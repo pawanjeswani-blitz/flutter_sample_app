@@ -9,4 +9,5 @@ class Constants {
   static const GetSalonFeedList = 'v1/service/get/salon/feed/';
   static const GetUserProfilePath = 'v1/service/get/userprofile';
   static const UpdateUserProfile = 'v1/service/update/profile';
+  static const GetSalonSlots = 'v1/service/get/store/slots';
 }

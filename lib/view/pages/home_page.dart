@@ -5,6 +5,7 @@ import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/salon_data.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -96,6 +97,12 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, item, index) => SalonCard(
                       title: item.name.toString(),
                       distance: item.distance.toStringAsFixed(1),
+                      customfunction: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SalonServicesUI(
+                                  salonId: item.id,
+                                )));
+                      },
                     )),
           ),
         ),
@@ -104,14 +111,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _title() => Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: Image.asset(
-                'assets/images/only_name_logo.png',
-                height: defaultOverride * 3.2,
-              ),
+        child: Row(
+          children: [
+            Column(
+              children: <Widget>[
+                Container(
+                  child: Image.asset(
+                    'assets/images/only_name_logo.png',
+                    height: defaultOverride * 3.2,
+                  ),
+                ),
+              ],
             ),
+            Spacer(),
+            Container(),
           ],
         ),
       );

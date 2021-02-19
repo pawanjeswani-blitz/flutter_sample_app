@@ -6,7 +6,10 @@ import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/login_page.dart';
 import 'package:saloonwala_consumer/view/pages/personal_info.dart';
 import 'package:saloonwala_consumer/view/pages/random_tests.dart';
+import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
+import 'package:saloonwala_consumer/view/pages/salon_slots_ui.dart';
 import 'package:saloonwala_consumer/view/pages/select_gender.dart';
+import 'package:saloonwala_consumer/view/pages/splash_page.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
@@ -21,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: AppColor.PRIMARY_DARK,
       ),
-      home: LoginPage(),
+      home: SplashPage(),
     );
   }
 }

@@ -37,11 +37,11 @@ class _LoginPageState extends State<LoginPage> {
   // final UserProfileLoginResponse _registerUserProfile =
   //     UserProfileLoginResponse();
   double defaultOverride;
-
+  bool readOnly = true;
   @override
   void initState() {
     super.initState();
-    _checkAndSetInfoBean();
+    // _checkAndSetInfoBean();
   }
 
   _getData() async {
@@ -168,90 +168,103 @@ class _LoginPageState extends State<LoginPage> {
                 bottomRight: Radius.circular(10.0))),
       );
 
-  Widget _getLoginForm() => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Form(
-            key: _loginFormKey1,
-            child: TextFormField(
-              validator: _validatePhoneNumber,
-              cursorColor: AppColor.PRIMARY_DARK,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10)
-              ],
-              keyboardType: TextInputType.phone,
-              style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-              maxLines: 1,
-              onChanged: (value) => phoneNumber = value,
-              decoration: _getTextFormFieldInputDecoration.copyWith(
-                hintText: 'Phone Number',
-                prefixIcon: Container(
-                  margin: EdgeInsets.only(left: defaultOverride * 1.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '+91 ',
-                        style: GoogleFonts.poppins(
-                          color: AppColor.PRIMARY_DARK,
-                          // fontSize: MediaQuery.of(context).size.width * 0.040,
-                          fontWeight: FontWeight.w500,
+  Widget _getLoginForm() => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Form(
+              key: _loginFormKey1,
+              child: TextFormField(
+                validator: _validatePhoneNumber,
+                cursorColor: AppColor.PRIMARY_DARK,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10)
+                ],
+                keyboardType: TextInputType.phone,
+                style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                maxLines: 1,
+                onChanged: (value) => phoneNumber = value,
+                decoration: _getTextFormFieldInputDecoration.copyWith(
+                  hintText: 'Phone Number',
+                  prefixIcon: Container(
+                    margin: EdgeInsets.only(left: defaultOverride * 1.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '+91 ',
+                          style: GoogleFonts.poppins(
+                            color: AppColor.PRIMARY_DARK,
+                            // fontSize: MediaQuery.of(context).size.width * 0.040,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  suffixIcon: FlatButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: () async {
+                        if (_loginFormKey1.currentState.validate()) {
+                          _requestOTP();
+                          readOnly = false;
+                        } else {
+                          showSnackBar("Please Enter 10-digit phone number");
+                        }
+                      },
+                      child: Text(
+                        'Get OTP',
+                        style: GoogleFonts.poppins(
+                            color: AppColor.PRIMARY_DARK,
+                            fontSize: defaultOverride * 1.75,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.0),
+                      )),
                 ),
-                suffixIcon: FlatButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () async {
-                      _requestOTP();
-                    },
-                    child: Text(
-                      'Get OTP',
-                      style: GoogleFonts.poppins(
-                          color: AppColor.PRIMARY_DARK,
-                          fontSize: defaultOverride * 1.75,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1.0),
-                    )),
               ),
             ),
-          ),
-          SizedBox(height: defaultOverride * 1.75),
-          Form(
-            key: _loginFormKey2,
-            child: TextFormField(
-              key: ObjectKey('otp'),
-              validator: _validateOTP,
-              controller: otpController,
-              enableSuggestions: false,
-              autocorrect: false,
-              cursorColor: AppColor.PRIMARY_DARK,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(4)
-              ],
-              keyboardType: TextInputType.numberWithOptions(
-                  signed: false, decimal: false),
-              style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-              maxLines: 1,
-              onChanged: (value) => otp = value,
-              decoration: _getTextFormFieldInputDecoration.copyWith(
-                  hintText: 'Enter 4-digit OTP'),
+            SizedBox(height: defaultOverride * 1.75),
+            Form(
+              key: _loginFormKey2,
+              child: TextFormField(
+                key: ObjectKey('otp'),
+                readOnly: readOnly,
+                validator: _validateOTP,
+                controller: otpController,
+                enableSuggestions: false,
+                autocorrect: false,
+                cursorColor: AppColor.PRIMARY_DARK,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(4)
+                ],
+                keyboardType: TextInputType.numberWithOptions(
+                    signed: false, decimal: false),
+                style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                maxLines: 1,
+                onChanged: (value) => otp = value,
+                decoration: _getTextFormFieldInputDecoration.copyWith(
+                    hintText: 'Enter 4-digit OTP'),
+              ),
             ),
-          ),
-          SizedBox(height: defaultOverride * 2.5),
-          GestureDetector(
-              child: RoundedButton(buttontext: 'Verify OTP'),
-              onTap: () async {
-                await _onVerifyOTPClick();
-                _getUserProfileData();
-              }),
-          SizedBox(height: defaultOverride * 3.5),
-        ],
+            SizedBox(height: defaultOverride * 2.5),
+            GestureDetector(
+                child: RoundedButton(buttontext: 'Verify OTP'),
+                onTap: () async {
+                  if (_loginFormKey1.currentState.validate() &&
+                      _loginFormKey2.currentState.validate()) {
+                    await _onVerifyOTPClick();
+                    _getUserProfileData();
+                  } else {
+                    showSnackBar("Please enter phone number and otp");
+                  }
+                }),
+            SizedBox(height: defaultOverride * 3.5),
+          ],
+        ),
       );
 
   void _requestOTP() async {

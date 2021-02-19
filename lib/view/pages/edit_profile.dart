@@ -34,17 +34,20 @@ class _EditProfileState extends State<EditProfile> {
       number,
       selectedgender,
       fname;
+  String fsname = "aa";
   // UserProfileLogin _userProfileLogin;
   @override
   void initState() {
     super.initState();
     _getUserProfileData();
+    setState(() {});
   }
 
   _getUserProfileData() async {
     Future<UserProfileLogin> userProfileData =
         AppSessionManager.getUserProfileAfterLogin();
-    userProfileData.then((value) {
+
+    await userProfileData.then((value) {
       fname = value.firstName;
       name = value.firstName + value.lastName;
       number = value.phoneNumber;
