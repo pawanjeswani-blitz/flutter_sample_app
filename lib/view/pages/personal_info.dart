@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
+import 'package:saloonwala_consumer/utils/internet_util.dart';
+import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
+import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class PersonalInfo extends StatefulWidget {
+  final String gender;
+
+  const PersonalInfo({Key key, this.gender}) : super(key: key);
   @override
   _PersonalInfoState createState() => _PersonalInfoState();
 }
@@ -14,18 +22,18 @@ class _PersonalInfoState extends State<PersonalInfo> {
   DateTime _selectedDateTime;
   String dob = DateUtil.getDisplayFormatDate(DateTime.now());
   // Text Controllers for taking input from text form field
-  TextEditingController nameController = TextEditingController();
   TextEditingController dobController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
-  TextEditingController stateController = TextEditingController();
+  String firstName, lastName, city, state;
   double defaultSizeOveride;
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultSizeOveride = defaultSize;
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -58,7 +66,16 @@ class _PersonalInfoState extends State<PersonalInfo> {
                         margin: EdgeInsets.only(
                             left: defaultSize * 2.2, right: defaultSize * 2.2),
                         child: TextFormField(
-                          controller: nameController,
+                          onChanged: (value) {
+                            List<String> split = value.split(' ');
+                            Map<int, String> values = {
+                              for (int i = 0; i < split.length; i++) i: split[i]
+                            };
+                            final value1 = values[0];
+                            final value2 = values[1];
+                            firstName = value1;
+                            lastName = value2;
+                          },
                           enableSuggestions: false,
                           autocorrect: false,
                           cursorColor: AppColor.PRIMARY_DARK,
@@ -67,14 +84,10 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           maxLines: 1,
                           decoration: _getTextFormFieldInputDecoration.copyWith(
                             hintText: 'Full Name',
-                            suffixIcon: Icon(
-                              Icons.perm_identity,
-                              color: AppColor.PRIMARY_DARK,
-                            ),
                           ),
                           validator: (value) {
                             if (value.isEmpty) {
-                              return "Full Name cannot be empty";
+                              return "Required Field";
                             }
                             return null;
                           },
@@ -120,7 +133,10 @@ class _PersonalInfoState extends State<PersonalInfo> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == "") {
+                            if (value == "" ||
+                                value ==
+                                    DateUtil.getDisplayFormatDate(
+                                        DateTime.now())) {
                               return "DOB cannot be current date";
                             }
                             return null;
@@ -134,13 +150,13 @@ class _PersonalInfoState extends State<PersonalInfo> {
                         margin: EdgeInsets.only(
                             left: defaultSize * 2.2, right: defaultSize * 2.2),
                         child: TextFormField(
-                          controller: cityController,
                           enableSuggestions: false,
                           autocorrect: false,
                           cursorColor: AppColor.PRIMARY_DARK,
                           style:
                               GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                           maxLines: 1,
+                          onChanged: (value) => city = value,
                           decoration: _getTextFormFieldInputDecoration.copyWith(
                             hintText: 'City',
                             suffixIcon: Icon(
@@ -179,13 +195,14 @@ class _PersonalInfoState extends State<PersonalInfo> {
                         margin: EdgeInsets.only(
                             left: defaultSize * 2.2, right: defaultSize * 2.2),
                         child: TextFormField(
-                          controller: stateController,
+                          // controller: stateController,
                           enableSuggestions: false,
                           autocorrect: false,
                           cursorColor: AppColor.PRIMARY_DARK,
                           style:
                               GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                           maxLines: 1,
+                          onChanged: (value) => state = value,
                           decoration: _getTextFormFieldInputDecoration.copyWith(
                             hintText: 'State',
                             suffixIcon: Icon(
@@ -221,12 +238,15 @@ class _PersonalInfoState extends State<PersonalInfo> {
                         height: defaultSize * 8.0,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_formKey.currentState.validate()) {
-                            print("validation Done");
+                            await _onUpdateClick();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => BottomNavBar()));
                           } else {
-                            print("try agian");
+                            showSnackBar("try agian");
                           }
+                          // print(firstName);
                         },
                         child: RoundedButtonDark(
                           buttontext: 'Get Started !',
@@ -293,5 +313,37 @@ class _PersonalInfoState extends State<PersonalInfo> {
         dobController.text = dob;
       });
     }
+  }
+
+  Future<SuperResponse<bool>> _onUpdateClick() async {
+    FocusScope.of(context).unfocus();
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await UserProfileService.updateUserProfile(
+            firstName, lastName, dob, city, state, widget.gender);
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          //check the user is already register or not
+          if (response.data != null) {
+            //user is register
+            print("registered");
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
+  }
+
+  void showSnackBar(String errorText) {
+    final snackBar = SnackBar(content: Text(errorText));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }

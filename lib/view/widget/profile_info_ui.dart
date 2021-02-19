@@ -6,8 +6,17 @@ import 'package:saloonwala_consumer/view/widget/custom_clipper.dart';
 
 class ProfileInfoUI extends StatelessWidget {
   final String name, email, title, image;
-  const ProfileInfoUI({Key key, this.name, this.email, this.title, this.image})
+  final bool showBackButton;
+
+  const ProfileInfoUI(
+      {Key key,
+      this.name,
+      this.email,
+      this.title,
+      this.image,
+      this.showBackButton = false})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double defaultSize = SizeConfig.defaultSize;
@@ -18,20 +27,43 @@ class ProfileInfoUI extends StatelessWidget {
           ClipPath(
             clipper: CustomClipperShape(),
             child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Stack(
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: defaultSize * 3.5,
+                  if (showBackButton)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              top: defaultSize * 3.5,
+                            ),
+                            child: Icon(
+                              Icons.chevron_left,
+                              size: defaultSize * 4.5,
+                              color: AppColor.LOGIN_BACKGROUND,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Text(title,
-                        style: GoogleFonts.poppins(
-                          color: AppColor.LOGIN_BACKGROUND,
-                          letterSpacing: 0.5,
-                          fontWeight: FontWeight.w500,
-                          fontSize: defaultSize * 3.5,
-                        )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: defaultSize * 3.5,
+                        ),
+                        child: Text(title,
+                            style: GoogleFonts.poppins(
+                              color: AppColor.LOGIN_BACKGROUND,
+                              letterSpacing: 0.5,
+                              fontWeight: FontWeight.w500,
+                              fontSize: defaultSize * 3.5,
+                            )),
+                      ),
+                    ],
                   ),
                 ],
               ),

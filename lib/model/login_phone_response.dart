@@ -1,6 +1,6 @@
-import 'package:saloonwala_consumer/view/pages/user_profile.dart';
+import 'package:saloonwala_consumer/model/user_profile.dart';
 
-class Data {
+class LoginPhoneResponse {
   bool userExists;
   String authToken;
   String refreshToken;
@@ -8,7 +8,7 @@ class Data {
   dynamic salonList;
   dynamic nextUrl;
 
-  Data(
+  LoginPhoneResponse(
       {this.userExists,
       this.authToken,
       this.refreshToken,
@@ -16,11 +16,13 @@ class Data {
       this.salonList,
       this.nextUrl});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  LoginPhoneResponse.fromJson(Map<String, dynamic> json) {
     userExists = json['userExists'];
     authToken = json['authToken'];
     refreshToken = json['refreshToken'];
-    userProfile = json['userProfile'];
+    userProfile = json['userProfile'] != null
+        ? new UserProfile.fromJson(json['userProfile'])
+        : null;
     salonList = json['salonList'];
     nextUrl = json['nextUrl'];
   }
@@ -30,7 +32,9 @@ class Data {
     data['userExists'] = this.userExists;
     data['authToken'] = this.authToken;
     data['refreshToken'] = this.refreshToken;
-    data['userProfile'] = this.userProfile;
+    if (this.userProfile != null) {
+      data['userProfile'] = this.userProfile.toJson();
+    }
     data['salonList'] = this.salonList;
     data['nextUrl'] = this.nextUrl;
     return data;

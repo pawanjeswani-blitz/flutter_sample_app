@@ -9,8 +9,13 @@ import 'package:saloonwala_consumer/api/auth_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/model/super_response.dart';
+import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
-import 'package:saloonwala_consumer/view/pages/user_profile.dart';
+import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
+import 'package:saloonwala_consumer/view/pages/home_page.dart';
+import 'package:saloonwala_consumer/view/pages/select_gender.dart';
+import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
@@ -27,14 +32,16 @@ class _LoginPageState extends State<LoginPage> {
   // bool autoValidate = false;
   String phoneNumber, otp;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
-  final UserProfile _registerUserProfile = UserProfile();
+  final GlobalKey<FormState> _loginFormKey1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _loginFormKey2 = GlobalKey<FormState>();
+  // final UserProfileLoginResponse _registerUserProfile =
+  //     UserProfileLoginResponse();
   double defaultOverride;
 
   @override
   void initState() {
     super.initState();
-    _getData();
+    _checkAndSetInfoBean();
   }
 
   _getData() async {
@@ -50,6 +57,19 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  _getUserProfileData() async {
+    Future<UserProfile> userProfileData = AppSessionManager.getUserProfile();
+    userProfileData.then((value) {
+      if (value.firstName == null && value.lastName == null) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => SelectGender()));
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => BottomNavBar()));
+      }
+    });
+  }
+
   // _getOTP() async {
   //   AuthService.getOTP();
   // }
@@ -60,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           Image.asset(
@@ -121,8 +142,10 @@ class _LoginPageState extends State<LoginPage> {
     errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.0),
         borderSide: BorderSide(color: Colors.white, width: 2.0)),
-    errorStyle:
-        GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
+    errorStyle: GoogleFonts.poppins(
+        color: AppColor.PRIMARY_DARK,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.5),
     disabledBorder: InputBorder.none,
     contentPadding: EdgeInsets.only(left: 15, bottom: 14, top: 14, right: 15),
     // hintText: hint,
@@ -145,20 +168,14 @@ class _LoginPageState extends State<LoginPage> {
                 bottomRight: Radius.circular(10.0))),
       );
 
-  Widget _getLoginForm() => Form(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextFormField(
-              // controller: mobilenoController,
-              key: _loginFormKey,
-              validator: (x) {
-                if (x.isEmpty || x.length < 10) {
-                  return "Please Enter 10-digit Mobile No.";
-                }
-                return null;
-              },
+  Widget _getLoginForm() => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Form(
+            key: _loginFormKey1,
+            child: TextFormField(
+              validator: _validatePhoneNumber,
               cursorColor: AppColor.PRIMARY_DARK,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
@@ -202,9 +219,13 @@ class _LoginPageState extends State<LoginPage> {
                     )),
               ),
             ),
-            SizedBox(height: defaultOverride * 1.75),
-            TextFormField(
+          ),
+          SizedBox(height: defaultOverride * 1.75),
+          Form(
+            key: _loginFormKey2,
+            child: TextFormField(
               key: ObjectKey('otp'),
+              validator: _validateOTP,
               controller: otpController,
               enableSuggestions: false,
               autocorrect: false,
@@ -221,15 +242,21 @@ class _LoginPageState extends State<LoginPage> {
               decoration: _getTextFormFieldInputDecoration.copyWith(
                   hintText: 'Enter 4-digit OTP'),
             ),
-            SizedBox(height: defaultOverride * 2.5),
-            RoundedButton(buttontext: 'Verify OTP'),
-            SizedBox(height: defaultOverride * 3.5),
-          ],
-        ),
+          ),
+          SizedBox(height: defaultOverride * 2.5),
+          GestureDetector(
+              child: RoundedButton(buttontext: 'Verify OTP'),
+              onTap: () async {
+                await _onVerifyOTPClick();
+                _getUserProfileData();
+              }),
+          SizedBox(height: defaultOverride * 3.5),
+        ],
       );
 
   void _requestOTP() async {
-    if (phoneNumber != null && phoneNumber.length == 10) {
+    if (_loginFormKey1.currentState.validate()) {
+      _loginFormKey1.currentState.save();
       FocusScope.of(context).unfocus();
       final isInternetConnected = await InternetUtil.isInternetConnected();
       if (isInternetConnected) {
@@ -237,7 +264,7 @@ class _LoginPageState extends State<LoginPage> {
         final response = await AuthService.getOTP('+91', phoneNumber);
         //close the progress dialog
         Navigator.of(context).pop();
-        if (response.data) {
+        if (response.data == null) {
           setState(() {});
         } else
           showSnackBar(response.error);
@@ -245,6 +272,57 @@ class _LoginPageState extends State<LoginPage> {
         showSnackBar("No internet connected");
     } else
       showSnackBar('Enter valid mobile number');
+  }
+
+  Future<SuperResponse<bool>> _onVerifyOTPClick() async {
+    if (_loginFormKey2.currentState.validate()) {
+      _loginFormKey2.currentState.save();
+      if (otp != null && otp.length == 4) {
+        FocusScope.of(context).unfocus();
+        final isInternetConnected = await InternetUtil.isInternetConnected();
+        if (isInternetConnected) {
+          ProgressDialog.showProgressDialog(context);
+          try {
+            final response =
+                await AuthService.verifyLoginOTP('+91', phoneNumber, otp);
+            //close the progress dialog
+            Navigator.of(context).pop();
+            if (response.error == null) {
+              //check the user is already register or not
+              if (response.data != null) {
+                //user is register
+                print("registered");
+              } else
+                showSnackBar("Something went wrong");
+            } else
+              showSnackBar(response.error);
+          } catch (ex) {
+            Navigator.of(context).pop();
+            showSnackBar("Please enter valid OTP.");
+          }
+        } else
+          showSnackBar("No internet connected");
+      } else
+        showSnackBar('Please enter OTP');
+    }
+  }
+
+  String _validatePhoneNumber(String value) {
+    if (value.isEmpty) {
+      return 'Phone Number is required';
+    } else if (value.length < 10) {
+      return 'Please enter 10-digit Phone Number';
+    }
+    return null;
+  }
+
+  String _validateOTP(String value) {
+    if (value.isEmpty) {
+      return 'OTP is required';
+    } else if (value.length < 4) {
+      return 'OTP must be at least 4 characters';
+    }
+    return null;
   }
 
   void showSnackBar(String errorText) {

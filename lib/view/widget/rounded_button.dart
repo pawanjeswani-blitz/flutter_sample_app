@@ -56,3 +56,60 @@ class RoundedButtonDark extends StatelessWidget {
     );
   }
 }
+
+class RoundedButtonDarkSave extends StatelessWidget {
+  final String buttontext;
+
+  const RoundedButtonDarkSave({Key key, this.buttontext}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    return Container(
+      width: defaultSize * 15.0,
+      padding: EdgeInsets.symmetric(vertical: defaultSize * 1.35),
+      margin: EdgeInsets.symmetric(horizontal: defaultSize * 1.4),
+      child: Center(
+        child: Text(buttontext,
+            style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: defaultSize * 2.2,
+                letterSpacing: 1.0,
+                fontWeight: FontWeight.w500)),
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: AppColor.PRIMARY_DARK),
+    );
+  }
+}
+
+class RoundedButtonOutlineBorder extends StatelessWidget {
+  final String buttontext;
+
+  const RoundedButtonOutlineBorder({Key key, this.buttontext})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    return Container(
+        width: defaultSize * 15.0,
+        padding: EdgeInsets.symmetric(vertical: defaultSize * 1.3),
+        margin: EdgeInsets.symmetric(horizontal: defaultSize * 1.4),
+        child: Center(
+          child: Text(buttontext,
+              style: GoogleFonts.poppins(
+                  color: AppColor.PRIMARY_DARK,
+                  fontSize: defaultSize * 2.0,
+                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w500)),
+        ),
+        decoration: BoxDecoration(
+            border: Border.all(
+              width: defaultSize * 0.2,
+              color: AppColor.PRIMARY_DARK,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(30))));
+  }
+}

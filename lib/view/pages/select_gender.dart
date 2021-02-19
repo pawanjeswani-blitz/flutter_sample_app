@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/view/pages/personal_info.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class SelectGender extends StatefulWidget {
@@ -98,8 +99,16 @@ class _SelectGenderState extends State<SelectGender> {
                             margin: EdgeInsets.only(
                                 left: defaultSize * 1.8,
                                 right: defaultSize * 1.8),
-                            child: RoundedButtonDark(
-                              buttontext: 'Continue',
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => PersonalInfo(
+                                          gender: gender,
+                                        )));
+                              },
+                              child: RoundedButtonDark(
+                                buttontext: 'Continue',
+                              ),
                             ),
                           )
                         : Container(),

@@ -7,6 +7,7 @@ import 'package:saloonwala_consumer/app/constants.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/model/info_bean.dart';
 import 'package:http/http.dart' as http;
+import 'package:saloonwala_consumer/model/login_phone_response.dart';
 import 'package:saloonwala_consumer/model/non_login_response.dart';
 import 'package:saloonwala_consumer/model/otp_response.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
@@ -106,6 +107,45 @@ class AuthService {
       debugPrint(response.body);
       Map<String, dynamic> map = json.decode(response.body);
       return SuperResponse.fromJson(map, null);
+    });
+  }
+
+  static Future<SuperResponse<LoginPhoneResponse>> verifyLoginOTP(
+      String countryCode, String phoneNumber, String otp) async {
+    final infoBean = await AppSessionManager.getInfoBean();
+    final nonLoginAuthToken = await AppSessionManager.getNonLoginAuthToken();
+
+    final body = {
+      "countryCode": countryCode,
+      "infoBean": infoBean,
+      "nonLoginAuthToken": nonLoginAuthToken,
+      "otp": otp,
+      "phoneNumber": phoneNumber
+    };
+
+    debugPrint("${Constants.BaseUrl}${Constants.LoginPhoneVerfication}");
+    debugPrint(jsonEncode(body));
+
+    return http
+        .post("${Constants.BaseUrl}${Constants.LoginPhoneVerfication}",
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: json.encode(body))
+        .then((http.Response response) {
+      if (response.statusCode < 200 ||
+          response.statusCode > 400 ||
+          json == null) {
+        throw new Exception("Error while fetching data");
+      }
+
+      debugPrint(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      final output =
+          SuperResponse.fromJson(map, LoginPhoneResponse.fromJson(map['data']));
+      if (output.data.authToken != null) {
+        AppSessionManager.setLoginAuthToken(output.data.authToken);
+        AppSessionManager.saveUserProfileObject(output.data.userProfile);
+      }
+      return output;
     });
   }
 }
