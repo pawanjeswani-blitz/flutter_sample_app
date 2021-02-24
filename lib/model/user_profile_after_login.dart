@@ -33,6 +33,7 @@ class UserProfileLogin {
   Null email;
   String phoneNumber;
   String dob;
+  String gender;
   int roleId;
 
   UserProfileLogin(
@@ -47,6 +48,7 @@ class UserProfileLogin {
       this.email,
       this.phoneNumber,
       this.dob,
+      this.gender,
       this.roleId});
 
   UserProfileLogin.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class UserProfileLogin {
     email = json['email'];
     phoneNumber = json['phoneNumber'];
     dob = json['dob'];
+    gender = json['gender'];
     roleId = json['roleId'];
   }
 
@@ -77,6 +80,7 @@ class UserProfileLogin {
     data['email'] = this.email;
     data['phoneNumber'] = this.phoneNumber;
     data['dob'] = this.dob;
+    data['gender'] = this.gender;
     data['roleId'] = this.roleId;
     return data;
   }

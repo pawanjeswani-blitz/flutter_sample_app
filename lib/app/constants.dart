@@ -10,4 +10,7 @@ class Constants {
   static const GetUserProfilePath = 'v1/service/get/userprofile';
   static const UpdateUserProfile = 'v1/service/update/profile';
   static const GetSalonSlots = 'v1/service/get/store/slots';
+  static const SlotsBooking = 'v1/service/post/booking/slot';
+  static const FavoriteUpdateHeart = 'v1/service/update/liked/saloon';
+  static const GetLikedSalon = 'v1/service/get/liked/saloon';
 }

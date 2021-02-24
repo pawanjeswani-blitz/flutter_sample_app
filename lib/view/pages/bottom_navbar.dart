@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/view/pages/favorite_salons.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 
@@ -11,11 +12,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedPosition = 0;
-  final _widgetList = [
-    HomePage(),
-    Center(child: Text("Favorite Screen")),
-    UserProfileUI()
-  ];
+  final _widgetList = [HomePage(), FavoriteSalonsScreen(), UserProfileUI()];
   double defaultOverride;
   @override
   Widget build(BuildContext context) {
@@ -23,23 +20,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: IndexedStack(
-              index: _selectedPosition,
-              children: _widgetList,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: IndexedStack(
+                index: _selectedPosition,
+                children: _widgetList,
+              ),
             ),
-          ),
-          _getBottomBar(),
-        ],
+            _getBottomBar(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _getBottomBar() => Container(
         padding: EdgeInsets.symmetric(
-            horizontal: defaultOverride * 2.0,
+            horizontal: defaultOverride * 0.0,
             vertical: defaultOverride * 0.75),
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -49,41 +48,55 @@ class _BottomNavBarState extends State<BottomNavBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            InkWell(
-              onTap: () {
-                setState(() {
-                  _selectedPosition = 0;
-                });
-              },
-              child: Image.asset(
-                'assets/images/transparent_small_logo.png',
-                color: Colors.white,
-                height: defaultOverride * 5.0,
-                width: defaultOverride * 5.0,
+            Container(
+              margin: EdgeInsets.only(left: defaultOverride * 1.25),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedPosition = 0;
+                  });
+                },
+                child: Image.asset(
+                  'assets/images/transparent_small_logo.png',
+                  color: _selectedPosition == 0
+                      ? AppColor.LOGIN_BACKGROUND
+                      : Colors.white,
+                  height: defaultOverride * 5.0,
+                  width: defaultOverride * 5.0,
+                ),
               ),
             ),
             IconButton(
                 icon: Icon(
-                  Icons.favorite,
-                  size: defaultOverride * 3.0,
-                  color: Colors.white,
+                  _selectedPosition == 1
+                      ? Icons.favorite
+                      : Icons.favorite_border_rounded,
+                  size: defaultOverride * 3.2,
+                  color: _selectedPosition == 1
+                      ? AppColor.LOGIN_BACKGROUND
+                      : Colors.white,
                 ),
                 onPressed: () {
                   setState(() {
                     _selectedPosition = 1;
                   });
                 }),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  _selectedPosition = 2;
-                });
-              },
-              child: Image.asset(
-                'assets/images/gp.png',
-                color: Colors.white,
-                height: defaultOverride * 3.0,
-                width: defaultOverride * 3.0,
+            Container(
+              margin: EdgeInsets.only(right: defaultOverride * 2.5),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedPosition = 2;
+                  });
+                },
+                child: Image.asset(
+                  'assets/images/gp.png',
+                  color: _selectedPosition == 2
+                      ? AppColor.LOGIN_BACKGROUND
+                      : Colors.white,
+                  height: defaultOverride * 3.0,
+                  width: defaultOverride * 3.0,
+                ),
               ),
             ),
           ],

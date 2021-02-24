@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloonwala_consumer/api/favorite_service.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
+import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/salon_data.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:saloonwala_consumer/model/super_response.dart';
+import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
+import 'package:saloonwala_consumer/view/pages/salon_services_tabview.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
+import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   final PagingController<int, SalonData> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -56,58 +63,101 @@ class _HomePageState extends State<HomePage> {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-                pinned: true,
-                automaticallyImplyLeading: false,
-                expandedHeight: defaultSize * 15.0,
-                title: _title(),
-                elevation: 0.0,
-                flexibleSpace: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                width: 0.0, color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                AppColor.PRIMARY_LIGHT,
-                                AppColor.PRIMARY_MEDIUM
-                              ])),
-                    ),
-                  ],
-                )),
-          ];
-        },
-        body: Container(
-          child: PagedListView<int, SalonData>(
-            padding: const EdgeInsets.all(0.0),
-            pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<SalonData>(
-                firstPageProgressIndicatorBuilder: (context) =>
-                    _getLoaderView(),
-                itemBuilder: (context, item, index) => SalonCard(
-                      title: item.name.toString(),
-                      distance: item.distance.toStringAsFixed(1),
-                      customfunction: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SalonServicesUI(
-                                  salonId: item.id,
-                                )));
-                      },
-                    )),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  expandedHeight: defaultSize * 10.0,
+                  title: _title(),
+                  elevation: 2.0,
+                  flexibleSpace: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  width: 0.0, color: AppColor.PRIMARY_MEDIUM),
+                            ),
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  AppColor.PRIMARY_LIGHT,
+                                  AppColor.PRIMARY_MEDIUM
+                                ])),
+                      ),
+                    ],
+                  )),
+            ];
+          },
+          body: Container(
+            child: PagedListView<int, SalonData>(
+              padding: const EdgeInsets.all(0.0),
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<SalonData>(
+                  firstPageProgressIndicatorBuilder: (context) =>
+                      _getLoaderView(),
+                  itemBuilder: (context, item, index) => SalonCard(
+                        title: item.name.toString(),
+                        distance: item.distance.toStringAsFixed(1),
+                        customfunction: () async {
+                          final userProfile = await AppSessionManager
+                              .getUserProfileAfterLogin();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SalonServicesTabView(
+                                    salonId: item.id,
+                                    salonName: item.name,
+                                    userprofile: userProfile,
+                                  )));
+                        },
+                        customFunctionLike: () {
+                          _onAddFavorite(item.id);
+                        },
+                      )),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<SuperResponse<bool>> _onAddFavorite(int salonId) async {
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await FavoriteService.favoriteUpdate(salonId);
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          //check the user is already register or not
+          if (response.data == null) {
+            //user is register
+            print(response.data);
+            showSnackBar("Salon added to favorites succesfully");
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
+  }
+
+  void showSnackBar(String errorText) {
+    final snackBar = SnackBar(content: Text(errorText));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   Widget _title() => Container(

@@ -9,6 +9,7 @@ import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
+import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
 import 'package:saloonwala_consumer/view/pages/dialog/select_gender_dialog.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
@@ -16,6 +17,9 @@ import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class EditProfile extends StatefulWidget {
+  final UserProfileLogin userProfile;
+
+  const EditProfile({Key key, this.userProfile}) : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -71,8 +75,8 @@ class _EditProfileState extends State<EditProfile> {
                 ProfileInfoUI(
                   title: 'Edit Profile',
                   image: 'assets/images/profile.jpg',
-                  name: fname.toString(),
-                  email: 'johndoe@gmail.com',
+                  name: widget.userProfile.firstName,
+                  email: ' ',
                   showBackButton: true,
                 ),
                 SizedBox(
@@ -104,7 +108,9 @@ class _EditProfileState extends State<EditProfile> {
                       lastName = value2;
                     },
                     decoration: _getTextFormFieldInputDecoration.copyWith(
-                      hintText: name.toString(),
+                      hintText: widget.userProfile.firstName +
+                          " " +
+                          widget.userProfile.lastName,
                       hintStyle:
                           GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                       suffixIcon: FlatButton(
@@ -126,51 +132,51 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: defaultSize * 1.0,
-                  ).copyWith(
-                    bottom: defaultSize * 2.0,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: defaultSize * 1.0,
-                  ),
-                  child: TextFormField(
-                    readOnly: readOnly,
-                    validator: _validatePhoneNumber,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10)
-                    ],
-                    keyboardType: TextInputType.phone,
-                    cursorColor: AppColor.PRIMARY_DARK,
-                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                    maxLines: 1,
-                    onChanged: (value) => phoneNumber = value,
-                    decoration: _getTextFormFieldInputDecoration.copyWith(
-                      hintText: number.toString(),
-                      hintStyle:
-                          GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                      suffixIcon: FlatButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: () async {
-                            // _requestOTP();
-                            setState(() {
-                              readOnly = false;
-                            });
-                          },
-                          child: Text(
-                            'Edit Number',
-                            style: GoogleFonts.poppins(
-                                color: AppColor.PRIMARY_DARK,
-                                fontSize: defaultSize * 1.75,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 1.0),
-                          )),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   margin: EdgeInsets.symmetric(
+                //     horizontal: defaultSize * 1.0,
+                //   ).copyWith(
+                //     bottom: defaultSize * 2.0,
+                //   ),
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: defaultSize * 1.0,
+                //   ),
+                //   child: TextFormField(
+                //     readOnly: readOnly,
+                //     validator: _validatePhoneNumber,
+                //     inputFormatters: [
+                //       FilteringTextInputFormatter.digitsOnly,
+                //       LengthLimitingTextInputFormatter(10)
+                //     ],
+                //     keyboardType: TextInputType.phone,
+                //     cursorColor: AppColor.PRIMARY_DARK,
+                //     style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                //     maxLines: 1,
+                //     onChanged: (value) => phoneNumber = value,
+                //     decoration: _getTextFormFieldInputDecoration.copyWith(
+                //       hintText: number.toString(),
+                //       hintStyle:
+                //           GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                //       suffixIcon: FlatButton(
+                //           splashColor: Colors.transparent,
+                //           highlightColor: Colors.transparent,
+                //           onPressed: () async {
+                //             // _requestOTP();
+                //             setState(() {
+                //               readOnly = false;
+                //             });
+                //           },
+                //           child: Text(
+                //             'Edit Number',
+                //             style: GoogleFonts.poppins(
+                //                 color: AppColor.PRIMARY_DARK,
+                //                 fontSize: defaultSize * 1.75,
+                //                 fontWeight: FontWeight.w500,
+                //                 letterSpacing: 1.0),
+                //           )),
+                //     ),
+                //   ),
+                // ),
                 Container(
                   margin: EdgeInsets.symmetric(
                     horizontal: defaultSize * 1.0,
@@ -189,7 +195,8 @@ class _EditProfileState extends State<EditProfile> {
                     maxLines: 1,
                     // onChanged: (value) => gender = value,
                     decoration: _getTextFormFieldInputDecoration.copyWith(
-                      hintText: 'Male',
+                      hintText:
+                          widget.userProfile.gender == "M" ? 'Male' : 'Female',
                       suffixIcon: FlatButton(
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
@@ -232,7 +239,7 @@ class _EditProfileState extends State<EditProfile> {
                         if (_fullNameFormKey.currentState.validate()) {
                           await _onEditProfileClick();
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => UserProfileUI()));
+                              builder: (context) => BottomNavBar()));
                         } else {
                           showSnackBar("try agian");
                         }

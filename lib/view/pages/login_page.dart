@@ -13,6 +13,8 @@ import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
+import 'package:saloonwala_consumer/view/pages/dialog/no_internet_dialog.dart';
+import 'package:saloonwala_consumer/view/pages/dialog/valid_otp_dailog.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/select_gender.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // _checkAndSetInfoBean();
+    _checkAndSetInfoBean();
   }
 
   _getData() async {
@@ -51,10 +53,34 @@ class _LoginPageState extends State<LoginPage> {
 
   _checkAndSetInfoBean() async {
     final nonLoginAuthToken = await AppSessionManager.getNonLoginAuthToken();
+    final isInternetConnected = await InternetUtil.isInternetConnected();
     if (nonLoginAuthToken == null) {
-      //info bean is not set. call the api to set the info bean
-      AuthService.getNonAuthToken();
+      if (isInternetConnected) {
+        ProgressDialog.showProgressDialog(context);
+        try {
+          AuthService.getNonAuthToken();
+          //close the progress dialog
+          Navigator.of(context).pop();
+        } catch (ex) {
+          Navigator.of(context).pop();
+          showSnackBar("ex");
+        }
+      } else
+        _onShow();
     }
+  }
+
+  void _onShow() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return NoInternetDialog(
+            customFunction: () {
+              _checkAndSetInfoBean();
+              Navigator.of(context).pop();
+            },
+          );
+        });
   }
 
   _getUserProfileData() async {
@@ -266,6 +292,43 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       );
+  void _onRequestOTPShow() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return NoInternetDialog(
+            customFunction: () {
+              _requestOTP();
+            },
+          );
+        });
+  }
+
+  void _onVerifyOTP() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return NoInternetDialog(
+            customFunction: () {
+              _onVerifyOTPClick();
+              Navigator.of(context).pop();
+            },
+          );
+        });
+  }
+
+  void _onValidOTP() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return EnterValidOTP(
+            customFunction: () {
+              // _onVerifyOTPClick();
+              Navigator.of(context).pop();
+            },
+          );
+        });
+  }
 
   void _requestOTP() async {
     if (_loginFormKey1.currentState.validate()) {
@@ -282,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
         } else
           showSnackBar(response.error);
       } else
-        showSnackBar("No internet connected");
+        _onRequestOTPShow();
     } else
       showSnackBar('Enter valid mobile number');
   }
@@ -311,10 +374,10 @@ class _LoginPageState extends State<LoginPage> {
               showSnackBar(response.error);
           } catch (ex) {
             Navigator.of(context).pop();
-            showSnackBar("Please enter valid OTP.");
+            _onValidOTP();
           }
         } else
-          showSnackBar("No internet connected");
+          _onVerifyOTP();
       } else
         showSnackBar('Please enter OTP');
     }

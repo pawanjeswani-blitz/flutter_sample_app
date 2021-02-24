@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
+import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
@@ -59,24 +60,25 @@ class _UserProfileUIState extends State<UserProfileUI> {
           child: Column(
             children: [
               ProfileInfoUI(
-                title: 'Profile',
-                image: 'assets/images/profile.jpg',
-                name: _userProfileLogin == null
-                    ? ""
-                    : _userProfileLogin.firstName.toString(),
-                email: _userProfileLogin == null
-                    ? ""
-                    : _userProfileLogin.email.toString(),
-              ),
+                  title: 'Profile',
+                  image: 'assets/images/profile.jpg',
+                  name: _userProfileLogin == null
+                      ? ""
+                      : _userProfileLogin.firstName.toString(),
+                  email: " "),
               SizedBox(
                 height: defaultSize * 2.0,
               ),
               ProfileMenuItem(
                 iconSrc: Icons.person,
                 title: 'Edit Profile',
-                press: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => EditProfile()));
+                press: () async {
+                  final userProfile =
+                      await AppSessionManager.getUserProfileAfterLogin();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditProfile(
+                            userProfile: userProfile,
+                          )));
                 },
               ),
               ProfileMenuItem(

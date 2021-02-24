@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: AppColor.PRIMARY_DARK,
       ),
-      home: SplashPage(),
+      home: BottomNavBar(),
     );
   }
 }
