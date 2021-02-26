@@ -686,3 +686,94 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
     );
   }
 }
+
+class SearchSalonCard extends StatefulWidget {
+  final String title;
+  final dynamic distance;
+  final Function customfunction, customFunctionLike;
+
+  const SearchSalonCard(
+      {Key key,
+      this.title,
+      this.distance,
+      this.customfunction,
+      this.customFunctionLike})
+      : super(key: key);
+  @override
+  _SearchSalonCardState createState() => _SearchSalonCardState();
+}
+
+class _SearchSalonCardState extends State<SearchSalonCard> {
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    String sample = "AA";
+    return GestureDetector(
+      onTap: () {
+        widget.customfunction();
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+            left: defaultSize * 1.0,
+            right: defaultSize * 1.0,
+            top: defaultSize * 0.5,
+            bottom: defaultSize * 1.2),
+        child: Card(
+          elevation: 1,
+          color: Colors.white,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            children: [
+              sample != null && sample.isNotEmpty
+                  ? Container(
+                      height: defaultSize * 8.5,
+                      width: defaultSize * 15,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: defaultSize * 10,
+                      width: defaultSize * 15,
+                      color: Colors.blueGrey,
+                      child: Icon(
+                        Icons.home,
+                        size: defaultSize * 3.0,
+                        color: Colors.white,
+                      ),
+                    ),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: defaultSize * 20.0),
+                child: Container(
+                  margin: EdgeInsets.only(left: defaultSize * 1.35),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        widget.title,
+                        style: GoogleFonts.poppins(
+                            fontSize: defaultSize * 1.70,
+                            color: AppColor.PRIMARY_MEDIUM,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

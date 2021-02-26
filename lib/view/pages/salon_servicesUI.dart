@@ -139,7 +139,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                                 _selectedServiceList,
                                             salonId: widget.salonId,
                                             salonName: widget.salonName,
-                                            userProfile: userProfile,
+                                            userProfile: widget.userprofile,
                                           )));
                                 },
                                 child: Text(" Book Now",

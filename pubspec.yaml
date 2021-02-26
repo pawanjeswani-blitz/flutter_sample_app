@@ -23,6 +23,7 @@ dependencies:
   infinite_scroll_pagination: ^2.0.0
   font_awesome_flutter: ^8.11.0
   flutter_calendar_carousel: ^1.5.3
+  material_floating_search_bar: ^0.2.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

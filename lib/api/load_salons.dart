@@ -56,4 +56,31 @@ class LoadSalons {
       return SuperResponse.fromJson(map, SaloonServices.fromJson(map['data']));
     });
   }
+
+  static Future<SuperResponse<PaginatedSalonResponse>> getSalonSearchFeed(
+      int pageNo, String name) async {
+    final loginAuthToken = await AppSessionManager.getLoginAuthToken();
+    final body = {"authToken": loginAuthToken, "name": name};
+    debugPrint(
+        "${Constants.SecondryUrl}${Constants.GetSearchList}${pageNo.toString()}");
+    debugPrint(jsonEncode(body));
+    return http
+        .post(
+            "${Constants.SecondryUrl}${Constants.GetSearchList}${pageNo.toString()}",
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: json.encode(body))
+        .then((http.Response response) {
+      if (response.statusCode < 200 ||
+          response.statusCode > 400 ||
+          json == null) {
+        throw new Exception("Error while fetching data");
+      }
+
+      debugPrint(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      // return SuperResponse.fromJson(map, null);
+      return SuperResponse.fromJson(
+          map, PaginatedSalonResponse.fromJson(map['data']));
+    });
+  }
 }

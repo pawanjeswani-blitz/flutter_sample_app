@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
+import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
@@ -14,7 +13,7 @@ class BookingDetails extends StatefulWidget {
   final List<Services> selectedServiceList;
   final int salonId;
   final String salonName, employeeName, dateString, dayMonth;
-  final UserProfile userProfile;
+  final UserProfileLogin userProfile;
 
   const BookingDetails(
       {Key key,

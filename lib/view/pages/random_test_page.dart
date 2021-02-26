@@ -1,37 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:saloonwala_consumer/api/favorite_service.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/salon_data.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
-import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
 import 'package:saloonwala_consumer/view/pages/salon_services_tabview.dart';
 import 'package:saloonwala_consumer/view/pages/search_salons.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
-class HomePage extends StatefulWidget {
+class RandomTestSearchBAR extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _RandomTestSearchBARState createState() => _RandomTestSearchBARState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _RandomTestSearchBARState extends State<RandomTestSearchBAR> {
   final PagingController<int, SalonData> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  static const historyLength = 5;
 
+  List<String> _searchHistory = [
+    'fuchsia',
+    'flutter',
+    'widgets',
+    'resocoder',
+  ];
+
+  List<String> filteredSearchHistory;
+
+  String selectedTerm;
+
+  List<String> filterSearchTerms({
+    @required String filter,
+  }) {
+    if (filter != null && filter.isNotEmpty) {
+      return _searchHistory.reversed
+          .where((term) => term.startsWith(filter))
+          .toList();
+    } else {
+      return _searchHistory.reversed.toList();
+    }
+  }
+
+  void addSearchTerm(String term) {
+    if (_searchHistory.contains(term)) {
+      putSearchTermFirst(term);
+      return;
+    }
+
+    _searchHistory.add(term);
+    if (_searchHistory.length > historyLength) {
+      _searchHistory.removeRange(0, _searchHistory.length - historyLength);
+    }
+
+    filteredSearchHistory = filterSearchTerms(filter: null);
+  }
+
+  void deleteSearchTerm(String term) {
+    _searchHistory.removeWhere((t) => t == term);
+    filteredSearchHistory = filterSearchTerms(filter: null);
+  }
+
+  void putSearchTermFirst(String term) {
+    deleteSearchTerm(term);
+    addSearchTerm(term);
+  }
+
+  FloatingSearchBarController controller;
   @override
   void initState() {
     super.initState();
 
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
+      controller = FloatingSearchBarController();
+      filteredSearchHistory = filterSearchTerms(filter: null);
     });
   }
 
@@ -56,6 +108,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _pagingController.dispose();
+    controller.dispose();
     super.dispose();
   }
 

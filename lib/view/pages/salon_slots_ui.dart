@@ -10,6 +10,7 @@ import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/model/slots.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
+import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
@@ -24,7 +25,7 @@ class SalonSlotsUI extends StatefulWidget {
   final List<Services> selectedServiceList;
   final int salonId;
   final String salonName;
-  final UserProfile userProfile;
+  final UserProfileLogin userProfile;
   const SalonSlotsUI(
       {Key key,
       this.selectedServiceList,
@@ -387,7 +388,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                           DateTime.fromMillisecondsSinceEpoch(
                               _selectedTimeSlot.startTime)),
                       dayMonth: DateUtil.getDisplayFormatDay(_selectedDateTime),
-                      userProfile: userProfile,
+                      userProfile: widget.userProfile,
                     )));
             print(response.data);
           } else
