@@ -14,4 +14,5 @@ class Constants {
   static const FavoriteUpdateHeart = 'v1/service/update/liked/saloon';
   static const GetLikedSalon = 'v1/service/get/liked/saloon';
   static const GetSearchList = '/v1/service/get/search/salon/';
+  static const GetAppointmentData = '/v1/service/get/appointment/';
 }

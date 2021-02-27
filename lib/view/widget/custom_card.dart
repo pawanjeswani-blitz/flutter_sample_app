@@ -777,3 +777,130 @@ class _SearchSalonCardState extends State<SearchSalonCard> {
     );
   }
 }
+
+class AppointmentCard extends StatefulWidget {
+  final String salonTitle, date, time;
+  final Function viewDetails, cancel;
+
+  const AppointmentCard(
+      {Key key,
+      this.salonTitle,
+      this.date,
+      this.time,
+      this.viewDetails,
+      this.cancel})
+      : super(key: key);
+  @override
+  _AppointmentCardState createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends State<AppointmentCard> {
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    return Container(
+      // height: defaultSize * 20,
+      // width: double.infinity,
+      margin: EdgeInsets.only(
+          left: defaultSize * 1.0,
+          right: defaultSize * 1.0,
+          top: defaultSize * 0.5,
+          bottom: defaultSize * 1.2),
+      child: Card(
+        elevation: 2.0,
+        color: Colors.white,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 1.5,
+              ),
+              child: Text(
+                widget.salonTitle,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 2.0,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.date,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.time,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Divider(
+              thickness: defaultSize * 0.065,
+            ),
+            Row(
+              children: [
+                FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () async {
+                    widget.viewDetails();
+                  },
+                  child: Text(
+                    'View Details',
+                    style: GoogleFonts.poppins(
+                        color: AppColor.PRIMARY_DARK,
+                        fontSize: defaultSize * 1.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                Spacer(),
+                FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () async {
+                    widget.cancel();
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.poppins(
+                        color: Colors.red[800],
+                        fontSize: defaultSize * 1.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

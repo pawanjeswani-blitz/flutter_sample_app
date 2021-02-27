@@ -6,6 +6,7 @@ import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/edit_profile.dart';
+import 'package:saloonwala_consumer/view/pages/upcoming_appointments_screen.dart';
 import 'package:saloonwala_consumer/view/widget/custom_appbar.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_menu_item.dart';
@@ -84,7 +85,10 @@ class _UserProfileUIState extends State<UserProfileUI> {
               ProfileMenuItem(
                 iconSrc: Icons.access_time,
                 title: 'Upcoming Appointments',
-                press: () {},
+                press: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => UpcomingAppointmentScreen()));
+                },
               ),
               ProfileMenuItem(
                 iconSrc: Icons.content_paste,

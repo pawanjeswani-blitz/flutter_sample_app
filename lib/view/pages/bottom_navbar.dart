@@ -12,7 +12,11 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedPosition = 0;
-  final _widgetList = [HomePage(), FavoriteSalonsScreen(), UserProfileUI()];
+  final _widgetList = [
+    HomePage(),
+    Center(child: Text("Favorite Salons")),
+    UserProfileUI()
+  ];
   double defaultOverride;
   @override
   Widget build(BuildContext context) {
@@ -54,6 +58,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 onTap: () {
                   setState(() {
                     _selectedPosition = 0;
+                    _widgetList.removeAt(1);
                   });
                 },
                 child: Image.asset(
@@ -79,6 +84,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 onPressed: () {
                   setState(() {
                     _selectedPosition = 1;
+                    _widgetList.insert(1, FavoriteSalonsScreen());
                   });
                 }),
             Container(
@@ -86,7 +92,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               child: InkWell(
                 onTap: () {
                   setState(() {
+                    // _widgetList.removeAt(1);
+
                     _selectedPosition = 2;
+                    _widgetList.insert(2, UserProfileUI());
                   });
                 },
                 child: Image.asset(

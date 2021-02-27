@@ -5,6 +5,7 @@ import 'package:saloonwala_consumer/view/pages/edit_profile.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/login_page.dart';
 import 'package:saloonwala_consumer/view/pages/personal_info.dart';
+import 'package:saloonwala_consumer/view/pages/test.dart';
 import 'package:saloonwala_consumer/view/pages/random_test_page.dart';
 // import 'package:saloonwala_consumer/view/pages/random_tesst_search.dart';
 import 'package:saloonwala_consumer/view/pages/random_tests.dart';
@@ -12,6 +13,7 @@ import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
 import 'package:saloonwala_consumer/view/pages/salon_slots_ui.dart';
 import 'package:saloonwala_consumer/view/pages/select_gender.dart';
 import 'package:saloonwala_consumer/view/pages/splash_page.dart';
+import 'package:saloonwala_consumer/view/pages/upcoming_appointments_screen.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 

@@ -9,12 +9,13 @@ import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
-class RandomTest extends StatefulWidget {
+class UpcomingAppointmentScreen extends StatefulWidget {
   @override
-  _RandomTestState createState() => _RandomTestState();
+  _UpcomingAppointmentScreenState createState() =>
+      _UpcomingAppointmentScreenState();
 }
 
-class _RandomTestState extends State<RandomTest> {
+class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
   final PagingController<int, AppointmentResponse> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;

@@ -61,18 +61,23 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-                itemCount: _salonData.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return FavoriteSalonCard(
-                    title: _salonData[position].name,
-                    distance: _salonData[position].distance.toStringAsFixed(1),
-                    customfunction: () async {
-                      await _onRemoveFavorite(_salonData[position].id);
-                      _loadSalons();
+            child: _salonData != null
+                ? ListView.builder(
+                    // itemCount: _salonData.length,
+                    itemBuilder: (BuildContext context, int position) {
+                      return FavoriteSalonCard(
+                        title: _salonData[position].name,
+                        distance:
+                            _salonData[position].distance.toStringAsFixed(1),
+                        customfunction: () async {
+                          await _onRemoveFavorite(_salonData[position].id);
+                          _loadSalons();
+                        },
+                      );
                     },
-                  );
-                }),
+                    itemCount: _salonData.length,
+                  )
+                : Center(child: CircularProgressIndicator()),
           )
         ],
       ),
