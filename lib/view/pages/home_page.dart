@@ -163,6 +163,22 @@ class _HomePageState extends State<HomePage> {
                       builderDelegate: PagedChildBuilderDelegate<SalonData>(
                           firstPageProgressIndicatorBuilder: (context) =>
                               _getLoaderView(),
+                          noMoreItemsIndicatorBuilder: (context) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: defaultSize * 2.0,
+                                ),
+                                child: Text(
+                                  "You've reached the end",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey[500],
+                                    fontSize: defaultSize * 2.0,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                           itemBuilder: (context, item, index) => SalonCard(
                                 title: item.name.toString(),
                                 distance: item.distance.toStringAsFixed(1),

@@ -147,6 +147,22 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                         PagedChildBuilderDelegate<AppointmentResponse>(
                             firstPageProgressIndicatorBuilder: (context) =>
                                 _getLoaderView(),
+                            noMoreItemsIndicatorBuilder: (context) {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: defaultSize * 2.0,
+                                  ),
+                                  child: Text(
+                                    "You've reached the end",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.grey[500],
+                                      fontSize: defaultSize * 2.0,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             itemBuilder: (context, item, index) =>
                                 item.status == "REQUESTED"
                                     ? AppointmentCard(
@@ -171,6 +187,23 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                     pagingController: _pagingController,
                     builderDelegate:
                         PagedChildBuilderDelegate<AppointmentResponse>(
+                            noMoreItemsIndicatorBuilder: (context) {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: defaultSize * 25.0,
+                                    bottom: defaultSize * 2.0,
+                                  ),
+                                  child: Text(
+                                    "Your request is being proccessed",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.grey[500],
+                                      fontSize: defaultSize * 2.0,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             firstPageProgressIndicatorBuilder: (context) =>
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
