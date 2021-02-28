@@ -37,20 +37,74 @@ class _BookingDetailsState extends State<BookingDetails> {
     SizeConfig().init(context);
     double defaultSizeOver = SizeConfig.defaultSize;
     defaultSize = defaultSizeOver;
-    return Scaffold(
-      body: _getBookingDetails(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: _getBookingDetails(),
+      ),
     );
   }
 
   int getTotal() {
     int sum = 0;
+    int saved = 0;
     for (int i = 0; i < widget.selectedServiceList.length; i++) {
+      int _getDiscountPercentage() {
+        if (widget.selectedServiceList[i].serviceDiscount != null &&
+            widget.selectedServiceList[i].serviceDiscount > 0)
+          return widget.selectedServiceList[i].serviceDiscount;
+        else
+          return widget.selectedServiceList[i].globalDiscount ?? 0;
+      }
+
+      int _getDiscountedPrice(int amount) {
+        int percentageDiscount = _getDiscountPercentage();
+        double discount = amount * percentageDiscount / 100;
+        return (amount - discount).toInt();
+      }
+
       sum += widget.userProfile.gender == "M"
-          ? widget.selectedServiceList[i].maleRate
-          : widget.selectedServiceList[i].femaleRate;
+          ? _getDiscountedPrice(widget.selectedServiceList[i].maleRate)
+          : _getDiscountedPrice(widget.selectedServiceList[i].femaleRate);
+      // sum += widget.userProfile.gender == "M"
+      //     ? widget.selectedServiceList[i].maleRate
+      //     : widget.selectedServiceList[i].femaleRate;
+
     }
     print(sum.toString());
     return sum;
+  }
+
+  int getSaved() {
+    int saved = 0;
+    for (int i = 0; i < widget.selectedServiceList.length; i++) {
+      int _getDiscountPercentage() {
+        if (widget.selectedServiceList[i].serviceDiscount != null &&
+            widget.selectedServiceList[i].serviceDiscount > 0)
+          return widget.selectedServiceList[i].serviceDiscount;
+        else
+          return widget.selectedServiceList[i].globalDiscount ?? 0;
+      }
+
+      int _getDiscountedPrice(int amount) {
+        int percentageDiscount = _getDiscountPercentage();
+        double discount = amount * percentageDiscount / 100;
+        return (amount - discount).toInt();
+      }
+
+      int _getTotalSaved(int amount, actualamount) {
+        return (actualamount - amount).toInt();
+      }
+
+      saved += _getTotalSaved(
+          widget.userProfile.gender == "M"
+              ? _getDiscountedPrice(widget.selectedServiceList[i].maleRate)
+              : _getDiscountedPrice(widget.selectedServiceList[i].femaleRate),
+          widget.userProfile.gender == "M"
+              ? widget.selectedServiceList[i].maleRate
+              : widget.selectedServiceList[i].femaleRate);
+    }
+    return saved;
   }
 
   Widget _getBookingDetails() => SingleChildScrollView(
@@ -178,8 +232,48 @@ class _BookingDetailsState extends State<BookingDetails> {
                           ],
                         ),
                       ),
+                      // Padding(
+                      //   padding: EdgeInsets.only(
+                      //     left: defaultSize * 3.0,
+                      //     right: defaultSize * 3.0,
+                      //     bottom: 0.0,
+                      //   ),
+                      //   child: Row(
+                      //     children: [
+                      //       Text(
+                      //         "Service Name",
+                      //         style: GoogleFonts.poppins(
+                      //             color: AppColor.DARK_ACCENT,
+                      //             fontWeight: FontWeight.w500,
+                      //             fontSize: defaultSize * 1.5),
+                      //       ),
+                      //       Spacer(),
+                      //       Text(
+                      //         "Amount",
+                      //         style: GoogleFonts.poppins(
+                      //             color: AppColor.DARK_ACCENT,
+                      //             fontWeight: FontWeight.w500,
+                      //             fontSize: defaultSize * 1.5),
+                      //       ),
+                      //       // Spacer(),
+                      //       Padding(
+                      //         padding: EdgeInsets.only(
+                      //           left: defaultSize * 2.0,
+                      //         ),
+                      //         child: Text(
+                      //           "Discount",
+                      //           style: GoogleFonts.poppins(
+                      //               color: AppColor.DARK_ACCENT,
+                      //               fontWeight: FontWeight.w500,
+                      //               fontSize: defaultSize * 1.5),
+                      //         ),
+                      //       )
+                      //     ],
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.only(
+                            top: 0,
                             left: defaultSize * 3.0,
                             right: defaultSize * 3.0,
                             bottom: defaultSize * 2.0),
@@ -188,6 +282,29 @@ class _BookingDetailsState extends State<BookingDetails> {
                             shrinkWrap: true,
                             itemCount: widget.selectedServiceList.length,
                             itemBuilder: (BuildContext context, int index) {
+                              int _getDiscountPercentage() {
+                                if (widget.selectedServiceList[index]
+                                            .serviceDiscount !=
+                                        null &&
+                                    widget.selectedServiceList[index]
+                                            .serviceDiscount >
+                                        0)
+                                  return widget.selectedServiceList[index]
+                                      .serviceDiscount;
+                                else
+                                  return widget.selectedServiceList[index]
+                                          .globalDiscount ??
+                                      0;
+                              }
+
+                              int _getDiscountedPrice(int amount) {
+                                int percentageDiscount =
+                                    _getDiscountPercentage();
+                                double discount =
+                                    amount * percentageDiscount / 100;
+                                return (amount - discount).toInt();
+                              }
+
                               return Row(
                                 children: [
                                   Text(
@@ -200,12 +317,51 @@ class _BookingDetailsState extends State<BookingDetails> {
                                   Spacer(),
                                   Text(
                                     widget.userProfile.gender == "M"
-                                        ? "${widget.selectedServiceList[index].maleRate.toString()}"
-                                        : "${widget.selectedServiceList[index].femaleRate.toString()}",
+                                        ? "₹ ${_getDiscountedPrice(widget.selectedServiceList[index].maleRate)}"
+                                        : "₹ ${_getDiscountedPrice(widget.selectedServiceList[index].femaleRate)}",
                                     style: GoogleFonts.poppins(
                                         color: AppColor.DARK_ACCENT,
                                         fontWeight: FontWeight.w500,
                                         fontSize: defaultSize * 1.5),
+                                  ),
+                                  if (_getDiscountedPrice(widget
+                                              .selectedServiceList[index]
+                                              .femaleRate) !=
+                                          widget.selectedServiceList[index]
+                                              .femaleRate &&
+                                      _getDiscountedPrice(widget
+                                              .selectedServiceList[index]
+                                              .maleRate) !=
+                                          widget.selectedServiceList[index]
+                                              .maleRate)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: defaultSize * 1.0,
+                                      ),
+                                      child: Text(
+                                          widget.userProfile.gender == "M"
+                                              ? "₹ ${widget.selectedServiceList[index].maleRate}"
+                                              : "₹ ${widget.selectedServiceList[index].femaleRate}",
+                                          style: GoogleFonts.poppins(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              decorationThickness: 2.2,
+                                              color: AppColor.DARK_ACCENT,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: defaultSize * 1.5)),
+                                    ),
+                                  // Spacer(),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: defaultSize * 2.0,
+                                    ),
+                                    child: Text(
+                                      "${_getDiscountPercentage()}% Off",
+                                      style: GoogleFonts.poppins(
+                                          color: AppColor.DARK_ACCENT,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: defaultSize * 1.5),
+                                    ),
                                   ),
                                 ],
                               );
@@ -213,9 +369,9 @@ class _BookingDetailsState extends State<BookingDetails> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: defaultSize * 3.0,
-                            right: defaultSize * 3.0,
-                            bottom: defaultSize * 3.0),
+                          left: defaultSize * 3.0,
+                          right: defaultSize * 3.0,
+                        ),
                         child: Row(
                           children: [
                             Text(
@@ -227,11 +383,40 @@ class _BookingDetailsState extends State<BookingDetails> {
                             ),
                             Spacer(),
                             Text(
-                              getTotal().toString(),
+                              "₹ ${getTotal().toString()}",
                               style: GoogleFonts.poppins(
                                   color: AppColor.DARK_ACCENT,
                                   fontWeight: FontWeight.w500,
                                   fontSize: defaultSize * 2.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: defaultSize * 3.0,
+                            right: defaultSize * 3.0,
+                            bottom: defaultSize * 3.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Total saved",
+                              style: GoogleFonts.poppins(
+                                  color: AppColor.DARK_ACCENT,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: defaultSize * 1.45),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(right: defaultSize * 1.0),
+                              child: Text(
+                                "₹ ${getSaved().toString()}",
+                                style: GoogleFonts.poppins(
+                                    color: AppColor.DARK_ACCENT,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: defaultSize * 1.45),
+                              ),
                             ),
                           ],
                         ),

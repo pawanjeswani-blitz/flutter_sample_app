@@ -6,19 +6,15 @@ import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/appointment_response.dart';
 import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
-import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
-import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
-import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 
-class UpcomingAppointmentScreen extends StatefulWidget {
+class PastAppointments extends StatefulWidget {
   @override
-  _UpcomingAppointmentScreenState createState() =>
-      _UpcomingAppointmentScreenState();
+  _PastAppointmentsState createState() => _PastAppointmentsState();
 }
 
-class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
+class _PastAppointmentsState extends State<PastAppointments> {
   final PagingController<int, AppointmentResponse> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;
@@ -68,9 +64,8 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     return Scaffold(
-      key: _scaffoldKey,
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           body: NestedScrollView(
             headerSliverBuilder:
@@ -100,24 +95,35 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                   bottom: TabBar(
                     indicatorPadding: EdgeInsets.symmetric(
                         vertical: defaultSize * 0.8,
-                        horizontal: defaultSize * 2.25),
+                        horizontal: defaultSize * 1.0),
                     indicatorColor: AppColor.LOGIN_BACKGROUND,
                     tabs: [
                       Tab(
                         child: Text(
-                          'Awaiting',
+                          'Past',
                           style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.654,
+                            fontSize: defaultSize * 1.354,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                       Tab(
                         child: Text(
-                          'Confirmed',
+                          'Owner cancelled',
                           style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.654,
+                            fontSize: defaultSize * 1.354,
                             fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Center(
+                          child: Text(
+                            'Customer cancelled',
+                            style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 1.354,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -155,10 +161,11 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                               return Center(
                                 child: Padding(
                                   padding: EdgeInsets.only(
+                                    top: defaultSize * 25.0,
                                     bottom: defaultSize * 2.0,
                                   ),
                                   child: Text(
-                                    "You've reached the end",
+                                    "No Records",
                                     style: GoogleFonts.poppins(
                                       color: Colors.grey[500],
                                       fontSize: defaultSize * 2.0,
@@ -168,7 +175,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                               );
                             },
                             itemBuilder: (context, item, index) =>
-                                item.status == "REQUESTED"
+                                item.status == "Done"
                                     ? AppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
@@ -178,9 +185,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        cancel: () {
-                                          _onCancel(item.id);
-                                        },
+                                        cancel: () {},
                                         viewDetails: () {},
                                       )
                                     : SizedBox()),
@@ -201,7 +206,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                     bottom: defaultSize * 2.0,
                                   ),
                                   child: Text(
-                                    "Your request is being proccessed",
+                                    "No Records",
                                     style: GoogleFonts.poppins(
                                       color: Colors.grey[500],
                                       fontSize: defaultSize * 2.0,
@@ -213,7 +218,50 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                             firstPageProgressIndicatorBuilder: (context) =>
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
-                                item.status == "Booked"
+                                item.status == "OWNER_CANCELLED"
+                                    ? AppointmentCard(
+                                        salonTitle: item.salonDetails.name
+                                            .toUpperCase(),
+                                        date: DateUtil.getDisplayFormatDay(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                item.startTime)),
+                                        time: DateUtil.getDisplayFormatHour(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                item.startTime)),
+                                        cancel: () {},
+                                        viewDetails: () {},
+                                      )
+                                    : SizedBox()),
+                  ),
+                ),
+                Container(
+                  child: PagedListView<int, AppointmentResponse>(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(0.0),
+                    pagingController: _pagingController,
+                    builderDelegate:
+                        PagedChildBuilderDelegate<AppointmentResponse>(
+                            noMoreItemsIndicatorBuilder: (context) {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: defaultSize * 25.0,
+                                    bottom: defaultSize * 2.0,
+                                  ),
+                                  child: Text(
+                                    "No more Records",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.grey[500],
+                                      fontSize: defaultSize * 2.0,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            firstPageProgressIndicatorBuilder: (context) =>
+                                _getLoaderView(),
+                            itemBuilder: (context, item, index) =>
+                                item.status == "CUST_CANCELLED"
                                     ? AppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
@@ -235,38 +283,6 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
         ),
       ),
     );
-  }
-
-  Future<SuperResponse<bool>> _onCancel(int bookingId) async {
-    final isInternetConnected = await InternetUtil.isInternetConnected();
-    if (isInternetConnected) {
-      ProgressDialog.showProgressDialog(context);
-      try {
-        final response =
-            await GetAppointmentService.cancelAppointment(bookingId);
-        //close the progress dialog
-        Navigator.of(context).pop();
-        if (response.error == null) {
-          //check the user is already register or not
-          if (response.data == null) {
-            //user is register
-            print(response.data);
-            showSnackBar("Appointment Cancelled succesfully");
-          } else
-            showSnackBar("Something went wrong");
-        } else
-          showSnackBar(response.error);
-      } catch (ex) {
-        Navigator.of(context).pop();
-        showSnackBar("Something went wrong.");
-      }
-    } else
-      showSnackBar("No internet connected");
-  }
-
-  void showSnackBar(String errorText) {
-    final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   Widget _getLoaderView() {

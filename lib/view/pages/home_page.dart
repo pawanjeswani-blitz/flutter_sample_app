@@ -20,10 +20,6 @@ import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
-  final Timer timer;
-
-  const HomePage({Key key, this.timer}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -69,7 +65,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    widget.timer.cancel();
+    // widget.timer.cancel();
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
@@ -168,51 +164,59 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                     child: Container(
-                      child: PagedListView<int, SalonData>(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(0.0),
-                        pagingController: _pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<SalonData>(
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            noMoreItemsIndicatorBuilder: (context) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "You've reached the end",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
+                      child: RefreshIndicator(
+                        onRefresh: () => Future.sync(
+                          () => _pagingController.refresh(),
+                        ),
+                        child: PagedListView<int, SalonData>(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(0.0),
+                          pagingController: _pagingController,
+                          builderDelegate: PagedChildBuilderDelegate<SalonData>(
+                              firstPageProgressIndicatorBuilder: (context) =>
+                                  _loadingWidget(),
+                              newPageProgressIndicatorBuilder: (context) =>
+                                  _loadingWidget(),
+                              noMoreItemsIndicatorBuilder: (context) {
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom: defaultSize * 2.0,
+                                    ),
+                                    child: Text(
+                                      "You've reached the end",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.grey[500],
+                                        fontSize: defaultSize * 2.0,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            itemBuilder: (context, item, index) => SalonCard(
-                                  title: item.name.toString(),
-                                  distance: item.distance.toStringAsFixed(1),
-                                  customfunction: () async {
-                                    final userProfile = await AppSessionManager
-                                        .getUserProfileAfterLogin();
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            SalonServicesTabView(
-                                          salonId: item.id,
-                                          salonName: item.name,
-                                          userprofile: userProfile,
-                                          salonInfo: item,
+                                );
+                              },
+                              itemBuilder: (context, item, index) => SalonCard(
+                                    title: item.name.toString(),
+                                    distance: item.distance.toStringAsFixed(1),
+                                    customfunction: () async {
+                                      final userProfile =
+                                          await AppSessionManager
+                                              .getUserProfileAfterLogin();
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SalonServicesTabView(
+                                            salonId: item.id,
+                                            salonName: item.name,
+                                            userprofile: userProfile,
+                                            salonInfo: item,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  customFunctionLike: () {
-                                    _onAddFavorite(item.id);
-                                  },
-                                )),
+                                      );
+                                    },
+                                    customFunctionLike: () {
+                                      _onAddFavorite(item.id);
+                                    },
+                                  )),
+                        ),
                       ),
                     ),
                   ),
@@ -225,30 +229,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  var _getTextFormFieldInputDecoration = InputDecoration(
-    filled: true,
-    fillColor: Colors.white,
-    hintStyle: GoogleFonts.poppins(color: AppColor.PRIMARY_LIGHT),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(18.0),
-      borderSide: BorderSide(color: Colors.transparent, width: 2.0),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(18.0),
-      borderSide: BorderSide(color: Colors.transparent, width: 2.0),
-    ),
-    enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18.0),
-        borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
-    errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18.0),
-        borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
-    disabledBorder: InputBorder.none,
-    errorStyle:
-        GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
-    contentPadding: EdgeInsets.only(left: 15, bottom: 14, top: 14, right: 15),
-    // hintText: hint,
-  );
+  Widget _loadingWidget() {
+    return Container(
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              int offset = 0;
+              int time = 400;
+              offset += 5;
+              time = 400 + offset;
+              return Shimmer.fromColors(
+                highlightColor: Colors.white,
+                baseColor: Colors.grey[300],
+                child: SalonCard(
+                  title: "",
+                  distance: "",
+                  customFunctionLike: () {},
+                  customfunction: () {},
+                ),
+                period: Duration(milliseconds: time),
+              );
+            }));
+  }
+
   Future<SuperResponse<bool>> _onAddFavorite(int salonId) async {
     final isInternetConnected = await InternetUtil.isInternetConnected();
     if (isInternetConnected) {
@@ -298,18 +302,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       );
-
-  Widget _reachedEnd() {
-    return Text("you've reached the end",
-        style: GoogleFonts.poppins(
-            fontSize: defaultOverride * 2.0, color: AppColor.PRIMARY_LIGHT));
-  }
-
-  Widget _getLoaderView() {
-    return Center(
-      child: CircularProgressIndicator(),
-    );
-  }
 }
 
 class ShimmerList extends StatefulWidget {
@@ -460,26 +452,26 @@ class _ShimmerListState extends State<ShimmerList> {
   }
 }
 
-class DelayedList extends StatefulWidget {
-  @override
-  _DelayedListState createState() => _DelayedListState();
-}
+// class DelayedList extends StatefulWidget {
+//   @override
+//   _DelayedListState createState() => _DelayedListState();
+// }
 
-class _DelayedListState extends State<DelayedList> {
-  bool isLoading = true;
+// class _DelayedListState extends State<DelayedList> {
+//   bool isLoading = true;
 
-  @override
-  Widget build(BuildContext context) {
-    Timer timer = Timer(Duration(seconds: 3), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
+//   @override
+//   Widget build(BuildContext context) {
+//     Timer timer = Timer(Duration(seconds: 3), () {
+//       setState(() {
+//         isLoading = false;
+//       });
+//     });
 
-    return isLoading
-        ? ShimmerList()
-        : HomePage(
-            timer: timer,
-          );
-  }
-}
+//     return isLoading
+//         ? ShimmerList()
+//         : HomePage(
+//             timer: timer,
+//           );
+//   }
+// }

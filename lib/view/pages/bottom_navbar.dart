@@ -14,7 +14,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedPosition = 0;
   final _widgetList = [
-    DelayedList(),
+    HomePage(),
     Center(child: Text("Favorite Salons")),
     UserProfileUI()
   ];

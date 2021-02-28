@@ -13,7 +13,8 @@ class Constants {
   static const SlotsBooking = 'v1/service/post/booking/slot';
   static const FavoriteUpdateHeart = 'v1/service/update/liked/saloon';
   static const GetLikedSalon = 'v1/service/get/liked/saloon';
-  static const GetSearchList = '/v1/service/get/search/salon/';
-  static const GetAppointmentData = '/v1/service/get/appointment/';
+  static const GetSearchList = 'v1/service/get/search/salon/';
+  static const GetAppointmentData = 'v1/service/get/appointment/';
   static const GetSingleStore = 'v1/service/get/single/store';
+  static const EditAppointMent = 'v1/service/edit/booking';
 }

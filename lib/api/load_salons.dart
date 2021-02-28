@@ -9,12 +9,33 @@ import 'package:saloonwala_consumer/model/salon_data.dart';
 import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoder/geocoder.dart';
 
 class LoadSalons {
   static Future<SuperResponse<PaginatedSalonResponse>> getSalonFeed(
       int pageNo) async {
+    // var addresses =
+    //     await Geocoder.local.findAddressesFromQuery("sai pooja apartment");
+    var latitude = "19.075983";
+    var longitude = "72.877655";
+    // if (addresses != null && addresses.first != null) {
+    //   latitude = addresses.first.coordinates.latitude.toString();
+    //   longitude = addresses.first.coordinates.longitude.toString();
+    // }
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    if (position != null) {
+      latitude = position.latitude.toString();
+      longitude = position.longitude.toString();
+    }
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
-    final body = {"authToken": loginAuthToken, "latUser": 19, "longUser": 23};
+    final body = {
+      "authToken": loginAuthToken,
+      "latUser": latitude,
+      "longUser": longitude
+    };
     debugPrint(
         "${Constants.SecondryUrl}${Constants.GetSalonFeedList}${pageNo.toString()}");
     debugPrint(jsonEncode(body));

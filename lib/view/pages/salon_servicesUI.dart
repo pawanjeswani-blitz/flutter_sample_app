@@ -42,7 +42,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   List<Services> _selectedServiceList = [];
   double defaultOverride;
   String genderFromUserProfile;
-  var sum = 0;
+  int sum = 0;
 
   // @override
   // void initState() {
@@ -95,13 +95,24 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                     child: Text(
                                         '${_selectedServiceList.length} Service Added',
                                         style: GoogleFonts.poppins(
-                                            fontSize: defaultSize * 1.80,
+                                            fontSize: defaultSize * 1.6,
                                             color: Colors.white)),
                                   ),
-                                  // Container(
-                                  //     child: Text(_selectedServiceList[index]
-                                  //         .maleRate
-                                  //         .toString())),
+                                  SizedBox(
+                                    width: defaultSize * 1,
+                                  ),
+                                  SizedBox(
+                                    width: defaultSize * 1.25,
+                                    child: Text('|',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: defaultSize * 1.6,
+                                            color: Colors.white)),
+                                  ),
+                                  Container(
+                                      child: Text(sum.toString(),
+                                          style: GoogleFonts.poppins(
+                                              fontSize: defaultSize * 1.6,
+                                              color: Colors.white))),
                                 ],
                               ),
                               Spacer(),
@@ -272,8 +283,13 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                 onTap: () {
                                   setState(() {
                                     // sa = "BB";
+
                                     _selectedServiceList
                                         .remove(_services.services[index]);
+                                    sum -= widget.userprofile.gender == "M"
+                                        ? _services.services[index].maleRate
+                                        : _services.services[index].femaleRate;
+
                                     print(_selectedServiceList.length);
                                   });
                                 },
@@ -301,6 +317,9 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                     // sa = "aa";
                                     _selectedServiceList
                                         .add(_services.services[index]);
+                                    sum += widget.userprofile.gender == "M"
+                                        ? _services.services[index].maleRate
+                                        : _services.services[index].femaleRate;
                                   });
                                 },
                                 child: Container(
