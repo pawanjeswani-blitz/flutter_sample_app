@@ -82,7 +82,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                     ),
                   ),
                   title: Text(
-                    "Upcoming Appointments",
+                    "Past Appointments",
                     style: GoogleFonts.poppins(
                       fontSize: defaultSize * 2.2,
                       fontWeight: FontWeight.w500,
@@ -176,7 +176,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                             },
                             itemBuilder: (context, item, index) =>
                                 item.status == "Done"
-                                    ? AppointmentCard(
+                                    ? PastAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
                                         date: DateUtil.getDisplayFormatDay(
@@ -185,7 +185,6 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        cancel: () {},
                                         viewDetails: () {},
                                       )
                                     : SizedBox()),
@@ -219,7 +218,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
                                 item.status == "OWNER_CANCELLED"
-                                    ? AppointmentCard(
+                                    ? PastAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
                                         date: DateUtil.getDisplayFormatDay(
@@ -228,7 +227,6 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        cancel: () {},
                                         viewDetails: () {},
                                       )
                                     : SizedBox()),
@@ -262,7 +260,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
                                 item.status == "CUST_CANCELLED"
-                                    ? AppointmentCard(
+                                    ? PastAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
                                         date: DateUtil.getDisplayFormatDay(
@@ -271,7 +269,6 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        cancel: () {},
                                         viewDetails: () {},
                                       )
                                     : SizedBox()),

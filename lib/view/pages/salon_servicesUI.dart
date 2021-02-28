@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -169,11 +168,11 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
           itemBuilder: (BuildContext context, int index) {
             index = index;
             int _getDiscountPercentage() {
-              if (_services.services[index].serviceDiscount != null &&
-                  _services.services[index].serviceDiscount > 0)
-                return _services.services[index].serviceDiscount;
+              if (_services.services[index].globalDiscount != null &&
+                  _services.services[index].globalDiscount > 0)
+                return _services.services[index].globalDiscount;
               else
-                return _services.services[index].globalDiscount ?? 0;
+                return _services.services[index].serviceDiscount ?? 0;
             }
 
             int _getDiscountedPrice(int amount) {
@@ -287,8 +286,10 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                     _selectedServiceList
                                         .remove(_services.services[index]);
                                     sum -= widget.userprofile.gender == "M"
-                                        ? _services.services[index].maleRate
-                                        : _services.services[index].femaleRate;
+                                        ? _getDiscountedPrice(
+                                            _services.services[index].maleRate)
+                                        : _getDiscountedPrice(_services
+                                            .services[index].femaleRate);
 
                                     print(_selectedServiceList.length);
                                   });
@@ -318,8 +319,10 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                     _selectedServiceList
                                         .add(_services.services[index]);
                                     sum += widget.userprofile.gender == "M"
-                                        ? _services.services[index].maleRate
-                                        : _services.services[index].femaleRate;
+                                        ? _getDiscountedPrice(
+                                            _services.services[index].maleRate)
+                                        : _getDiscountedPrice(_services
+                                            .services[index].femaleRate);
                                   });
                                 },
                                 child: Container(

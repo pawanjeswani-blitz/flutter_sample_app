@@ -30,7 +30,7 @@ class UserProfileLogin {
   int creationDate;
   int age;
   Null type;
-  Null email;
+  String email;
   String phoneNumber;
   String dob;
   String gender;

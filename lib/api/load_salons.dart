@@ -10,7 +10,6 @@ import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
 
 class LoadSalons {
   static Future<SuperResponse<PaginatedSalonResponse>> getSalonFeed(

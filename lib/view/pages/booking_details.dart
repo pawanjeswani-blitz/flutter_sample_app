@@ -50,11 +50,11 @@ class _BookingDetailsState extends State<BookingDetails> {
     int saved = 0;
     for (int i = 0; i < widget.selectedServiceList.length; i++) {
       int _getDiscountPercentage() {
-        if (widget.selectedServiceList[i].serviceDiscount != null &&
-            widget.selectedServiceList[i].serviceDiscount > 0)
-          return widget.selectedServiceList[i].serviceDiscount;
+        if (widget.selectedServiceList[i].globalDiscount != null &&
+            widget.selectedServiceList[i].globalDiscount > 0)
+          return widget.selectedServiceList[i].globalDiscount;
         else
-          return widget.selectedServiceList[i].globalDiscount ?? 0;
+          return widget.selectedServiceList[i].serviceDiscount ?? 0;
       }
 
       int _getDiscountedPrice(int amount) {
@@ -79,11 +79,11 @@ class _BookingDetailsState extends State<BookingDetails> {
     int saved = 0;
     for (int i = 0; i < widget.selectedServiceList.length; i++) {
       int _getDiscountPercentage() {
-        if (widget.selectedServiceList[i].serviceDiscount != null &&
-            widget.selectedServiceList[i].serviceDiscount > 0)
-          return widget.selectedServiceList[i].serviceDiscount;
+        if (widget.selectedServiceList[i].globalDiscount != null &&
+            widget.selectedServiceList[i].globalDiscount > 0)
+          return widget.selectedServiceList[i].globalDiscount;
         else
-          return widget.selectedServiceList[i].globalDiscount ?? 0;
+          return widget.selectedServiceList[i].serviceDiscount ?? 0;
       }
 
       int _getDiscountedPrice(int amount) {
@@ -284,16 +284,16 @@ class _BookingDetailsState extends State<BookingDetails> {
                             itemBuilder: (BuildContext context, int index) {
                               int _getDiscountPercentage() {
                                 if (widget.selectedServiceList[index]
-                                            .serviceDiscount !=
+                                            .globalDiscount !=
                                         null &&
                                     widget.selectedServiceList[index]
-                                            .serviceDiscount >
+                                            .globalDiscount >
                                         0)
                                   return widget.selectedServiceList[index]
-                                      .serviceDiscount;
+                                      .globalDiscount;
                                 else
                                   return widget.selectedServiceList[index]
-                                          .globalDiscount ??
+                                          .serviceDiscount ??
                                       0;
                               }
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class SalonCard extends StatefulWidget {
@@ -167,150 +166,6 @@ class _SalonCardState extends State<SalonCard> {
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ServiceCard extends StatefulWidget {
-  @override
-  _ServiceCardState createState() => _ServiceCardState();
-}
-
-class _ServiceCardState extends State<ServiceCard> {
-  String sa = "aa";
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    double defaultSize = SizeConfig.defaultSize;
-    return Scaffold(
-      body: Container(
-        height: defaultSize * 16.0,
-        margin: EdgeInsets.symmetric(horizontal: defaultSize * 1.25),
-        child: Card(
-          elevation: 5.0,
-          color: Colors.white,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: Row(
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: defaultSize * 38.0),
-                child: Container(
-                  margin: EdgeInsets.only(left: defaultSize * 1.5),
-                  padding: EdgeInsets.all(defaultSize * 1.5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Hair cut",
-                        style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 2.354,
-                            color: AppColor.PRIMARY_MEDIUM,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: defaultSize * 1.0,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            height: defaultSize * 2.5,
-                            width: defaultSize * 2.5,
-                            child: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                onPressed: () {},
-                                child: FaIcon(
-                                  FontAwesomeIcons.male,
-                                  size: defaultSize * 2.0,
-                                  color: AppColor.PRIMARY_MEDIUM,
-                                )),
-                          ),
-                          SizedBox(width: defaultSize * 1.25),
-                          Text(
-                            "100",
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 1.5,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          SizedBox(width: defaultSize * 1.5),
-                          Text(
-                            "|",
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 2.5,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          // SizedBox(width: defaultSize * 0.5),
-                          SizedBox(
-                            height: defaultSize * 2.5,
-                            width: defaultSize * 2.5,
-                            child: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                onPressed: () {},
-                                child: FaIcon(
-                                  FontAwesomeIcons.female,
-                                  size: defaultSize * 2.0,
-                                  color: AppColor.PRIMARY_MEDIUM,
-                                )),
-                          ),
-                          SizedBox(width: defaultSize * 1.25),
-                          Text(
-                            "1000",
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 1.5,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          Spacer(),
-                          sa == "aa"
-                              ? FlatButton(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onPressed: () {
-                                    setState(() {
-                                      sa = "BB";
-                                    });
-                                  },
-                                  child: Text(
-                                    " - Remove Service",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: defaultSize * 1.6265,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.PRIMARY_MEDIUM,
-                                    ),
-                                  ))
-                              : FlatButton(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onPressed: () {
-                                    setState(() {
-                                      sa = "aa";
-                                    });
-                                  },
-                                  child: Text(
-                                    " + Add Service",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: defaultSize * 1.6265,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.PRIMARY_MEDIUM,
-                                    ),
-                                  ))
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
@@ -894,6 +749,116 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     'Cancel',
                     style: GoogleFonts.poppins(
                         color: Colors.red[800],
+                        fontSize: defaultSize * 1.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PastAppointmentCard extends StatefulWidget {
+  final String salonTitle, date, time;
+  final Function viewDetails;
+
+  const PastAppointmentCard({
+    Key key,
+    this.salonTitle,
+    this.date,
+    this.time,
+    this.viewDetails,
+  }) : super(key: key);
+  @override
+  _PastAppointmentCardState createState() => _PastAppointmentCardState();
+}
+
+class _PastAppointmentCardState extends State<PastAppointmentCard> {
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    return Container(
+      // height: defaultSize * 20,
+      // width: double.infinity,
+      margin: EdgeInsets.only(
+          left: defaultSize * 1.0,
+          right: defaultSize * 1.0,
+          top: defaultSize * 0.5,
+          bottom: defaultSize * 1.2),
+      child: Card(
+        elevation: 2.0,
+        color: Colors.white,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 1.5,
+              ),
+              child: Text(
+                widget.salonTitle,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 2.0,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.date,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.time,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Divider(
+              thickness: defaultSize * 0.065,
+            ),
+            Row(
+              children: [
+                FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () async {
+                    widget.viewDetails();
+                  },
+                  child: Text(
+                    'Write a review',
+                    style: GoogleFonts.poppins(
+                        color: AppColor.PRIMARY_DARK,
                         fontSize: defaultSize * 1.5,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1.0),

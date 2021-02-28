@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';

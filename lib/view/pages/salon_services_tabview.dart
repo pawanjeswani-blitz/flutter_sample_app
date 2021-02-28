@@ -53,13 +53,15 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
               leading: InkWell(
                 onTap: () => Navigator.of(context).pop(true),
                 child: Container(
-                  // height: defaultSize * 4.0,
-                  // width: defaultSize * 4.0,
+                  // height: 5.0,
+                  // width: 5.0,
                   margin: EdgeInsets.only(
                       left: defaultSize * 1.5, top: defaultSize * 2.5),
                   // padding: EdgeInsets.all(defaultSize * 1.0),
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: AppColor.LOGIN_BACKGROUND),
+                    shape: BoxShape.circle,
+                    color: AppColor.LOGIN_BACKGROUND,
+                  ),
                   child: Icon(
                     Icons.chevron_left,
                     color: Colors.white,

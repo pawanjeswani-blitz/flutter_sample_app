@@ -13,8 +13,8 @@ class AppointmentResponse {
   String status;
   int creationDate;
   int modificationDate;
-  Null customerName;
-  Null customerNumber;
+  String customerName;
+  String customerNumber;
   String date;
   CustomerInfo customerInfo;
   EmpInfo empInfo;
