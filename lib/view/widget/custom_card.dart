@@ -538,10 +538,10 @@ class _BookingDetailsCardState extends State<BookingDetailsCard> {
 class FavoriteSalonCard extends StatefulWidget {
   final String title;
   final dynamic distance;
-  final Function customfunction;
+  final Function customfunction, redirect;
 
   const FavoriteSalonCard(
-      {Key key, this.title, this.distance, this.customfunction})
+      {Key key, this.title, this.distance, this.customfunction, this.redirect})
       : super(key: key);
   @override
   _FavoriteSalonCardState createState() => _FavoriteSalonCardState();
@@ -555,7 +555,7 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
     String sample = "AA";
     return GestureDetector(
       onTap: () {
-        widget.customfunction();
+        widget.redirect();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -637,28 +637,31 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
                   ),
                 ],
               ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: defaultSize * 1.25,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      color: AppColor.PRIMARY_DARK,
-                      size: defaultSize * 1.5,
-                    ),
-                    SizedBox(width: defaultSize * 0.5),
-                    Text(
-                      widget.distance,
-                      style: GoogleFonts.poppins(
-                          fontSize: defaultSize * 1.5,
-                          color: AppColor.PRIMARY_MEDIUM,
-                          fontWeight: FontWeight.w400),
-                    ),
-                  ],
-                ),
+              SizedBox(
+                height: defaultSize * 0.5,
               ),
+              // Container(
+              //   margin: EdgeInsets.only(
+              //     left: defaultSize * 1.25,
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Icon(
+              //         Icons.location_on,
+              //         color: AppColor.PRIMARY_DARK,
+              //         size: defaultSize * 1.5,
+              //       ),
+              //       SizedBox(width: defaultSize * 0.5),
+              //       Text(
+              //         widget.distance,
+              //         style: GoogleFonts.poppins(
+              //             fontSize: defaultSize * 1.5,
+              //             color: AppColor.PRIMARY_MEDIUM,
+              //             fontWeight: FontWeight.w400),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Divider(),
               Container(
                 height: defaultSize * 2.5,

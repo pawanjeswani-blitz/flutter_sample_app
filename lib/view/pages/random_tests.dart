@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:saloonwala_consumer/api/get_appointment_service.dart';
+import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
+import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/appointment_response.dart';
 import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
+import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
+import 'package:saloonwala_consumer/view/pages/salon_slots_ui.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
 class RandomTest extends StatefulWidget {
@@ -15,12 +20,11 @@ class RandomTest extends StatefulWidget {
 }
 
 class _RandomTestState extends State<RandomTest> {
-  final PagingController<int, AppointmentResponse> _pagingController =
-      PagingController(firstPageKey: 1);
-  double defaultOverride;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  SalonDetails _salonDetails;
-  String news;
+  final _pageSize = 100;
+  final PagingController<int, Services> _pagingController =
+      PagingController(firstPageKey: 0);
+  List<Services> _selectedServiceList = [];
+  double defaultSize;
 
   @override
   void initState() {
@@ -33,19 +37,13 @@ class _RandomTestState extends State<RandomTest> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await GetAppointmentService.getSalonFeed(pageKey);
-      final hasMore = newItems.data.hasMore;
-
-      // if response from hasMore ==true change the pageNO that is pageKey in this case
-      if (hasMore == true) {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems.data.list, nextPageKey);
-        for (int index = 0; index < newItems.data.list.length; index++) {
-          news = newItems.data.list[index].status;
-        }
+      final newItems = await LoadSalons.getServicesList();
+      final isLastPage = newItems.data.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems.data);
       } else {
-        // _reachedEnd();
-        _pagingController.appendLastPage(newItems.data.list);
+        final nextPageKey = pageKey + newItems.data.length;
+        _pagingController.appendPage(newItems.data, nextPageKey);
       }
     } catch (error) {
       print(error);
@@ -62,144 +60,399 @@ class _RandomTestState extends State<RandomTest> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    double defaultSize = SizeConfig.defaultSize;
+    double defaultOverride = SizeConfig.defaultSize;
+    defaultSize = defaultOverride;
     return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                new SliverAppBar(
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_rounded,
+      backgroundColor: Colors.white,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Column(
+          children: [
+            // _bottomservice(),
+            _selectedServiceList != null && _selectedServiceList.length > 0
+                ? Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Container(
+                      width: double.infinity,
+                      height: defaultSize * 10.0,
                       color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.all(defaultSize * 1.65),
+                        child: Container(
+                            // width: 50,
+                            // height: 50,
+                            decoration: BoxDecoration(
+                                color: AppColor.PRIMARY_DARK,
+                                border: Border.all(
+                                  color: Colors.transparent,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(defaultSize * 2.5))),
+                            child: Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: defaultSize * 2.5),
+                                      child: Text(
+                                          '${_selectedServiceList.length} Service Added',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: defaultSize * 1.80,
+                                              color: Colors.white)),
+                                    ),
+                                    Container(
+                                      child: Text("data"),
+                                    )
+                                    // Container(
+                                    //   child: FutureBuilder(
+                                    //       future: getSalonServicesGenderRate(),
+                                    //       builder: (BuildContext context,
+                                    //           AsyncSnapshot snapshot) {
+                                    //         if (snapshot.hasData) {
+                                    //           if (snapshot.data == "M") {
+                                    //             for (int i = 0;
+                                    //                 i <
+                                    //                     _selectedServiceList
+                                    //                         .length;
+                                    //                 i++) {
+                                    //               _selectedServiceList.length > 0
+                                    //                   ? sum +=
+                                    //                       _selectedServiceList[i]
+                                    //                           .maleRate
+                                    //                   : sum -=
+                                    //                       _selectedServiceList[i]
+                                    //                           .maleRate;
+                                    //               return Text("$sum");
+                                    //             }
+                                    //             return null;
+                                    //           } else {
+                                    //             return Text("hello");
+                                    //           }
+                                    //         } else {
+                                    //           return Text(" ");
+                                    //         }
+                                    //       }),
+                                    // )
+                                  ],
+                                ),
+                                Spacer(),
+                                FlatButton(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  // color: Colors.transparent,
+                                  onPressed: () async {
+                                    final userProfile = await AppSessionManager
+                                        .getUserProfile();
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => SalonSlotsUI(
+                                            // selectedServiceList:
+                                            //     _selectedServiceList,
+                                            // salonId: widget.salonId,
+                                            // salonName: widget.salonName,
+                                            // userProfile: widget.userprofile,
+                                            )));
+                                  },
+                                  child: Text(" Book Now",
+                                      style: GoogleFonts.poppins(
+                                          fontSize: defaultSize * 2.0,
+                                          color: AppColor.LOGIN_BACKGROUND)),
+                                ),
+                              ],
+                            )),
+                      ),
+                    ))
+                : Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Text(" "),
+                  ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => Future.sync(
+                  () => _pagingController.refresh(),
+                ),
+                child: PagedListView<int, Services>(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(0.0),
+                  pagingController: _pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<Services>(
+                    firstPageProgressIndicatorBuilder: (context) =>
+                        _getLoaderView(),
+                    itemBuilder: (context, item, index) => ServiceCard(
+                      pageController: _pagingController,
+                      id: item.id,
+                      maleRate: item.maleRate,
+                      femaleRate: item.femaleRate,
+                      description: item.description,
+                      serviceName: item.serviceName,
+                      globalDiscount: item.globalDiscount,
+                      serviceDiscount: item.serviceDiscount,
+                      index: index,
+                      serviceinfo: [item],
                     ),
                   ),
-                  title: Text(
-                    "Upcoming Appointments",
-                    style: GoogleFonts.poppins(
-                      fontSize: defaultSize * 2.2,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  floating: true,
-                  pinned: true,
-                  snap: true,
-                  expandedHeight: 120.0,
-                  bottom: TabBar(
-                    indicatorPadding: EdgeInsets.symmetric(
-                        vertical: defaultSize * 0.8,
-                        horizontal: defaultSize * 2.25),
-                    indicatorColor: AppColor.LOGIN_BACKGROUND,
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          'Awaiting',
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.654,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
-                          'Confirmed',
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.654,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  flexibleSpace: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                              AppColor.PRIMARY_LIGHT,
-                              AppColor.PRIMARY_MEDIUM
-                            ])),
-                      ),
-                    ],
-                  ),
                 ),
-              ];
-            },
-            body: new TabBarView(
-              children: [
-                Container(
-                  child: PagedListView<int, AppointmentResponse>(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0.0),
-                    pagingController: _pagingController,
-                    builderDelegate:
-                        PagedChildBuilderDelegate<AppointmentResponse>(
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            itemBuilder: (context, item, index) =>
-                                item.status == "REQUESTED"
-                                    ? AppointmentCard(
-                                        salonTitle: item.salonDetails.name
-                                            .toUpperCase(),
-                                        date: DateUtil.getDisplayFormatDay(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        time: DateUtil.getDisplayFormatHour(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        cancel: () {},
-                                        viewDetails: () {},
-                                      )
-                                    : SizedBox()),
-                  ),
-                ),
-                Container(
-                  child: PagedListView<int, AppointmentResponse>(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0.0),
-                    pagingController: _pagingController,
-                    builderDelegate:
-                        PagedChildBuilderDelegate<AppointmentResponse>(
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            itemBuilder: (context, item, index) =>
-                                item.status == "Booked"
-                                    ? AppointmentCard(
-                                        salonTitle: item.salonDetails.name
-                                            .toUpperCase(),
-                                        date: DateUtil.getDisplayFormatDay(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        time: DateUtil.getDisplayFormatHour(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        cancel: () {},
-                                        viewDetails: () {},
-                                      )
-                                    : SizedBox()),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _getLoaderView() {
-    return Center(
-      child: CircularProgressIndicator(),
+  Widget _bottomservice() {
+    _selectedServiceList != null && _selectedServiceList.length > 0
+        ? Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: Container(
+              width: double.infinity,
+              height: defaultSize * 10.0,
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.all(defaultSize * 1.65),
+                child: Container(
+                    // width: 50,
+                    // height: 50,
+                    decoration: BoxDecoration(
+                        color: AppColor.PRIMARY_DARK,
+                        border: Border.all(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(defaultSize * 2.5))),
+                    child: Row(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(left: defaultSize * 2.5),
+                              child: Text(
+                                  '${_selectedServiceList.length} Service Added',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: defaultSize * 1.80,
+                                      color: Colors.white)),
+                            ),
+                            Container(
+                              child: Text("data"),
+                            )
+                          ],
+                        ),
+                        Spacer(),
+                        FlatButton(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          // color: Colors.transparent,
+                          onPressed: () async {
+                            final userProfile =
+                                await AppSessionManager.getUserProfile();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SalonSlotsUI(
+                                    // selectedServiceList:
+                                    //     _selectedServiceList,
+                                    // salonId: widget.salonId,
+                                    // salonName: widget.salonName,
+                                    // userProfile: widget.userprofile,
+                                    )));
+                          },
+                          child: Text(" Book Now",
+                              style: GoogleFonts.poppins(
+                                  fontSize: defaultSize * 2.0,
+                                  color: AppColor.LOGIN_BACKGROUND)),
+                        ),
+                      ],
+                    )),
+              ),
+            ))
+        : Align(alignment: FractionalOffset.bottomCenter, child: Text(" "));
+  }
+}
+
+Widget _getLoaderView() {
+  return Center(
+    child: CircularProgressIndicator(),
+  );
+}
+
+class ServiceCard extends StatefulWidget {
+  // final Services serviceInfoDetails;
+  final PagingController<int, Services> pageController;
+
+  final int maleRate, femaleRate, serviceDiscount, globalDiscount, id, index;
+  final String serviceName, description;
+  final List<Services> serviceinfo;
+
+  const ServiceCard({
+    Key key,
+    this.pageController,
+    this.maleRate,
+    this.femaleRate,
+    this.serviceDiscount,
+    this.globalDiscount,
+    this.id,
+    this.serviceName,
+    this.description,
+    this.serviceinfo,
+    this.index = 0,
+  }) : super(key: key);
+
+  @override
+  _ServiceCardState createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: AppColor.VERY_LIGHT_GREEN),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _getTitleBar(),
+          if (widget.maleRate != null && widget.maleRate > 0)
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 16, right: 12),
+              child: Row(
+                children: [
+                  Text("Male Rate: ₹${_getDiscountedPrice(widget.maleRate)}",
+                      style: GoogleFonts.poppins(
+                          color: AppColor.PRIMARY_DARK,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15)),
+                  SizedBox(width: 8),
+                  if (_getDiscountedPrice(widget.maleRate) != widget.maleRate)
+                    Text("₹${widget.maleRate}",
+                        style: GoogleFonts.poppins(
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColor.PRIMARY_DARK,
+                            fontSize: 15)),
+                  SizedBox(width: 24),
+                  if (_getDiscountedPrice(widget.maleRate) != widget.maleRate)
+                    Text("${_getDiscountPercentage()}% Off",
+                        style: GoogleFonts.poppins(
+                            color: AppColor.PRIMARY_DARK, fontSize: 15)),
+                ],
+              ),
+            ),
+          if (widget.femaleRate != null && widget.femaleRate > 0)
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 12, top: 2, right: 12, bottom: 8),
+              child: Row(
+                children: [
+                  Text(
+                      "Female Rate: ₹${_getDiscountedPrice(widget.femaleRate)}",
+                      style: GoogleFonts.poppins(
+                          color: AppColor.PRIMARY_DARK,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15)),
+                  SizedBox(width: 8),
+                  if (_getDiscountedPrice(widget.femaleRate) !=
+                      widget.femaleRate)
+                    Text("₹${widget.femaleRate}",
+                        style: GoogleFonts.poppins(
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColor.PRIMARY_DARK,
+                            fontSize: 15)),
+                  SizedBox(width: 24),
+                  if (_getDiscountedPrice(widget.femaleRate) !=
+                      widget.femaleRate)
+                    Text("${_getDiscountPercentage()}% Off",
+                        style: GoogleFonts.poppins(
+                            color: AppColor.PRIMARY_DARK, fontSize: 15)),
+                ],
+              ),
+            ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Container(),
+              Spacer(),
+              widget.serviceinfo
+                      .contains(widget.pageController.itemList[widget.index])
+                  ? Container(
+                      margin: EdgeInsets.only(right: 20.0),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            widget.serviceinfo.remove(
+                                widget.pageController.itemList[widget.index]);
+                          });
+                          print(widget.serviceinfo.length);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 12),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 7, horizontal: 14),
+                          decoration: BoxDecoration(
+                              color: AppColor.DARK_ACCENT,
+                              borderRadius: BorderRadius.circular(50.0)),
+                          child: Text(
+                            '+ Remove Service',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white, fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      margin: EdgeInsets.only(right: 20.0),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            widget.serviceinfo.add(
+                                widget.pageController.itemList[widget.index]);
+                          });
+                          print(widget.serviceinfo.length);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 12),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 7, horizontal: 14),
+                          decoration: BoxDecoration(
+                              color: AppColor.DARK_ACCENT,
+                              borderRadius: BorderRadius.circular(50.0)),
+                          child: Text(
+                            '+ Add Service',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white, fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ),
+            ],
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
     );
   }
+
+  int _getDiscountedPrice(int amount) {
+    int percentageDiscount = _getDiscountPercentage();
+    double discount = amount * percentageDiscount / 100;
+    return (amount - discount).toInt();
+  }
+
+  int _getDiscountPercentage() {
+    if (widget.serviceDiscount != null && widget.serviceDiscount > 0)
+      return widget.serviceDiscount;
+    else
+      return widget.globalDiscount ?? 0;
+  }
+
+  Widget _getTitleBar() => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+            color: AppColor.PRIMARY_DARK,
+            borderRadius: BorderRadius.circular(16.0)),
+        child: Text("${widget.id}. ${widget.serviceName}",
+            style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 16)),
+      );
 }

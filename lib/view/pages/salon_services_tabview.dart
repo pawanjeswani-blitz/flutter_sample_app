@@ -2,18 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/model/salon_data.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
+import 'package:saloonwala_consumer/view/pages/single_salon_data.dart';
 
 class SalonServicesTabView extends StatefulWidget {
   final int salonId;
   final String salonName;
+  final SalonData salonInfo;
   final UserProfileLogin userprofile;
-
-  const SalonServicesTabView(
-      {Key key, this.salonId, this.salonName, this.userprofile})
-      : super(key: key);
+  final List<SalonData> salonList;
+  const SalonServicesTabView({
+    Key key,
+    this.salonId,
+    this.salonName,
+    this.userprofile,
+    this.salonInfo,
+    this.salonList,
+  }) : super(key: key);
   @override
   _SalonServicesTabViewState createState() => _SalonServicesTabViewState();
 }
@@ -132,8 +140,11 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
             salonId: widget.salonId,
             salonName: widget.salonName,
             userprofile: widget.userprofile,
+            salonInfo: widget.salonInfo,
           ),
-          Center(child: Text("data2")),
+          SingleStoreData(
+            salonInfo: widget.salonInfo,
+          ),
         ]),
       ),
     );

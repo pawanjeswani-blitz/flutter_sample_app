@@ -15,4 +15,5 @@ class Constants {
   static const GetLikedSalon = 'v1/service/get/liked/saloon';
   static const GetSearchList = '/v1/service/get/search/salon/';
   static const GetAppointmentData = '/v1/service/get/appointment/';
+  static const GetSingleStore = 'v1/service/get/single/store';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/view/pages/favorite_salons.dart';
@@ -13,7 +14,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedPosition = 0;
   final _widgetList = [
-    HomePage(),
+    DelayedList(),
     Center(child: Text("Favorite Salons")),
     UserProfileUI()
   ];
@@ -24,7 +25,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
     return Scaffold(
-      body: SafeArea(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
         child: Column(
           children: [
             Expanded(
