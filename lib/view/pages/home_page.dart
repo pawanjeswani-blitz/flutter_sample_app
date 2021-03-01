@@ -215,6 +215,10 @@ class _HomePageState extends State<HomePage> {
                                     customFunctionLike: () {
                                       _onAddFavorite(item.id);
                                     },
+                                    color: item.like == true
+                                        ? Colors.red[800]
+                                        : Colors.grey[400],
+                                    thumb: item.thumbnail1,
                                   )),
                         ),
                       ),

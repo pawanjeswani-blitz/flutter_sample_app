@@ -7,6 +7,7 @@ import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
 import 'package:saloonwala_consumer/view/pages/single_salon_data.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class SalonServicesTabView extends StatefulWidget {
   final int salonId;
@@ -29,6 +30,7 @@ class SalonServicesTabView extends StatefulWidget {
 class _SalonServicesTabViewState extends State<SalonServicesTabView>
     with SingleTickerProviderStateMixin {
   TabController controller;
+  var bannerImagesList = List<String>();
   void initState() {
     super.initState();
     controller = TabController(length: 2, vsync: this);
@@ -38,6 +40,24 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  List<String> _getImages() {
+    bannerImagesList = [
+      widget.salonInfo.thumbnail1 != null
+          ? widget.salonInfo.thumbnail1
+          : "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg",
+      widget.salonInfo.thumbnail2 != null
+          ? widget.salonInfo.thumbnail2
+          : 'https://s17026.pcdn.co/wp-content/uploads/sites/9/2016/06/1-229.jpg',
+      widget.salonInfo.thumbnail3 != null
+          ? widget.salonInfo.thumbnail3
+          : 'https://www.applesalon.in/images/services1.png',
+      widget.salonInfo.thumbnail4 != null
+          ? widget.salonInfo.thumbnail4
+          : 'https://www.greenshootmarketing.co.uk/wp-content/uploads/2019/10/guilherme-petri-PtOfbGkU3uI-unsplash.jpg'
+    ];
+    return bannerImagesList;
   }
 
   @override
@@ -77,11 +97,25 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
               actionsIconTheme: IconThemeData(opacity: 0.0),
               flexibleSpace: Stack(
                 children: <Widget>[
-                  Positioned.fill(
-                      child: Image.network(
-                    "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg",
-                    fit: BoxFit.cover,
-                  )),
+                  Container(
+                    width: double.infinity,
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        // aspectRatio: 0.5,
+                        viewportFraction: 1.0,
+                        autoPlayCurve: Curves.easeInOut,
+                        // enlargeCenterPage: true,
+                      ),
+                      items: _getImages()
+                          .map((item) => Container(
+                                width: double.infinity,
+                                child: Image.network(item,
+                                    fit: BoxFit.cover, width: 1000.0),
+                              ))
+                          .toList(),
+                    ),
+                  ),
                 ],
               ),
             ),

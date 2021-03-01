@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:saloonwala_consumer/app/constants.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
+import 'package:saloonwala_consumer/model/appointment_response.dart';
 import 'package:saloonwala_consumer/model/edit_booking.dart';
 import 'package:saloonwala_consumer/model/get_appointment.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
@@ -60,6 +61,31 @@ class GetAppointmentService {
       debugPrint(response.body);
       Map<String, dynamic> map = json.decode(response.body);
       return SuperResponse.fromJson(map, null);
+    });
+  }
+
+  static Future<SuperResponse<AppointmentResponse>> getSingleAppointment(
+      int bookingId) async {
+    final loginAuthToken = await AppSessionManager.getLoginAuthToken();
+    final body = {"authToken": loginAuthToken, "bookingId": bookingId};
+    debugPrint("${Constants.SecondryUrl}${Constants.GetSingleAppointment}");
+    debugPrint(jsonEncode(body));
+    return http
+        .post("${Constants.SecondryUrl}${Constants.GetSingleAppointment}",
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: json.encode(body))
+        .then((http.Response response) {
+      if (response.statusCode < 200 ||
+          response.statusCode > 400 ||
+          json == null) {
+        throw new Exception("Error while fetching data");
+      }
+
+      debugPrint(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      // return SuperResponse.fromJson(map, null);
+      return SuperResponse.fromJson(
+          map, AppointmentResponse.fromJson(map['data']));
     });
   }
 }

@@ -39,26 +39,6 @@ class _EditProfileState extends State<EditProfile> {
       selectedgender,
       fname;
   String fsname = "aa";
-  // UserProfileLogin _userProfileLogin;
-  @override
-  void initState() {
-    super.initState();
-    _getUserProfileData();
-    setState(() {});
-  }
-
-  _getUserProfileData() async {
-    Future<UserProfileLogin> userProfileData =
-        AppSessionManager.getUserProfileAfterLogin();
-
-    await userProfileData.then((value) {
-      fname = value.firstName;
-      name = value.firstName;
-      number = value.phoneNumber;
-      // selectedgender = value
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -105,12 +85,14 @@ class _EditProfileState extends State<EditProfile> {
                       final value1 = values[0];
                       final value2 = values[1];
                       firstName = value1;
-                      // lastName = value2;
+                      lastName = value2;
                     },
                     decoration: _getTextFormFieldInputDecoration.copyWith(
-                      hintText: widget.userProfile.firstName,
-                      // " " +
-                      // widget.userProfile.lastName,
+                      hintText: widget.userProfile.firstName +
+                                  widget.userProfile.lastName ==
+                              null
+                          ? " "
+                          : " ",
                       hintStyle:
                           GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                       suffixIcon: FlatButton(

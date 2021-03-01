@@ -14,9 +14,16 @@ class SalonData {
   int creationDate;
   int revenue;
   int jobCount;
-  Null ownerName;
+  String ownerName;
   String phoneNumber;
   double distance;
+  String thumbnail1;
+  String thumbnail2;
+  String thumbnail3;
+  String thumbnail4;
+  String planType;
+  bool offline;
+  bool like;
 
   SalonData(
       {this.id,
@@ -36,7 +43,14 @@ class SalonData {
       this.jobCount,
       this.ownerName,
       this.phoneNumber,
-      this.distance});
+      this.distance,
+      this.thumbnail1,
+      this.thumbnail2,
+      this.thumbnail3,
+      this.thumbnail4,
+      this.planType,
+      this.offline,
+      this.like});
 
   SalonData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -57,6 +71,13 @@ class SalonData {
     ownerName = json['ownerName'];
     phoneNumber = json['phoneNumber'];
     distance = json['distance'];
+    thumbnail1 = json['thumbnail1'];
+    thumbnail2 = json['thumbnail2'];
+    thumbnail3 = json['thumbnail3'];
+    thumbnail4 = json['thumbnail4'];
+    planType = json['planType'];
+    offline = json['offline'];
+    like = json['like'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,6 +100,13 @@ class SalonData {
     data['ownerName'] = this.ownerName;
     data['phoneNumber'] = this.phoneNumber;
     data['distance'] = this.distance;
+    data['thumbnail1'] = this.thumbnail1;
+    data['thumbnail2'] = this.thumbnail2;
+    data['thumbnail3'] = this.thumbnail3;
+    data['thumbnail4'] = this.thumbnail4;
+    data['planType'] = this.planType;
+    data['offline'] = this.offline;
+    data['like'] = this.like;
     return data;
   }
 }

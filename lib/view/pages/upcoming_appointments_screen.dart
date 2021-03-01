@@ -9,6 +9,7 @@ import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
+import 'package:saloonwala_consumer/view/pages/view_booking_details.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 
@@ -181,7 +182,16 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                         cancel: () {
                                           _onCancel(item.id);
                                         },
-                                        viewDetails: () {},
+                                        viewDetails: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewBookingDetails(
+                                                bookingId: item.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : SizedBox()),
                   ),
@@ -224,7 +234,16 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
                                         cancel: () {},
-                                        viewDetails: () {},
+                                        viewDetails: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewBookingDetails(
+                                                bookingId: item.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : SizedBox()),
                   ),

@@ -17,4 +17,5 @@ class Constants {
   static const GetAppointmentData = 'v1/service/get/appointment/';
   static const GetSingleStore = 'v1/service/get/single/store';
   static const EditAppointMent = 'v1/service/edit/booking';
+  static const GetSingleAppointment = 'v1/service/get/an/appointment';
 }

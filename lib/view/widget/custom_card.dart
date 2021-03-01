@@ -8,14 +8,20 @@ class SalonCard extends StatefulWidget {
   final String title;
   final dynamic distance;
   final Function customfunction, customFunctionLike;
+  final Color color;
+  final String thumb;
+  final bool liked;
 
-  const SalonCard(
-      {Key key,
-      this.title,
-      this.distance,
-      this.customfunction,
-      this.customFunctionLike})
-      : super(key: key);
+  const SalonCard({
+    Key key,
+    this.title,
+    this.distance,
+    this.customfunction,
+    this.customFunctionLike,
+    this.color,
+    this.thumb,
+    this.liked = false,
+  }) : super(key: key);
 
   @override
   _SalonCardState createState() => _SalonCardState();
@@ -46,7 +52,7 @@ class _SalonCardState extends State<SalonCard> {
           ),
           child: Row(
             children: [
-              sample != null && sample.isNotEmpty
+              widget.thumb != null && widget.thumb.isNotEmpty
                   ? Container(
                       height: defaultSize * 10.5,
                       width: defaultSize * 15,
@@ -60,13 +66,15 @@ class _SalonCardState extends State<SalonCard> {
                       ),
                     )
                   : Container(
-                      height: defaultSize * 10,
+                      height: defaultSize * 10.5,
                       width: defaultSize * 15,
-                      color: Colors.blueGrey,
-                      child: Icon(
-                        Icons.home,
-                        size: defaultSize * 3.0,
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
+                        ),
                       ),
                     ),
               ConstrainedBox(
@@ -102,28 +110,28 @@ class _SalonCardState extends State<SalonCard> {
                                 fontWeight: FontWeight.w400,
                                 color: AppColor.PRIMARY_MEDIUM),
                           ),
-                          SizedBox(width: defaultSize * 0.5),
-                          Text(
-                            "|",
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 1.5,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          SizedBox(width: defaultSize * 0.5),
-                          Icon(
-                            Icons.star,
-                            color: Color.fromRGBO(96, 127, 99, 1.0),
-                            size: defaultSize * 1.5,
-                          ),
-                          SizedBox(width: defaultSize * 0.5),
-                          Text(
-                            "4.0 / 5",
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 1.25,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
+                          // SizedBox(width: defaultSize * 0.5),
+                          // Text(
+                          //   "|",
+                          //   style: GoogleFonts.poppins(
+                          //       fontSize: defaultSize * 1.5,
+                          //       fontWeight: FontWeight.w500,
+                          //       color: AppColor.PRIMARY_MEDIUM),
+                          // ),
+                          // SizedBox(width: defaultSize * 0.5),
+                          // Icon(
+                          //   Icons.star,
+                          //   color: Color.fromRGBO(96, 127, 99, 1.0),
+                          //   size: defaultSize * 1.5,
+                          // ),
+                          // SizedBox(width: defaultSize * 0.5),
+                          // Text(
+                          //   "4.0 / 5",
+                          //   style: GoogleFonts.poppins(
+                          //       fontSize: defaultSize * 1.25,
+                          //       fontWeight: FontWeight.w400,
+                          //       color: AppColor.PRIMARY_MEDIUM),
+                          // ),
                         ],
                       ),
                     ],
@@ -161,225 +169,11 @@ class _SalonCardState extends State<SalonCard> {
                         child: Icon(
                           Icons.favorite,
                           size: defaultSize * 1.85,
-                          color: Colors.grey[400],
+                          color: widget.liked ? widget.color : widget.color,
                         ),
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class BookingDetailsCard extends StatefulWidget {
-  @override
-  _BookingDetailsCardState createState() => _BookingDetailsCardState();
-}
-
-class _BookingDetailsCardState extends State<BookingDetailsCard> {
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    double defaultSize = SizeConfig.defaultSize;
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(bottom: defaultSize * 3.0),
-                  child: Column(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(top: defaultSize * 3.0),
-                          height: defaultSize * 11.0,
-                          width: defaultSize * 11.0,
-                          child: Image.asset('assets/images/waiting.gif')),
-                      Text(
-                        "Awaiting Confirmation",
-                        style: GoogleFonts.poppins(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: AppColor.DARK_ACCENT),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: defaultSize * 3.25),
-                child: Card(
-                  elevation: defaultSize * 1.0,
-                  color: Colors.white,
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.0, vertical: defaultSize * 2.0),
-                        child: Text(
-                          "APPOINTMENT",
-                          style: GoogleFonts.poppins(
-                              color: AppColor.DARK_ACCENT,
-                              fontWeight: FontWeight.w600,
-                              fontSize: defaultSize * 2.0),
-                        ),
-                      ),
-                      Text(
-                        "Date 11 JULY,2021 | MONDAY",
-                        style: GoogleFonts.poppins(
-                            color: AppColor.DARK_ACCENT,
-                            fontWeight: FontWeight.w500,
-                            fontSize: defaultSize * 1.5),
-                      ),
-                      Text(
-                        "TIME: 10AM",
-                        style: GoogleFonts.poppins(
-                            color: AppColor.DARK_ACCENT,
-                            fontWeight: FontWeight.w500,
-                            fontSize: defaultSize * 1.5),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: defaultSize * 3.0,
-                            vertical: defaultSize * 2.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "SPECIALIST SELECTED",
-                              style: GoogleFonts.poppins(
-                                color: Color.fromRGBO(172, 125, 83, 1),
-                                fontSize: defaultSize * 1.45,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: defaultSize * 1.85),
-                            Expanded(
-                              child: Divider(
-                                color: Color.fromRGBO(216, 206, 197, 0.32),
-                                thickness: defaultSize * 1.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: defaultSize * 2.0),
-                        child: Text(
-                          "Susmita",
-                          style: GoogleFonts.poppins(
-                              color: AppColor.DARK_ACCENT,
-                              fontWeight: FontWeight.w500,
-                              fontSize: defaultSize * 2.0),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          left: defaultSize * 3.0,
-                          right: defaultSize * 3.0,
-                          top: defaultSize * 2.0,
-                          // bottom: defaultSize * 1.0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "SERVICE SELECTED",
-                              style: GoogleFonts.poppins(
-                                color: Color.fromRGBO(172, 125, 83, 1),
-                                fontSize: defaultSize * 1.45,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: defaultSize * 1.85),
-                            Expanded(
-                              child: Divider(
-                                color: Color.fromRGBO(216, 206, 197, 0.32),
-                                thickness: defaultSize * 1.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: defaultSize * 3.0,
-                            right: defaultSize * 3.0,
-                            bottom: defaultSize * 2.0),
-                        child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: 4,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Row(
-                                children: [
-                                  Text(
-                                    "The Work",
-                                    style: GoogleFonts.poppins(
-                                        color: AppColor.DARK_ACCENT,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: defaultSize * 1.5),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    " 200",
-                                    style: GoogleFonts.poppins(
-                                        color: AppColor.DARK_ACCENT,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: defaultSize * 1.5),
-                                  ),
-                                ],
-                              );
-                            }),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: defaultSize * 3.0,
-                            right: defaultSize * 3.0,
-                            bottom: defaultSize * 3.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Total",
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.DARK_ACCENT,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: defaultSize * 2.5),
-                            ),
-                            Spacer(),
-                            Text(
-                              " 200",
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.DARK_ACCENT,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: defaultSize * 2.5),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    top: defaultSize * 3.0,
-                    bottom: defaultSize * 3.0,
-                    left: defaultSize * 2.0,
-                    right: defaultSize * 2.0),
-                child: RoundedButtonDark(
-                  buttontext: "DONE",
                 ),
               ),
             ],
@@ -857,6 +651,117 @@ class _PastAppointmentCardState extends State<PastAppointmentCard> {
                   },
                   child: Text(
                     'Write a review',
+                    style: GoogleFonts.poppins(
+                        color: AppColor.PRIMARY_DARK,
+                        fontSize: defaultSize * 1.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CancelledAppointmentCard extends StatefulWidget {
+  final String salonTitle, date, time;
+  final Function viewDetails;
+
+  const CancelledAppointmentCard({
+    Key key,
+    this.salonTitle,
+    this.date,
+    this.time,
+    this.viewDetails,
+  }) : super(key: key);
+  @override
+  _CancelledAppointmentCardState createState() =>
+      _CancelledAppointmentCardState();
+}
+
+class _CancelledAppointmentCardState extends State<CancelledAppointmentCard> {
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double defaultSize = SizeConfig.defaultSize;
+    return Container(
+      // height: defaultSize * 20,
+      // width: double.infinity,
+      margin: EdgeInsets.only(
+          left: defaultSize * 1.0,
+          right: defaultSize * 1.0,
+          top: defaultSize * 0.5,
+          bottom: defaultSize * 1.2),
+      child: Card(
+        elevation: 2.0,
+        color: Colors.grey[200],
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 1.5,
+              ),
+              child: Text(
+                widget.salonTitle,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 2.0,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.date,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: defaultSize * 2.0,
+                top: defaultSize * 0.5,
+              ),
+              child: Text(
+                widget.time,
+                style: GoogleFonts.poppins(
+                  fontSize: defaultSize * 1.75,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Divider(
+              thickness: defaultSize * 0.065,
+            ),
+            Row(
+              children: [
+                FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () async {
+                    widget.viewDetails();
+                  },
+                  child: Text(
+                    'View Details',
                     style: GoogleFonts.poppins(
                         color: AppColor.PRIMARY_DARK,
                         fontSize: defaultSize * 1.5,

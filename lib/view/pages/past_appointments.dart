@@ -7,6 +7,7 @@ import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/appointment_response.dart';
 import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
+import 'package:saloonwala_consumer/view/pages/view_booking_details.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
 class PastAppointments extends StatefulWidget {
@@ -99,25 +100,32 @@ class _PastAppointmentsState extends State<PastAppointments> {
                     indicatorColor: AppColor.LOGIN_BACKGROUND,
                     tabs: [
                       Tab(
-                        child: Text(
-                          'Past',
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.354,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: defaultSize * 1.0),
+                          child: Text(
+                            'Past',
+                            style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 1.354,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                       Tab(
-                        child: Text(
-                          'Owner cancelled',
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.354,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: defaultSize * 1.0),
+                          child: Text(
+                            'Owner cancelled',
+                            style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 1.354,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                       Tab(
-                        child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: defaultSize * 1.0),
                           child: Text(
                             'Customer cancelled',
                             style: GoogleFonts.poppins(
@@ -218,7 +226,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
                                 item.status == "OWNER_CANCELLED"
-                                    ? PastAppointmentCard(
+                                    ? CancelledAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
                                         date: DateUtil.getDisplayFormatDay(
@@ -227,7 +235,16 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        viewDetails: () {},
+                                        viewDetails: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewBookingDetails(
+                                                bookingId: item.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : SizedBox()),
                   ),
@@ -260,7 +277,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                 _getLoaderView(),
                             itemBuilder: (context, item, index) =>
                                 item.status == "CUST_CANCELLED"
-                                    ? PastAppointmentCard(
+                                    ? CancelledAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
                                         date: DateUtil.getDisplayFormatDay(
@@ -269,7 +286,16 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        viewDetails: () {},
+                                        viewDetails: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewBookingDetails(
+                                                bookingId: item.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : SizedBox()),
                   ),

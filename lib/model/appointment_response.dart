@@ -20,24 +20,27 @@ class AppointmentResponse {
   EmpInfo empInfo;
   List<ServiceInfo> serviceInfo;
   SalonDetails salonDetails;
+  int totalRate;
 
-  AppointmentResponse(
-      {this.id,
-      this.custId,
-      this.empId,
-      this.startTime,
-      this.endTime,
-      this.salonId,
-      this.status,
-      this.creationDate,
-      this.modificationDate,
-      this.customerName,
-      this.customerNumber,
-      this.date,
-      this.customerInfo,
-      this.empInfo,
-      this.serviceInfo,
-      this.salonDetails});
+  AppointmentResponse({
+    this.id,
+    this.custId,
+    this.empId,
+    this.startTime,
+    this.endTime,
+    this.salonId,
+    this.status,
+    this.creationDate,
+    this.modificationDate,
+    this.customerName,
+    this.customerNumber,
+    this.date,
+    this.customerInfo,
+    this.empInfo,
+    this.serviceInfo,
+    this.salonDetails,
+    this.totalRate,
+  });
 
   AppointmentResponse.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -66,6 +69,7 @@ class AppointmentResponse {
     salonDetails = json['salonDetails'] != null
         ? new SalonDetails.fromJson(json['salonDetails'])
         : null;
+    totalRate = json['totalRate'];
   }
 
   Map<String, dynamic> toJson() {
@@ -94,6 +98,7 @@ class AppointmentResponse {
     if (this.salonDetails != null) {
       data['salonDetails'] = this.salonDetails.toJson();
     }
+    data['totalRate'] = this.totalRate;
     return data;
   }
 }
