@@ -32,6 +32,19 @@ class AppSessionManager {
     await prefs.setString('login_auth_token', token);
   }
 
+  static Future<String> getRefreshToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('refresh_token'))
+      return prefs.getString('refresh_token');
+    else
+      return null;
+  }
+
+  static setRefreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('refresh_token', token);
+  }
+
   static saveUserProfileObject(UserProfile user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userJson = jsonEncode(user.toJson());

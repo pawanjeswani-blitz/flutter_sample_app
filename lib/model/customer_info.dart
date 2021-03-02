@@ -6,8 +6,8 @@ class CustomerInfo {
   String profileUrl;
   int creationDate;
   int age;
-  Null type;
-  Null email;
+  String type;
+  String email;
   String phoneNumber;
   String dob;
   int roleId;

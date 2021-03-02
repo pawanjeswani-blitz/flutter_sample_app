@@ -9,17 +9,28 @@ import 'package:saloonwala_consumer/model/update_profile.dart';
 import 'package:http/http.dart' as http;
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UserProfileService {
   static Future<SuperResponse<UpdateProfile>> updateUserProfile(
-      String firstName,
-      String lastName,
-      String dob,
-      String city,
-      String state,
-      String gender) async {
+    String firstName,
+    String lastName,
+    String dob,
+    String city,
+    String state,
+    String gender,
+    String email,
+    String address,
+  ) async {
+    var latitude = "19.075983";
+    var longitude = "72.877655";
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    if (position != null) {
+      latitude = position.latitude.toString();
+      longitude = position.longitude.toString();
+    }
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
-
     final body = {
       "authToken": loginAuthToken,
       "cityName": city,
@@ -27,10 +38,12 @@ class UserProfileService {
       "firstName": firstName,
       "gender": gender,
       "lastName": lastName,
-      "latitude": "19",
-      "longitude": "23",
+      "latitude": latitude,
+      "longitude": longitude,
       "profileUrl": " ",
-      "stateName": state
+      "stateName": state,
+      "email": email,
+      "address": address
     };
     debugPrint("${Constants.BaseUrl}${Constants.UpdateUserProfile}");
     debugPrint(jsonEncode(body));
@@ -85,16 +98,17 @@ class UserProfileService {
   }
 
   static Future<SuperResponse<UpdateProfile>> updateUserProfileFromEditProfile(
-      String firstName, String lastName, String gender) async {
-    String dob, city, state;
+    String firstName,
+    String lastName,
+    String dob,
+    String city,
+    String state,
+    String gender,
+    String email,
+    String address,
+  ) async {
+    // String dob, city, state;
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
-    Future<UserProfileLogin> userProfileData =
-        AppSessionManager.getUserProfileAfterLogin();
-    await userProfileData.then((value) {
-      dob = value.dob.toString();
-      city = value.cityName;
-      state = value.stateName;
-    });
 
     final body = {
       "authToken": loginAuthToken,
@@ -103,10 +117,10 @@ class UserProfileService {
       "firstName": firstName,
       "gender": gender,
       "lastName": lastName,
-      "latitude": "19",
-      "longitude": "23",
       "profileUrl": " ",
-      "stateName": state
+      "stateName": state,
+      "email": email,
+      "address": address
     };
     debugPrint("${Constants.BaseUrl}${Constants.UpdateUserProfile}");
     debugPrint(jsonEncode(body));

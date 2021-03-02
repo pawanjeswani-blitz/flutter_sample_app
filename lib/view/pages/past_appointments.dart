@@ -183,7 +183,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                               );
                             },
                             itemBuilder: (context, item, index) =>
-                                item.status == "Done"
+                                item.status == "DONE"
                                     ? PastAppointmentCard(
                                         salonTitle: item.salonDetails.name
                                             .toUpperCase(),
@@ -193,7 +193,17 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                         time: DateUtil.getDisplayFormatHour(
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 item.startTime)),
-                                        viewDetails: () {},
+                                        viewDetails: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ViewBookingDetails(
+                                                bookingId: item.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        review: () {},
                                       )
                                     : SizedBox()),
                   ),

@@ -32,12 +32,13 @@ class _EditProfileState extends State<EditProfile> {
   // final GlobalKey<FormState> _genderFormKey = GlobalKey<FormState>();
   String firstName,
       lastName,
-      phoneNumber,
+      email,
       gender,
       name,
       number,
       selectedgender,
-      fname;
+      fname,
+      address;
   String fsname = "aa";
   @override
   Widget build(BuildContext context) {
@@ -89,10 +90,8 @@ class _EditProfileState extends State<EditProfile> {
                     },
                     decoration: _getTextFormFieldInputDecoration.copyWith(
                       hintText: widget.userProfile.firstName +
-                                  widget.userProfile.lastName ==
-                              null
-                          ? " "
-                          : " ",
+                          " " +
+                          widget.userProfile.lastName,
                       hintStyle:
                           GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                       suffixIcon: FlatButton(
@@ -114,51 +113,45 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   ),
                 ),
-                // Container(
-                //   margin: EdgeInsets.symmetric(
-                //     horizontal: defaultSize * 1.0,
-                //   ).copyWith(
-                //     bottom: defaultSize * 2.0,
-                //   ),
-                //   padding: EdgeInsets.symmetric(
-                //     horizontal: defaultSize * 1.0,
-                //   ),
-                //   child: TextFormField(
-                //     readOnly: readOnly,
-                //     validator: _validatePhoneNumber,
-                //     inputFormatters: [
-                //       FilteringTextInputFormatter.digitsOnly,
-                //       LengthLimitingTextInputFormatter(10)
-                //     ],
-                //     keyboardType: TextInputType.phone,
-                //     cursorColor: AppColor.PRIMARY_DARK,
-                //     style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                //     maxLines: 1,
-                //     onChanged: (value) => phoneNumber = value,
-                //     decoration: _getTextFormFieldInputDecoration.copyWith(
-                //       hintText: number.toString(),
-                //       hintStyle:
-                //           GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                //       suffixIcon: FlatButton(
-                //           splashColor: Colors.transparent,
-                //           highlightColor: Colors.transparent,
-                //           onPressed: () async {
-                //             // _requestOTP();
-                //             setState(() {
-                //               readOnly = false;
-                //             });
-                //           },
-                //           child: Text(
-                //             'Edit Number',
-                //             style: GoogleFonts.poppins(
-                //                 color: AppColor.PRIMARY_DARK,
-                //                 fontSize: defaultSize * 1.75,
-                //                 fontWeight: FontWeight.w500,
-                //                 letterSpacing: 1.0),
-                //           )),
-                //     ),
-                //   ),
-                // ),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: defaultSize * 1.0,
+                  ).copyWith(
+                    bottom: defaultSize * 2.0,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: defaultSize * 1.0,
+                  ),
+                  child: TextFormField(
+                    readOnly: readOnly,
+                    // validator: _validatePhoneNumber,
+                    cursorColor: AppColor.PRIMARY_DARK,
+                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                    maxLines: 1,
+                    onChanged: (value) => email = value,
+                    decoration: _getTextFormFieldInputDecoration.copyWith(
+                      hintText: widget.userProfile.email,
+                      hintStyle:
+                          GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                      suffixIcon: FlatButton(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onPressed: () async {
+                            setState(() {
+                              readOnly = false;
+                            });
+                          },
+                          child: Text(
+                            'Edit Email',
+                            style: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultSize * 1.75,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1.0),
+                          )),
+                    ),
+                  ),
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(
                     horizontal: defaultSize * 1.0,
@@ -191,6 +184,45 @@ class _EditProfileState extends State<EditProfile> {
                           },
                           child: Text(
                             'Edit Gender',
+                            style: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultSize * 1.75,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1.0),
+                          )),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: defaultSize * 1.0,
+                  ).copyWith(
+                    bottom: defaultSize * 2.0,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: defaultSize * 1.0,
+                  ),
+                  child: TextFormField(
+                    readOnly: readOnly,
+                    // validator: _validatePhoneNumber,
+                    cursorColor: AppColor.PRIMARY_DARK,
+                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                    maxLines: 4,
+                    onChanged: (value) => address = value,
+                    decoration: _getTextFormFieldInputDecoration.copyWith(
+                      hintText: widget.userProfile.address,
+                      hintStyle:
+                          GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                      suffixIcon: FlatButton(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onPressed: () async {
+                            setState(() {
+                              readOnly = false;
+                            });
+                          },
+                          child: Text(
+                            'Edit Address',
                             style: GoogleFonts.poppins(
                                 color: AppColor.PRIMARY_DARK,
                                 fontSize: defaultSize * 1.75,
@@ -262,12 +294,21 @@ class _EditProfileState extends State<EditProfile> {
       try {
         final response =
             await UserProfileService.updateUserProfileFromEditProfile(
-                firstName, lastName, gender);
+          firstName == null ? widget.userProfile.firstName : firstName,
+          lastName == null ? widget.userProfile.lastName : lastName,
+          widget.userProfile.dob,
+          widget.userProfile.cityName,
+          widget.userProfile.stateName,
+          gender,
+          email == null ? widget.userProfile.email : email,
+          address == null ? widget.userProfile.address : address,
+        );
+        print(response.data);
         //close the progress dialog
         Navigator.of(context).pop();
         if (response.error == null) {
           //check the user is already register or not
-          if (response.data != null) {
+          if (response.data == null) {
             //user is register
             print(response.data);
           } else

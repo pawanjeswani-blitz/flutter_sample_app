@@ -559,7 +559,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
 class PastAppointmentCard extends StatefulWidget {
   final String salonTitle, date, time;
-  final Function viewDetails;
+  final Function viewDetails, review;
 
   const PastAppointmentCard({
     Key key,
@@ -567,6 +567,7 @@ class PastAppointmentCard extends StatefulWidget {
     this.date,
     this.time,
     this.viewDetails,
+    this.review,
   }) : super(key: key);
   @override
   _PastAppointmentCardState createState() => _PastAppointmentCardState();
@@ -647,12 +648,28 @@ class _PastAppointmentCardState extends State<PastAppointmentCard> {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onPressed: () async {
-                    widget.viewDetails();
+                    widget.review();
                   },
                   child: Text(
                     'Write a review',
                     style: GoogleFonts.poppins(
                         color: AppColor.PRIMARY_DARK,
+                        fontSize: defaultSize * 1.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.0),
+                  ),
+                ),
+                Spacer(),
+                FlatButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () async {
+                    widget.viewDetails();
+                  },
+                  child: Text(
+                    'View Details',
+                    style: GoogleFonts.poppins(
+                        color: Colors.red[800],
                         fontSize: defaultSize * 1.5,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1.0),

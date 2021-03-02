@@ -29,12 +29,13 @@ class UserProfileLogin {
   String profileUrl;
   int creationDate;
   int age;
-  Null type;
+  String type;
   String email;
   String phoneNumber;
   String dob;
-  String gender;
   int roleId;
+  String gender;
+  String address;
 
   UserProfileLogin(
       {this.cityName,
@@ -48,8 +49,9 @@ class UserProfileLogin {
       this.email,
       this.phoneNumber,
       this.dob,
+      this.roleId,
       this.gender,
-      this.roleId});
+      this.address});
 
   UserProfileLogin.fromJson(Map<String, dynamic> json) {
     cityName = json['cityName'];
@@ -63,8 +65,9 @@ class UserProfileLogin {
     email = json['email'];
     phoneNumber = json['phoneNumber'];
     dob = json['dob'];
-    gender = json['gender'];
     roleId = json['roleId'];
+    gender = json['gender'];
+    address = json['address'];
   }
 
   Map<String, dynamic> toJson() {
@@ -80,8 +83,9 @@ class UserProfileLogin {
     data['email'] = this.email;
     data['phoneNumber'] = this.phoneNumber;
     data['dob'] = this.dob;
-    data['gender'] = this.gender;
     data['roleId'] = this.roleId;
+    data['gender'] = this.gender;
+    data['address'] = this.address;
     return data;
   }
 }

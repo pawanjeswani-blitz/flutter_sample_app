@@ -12,11 +12,13 @@ import 'package:saloonwala_consumer/model/non_login_response.dart';
 import 'package:saloonwala_consumer/model/otp_response.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:package_info/package_info.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthService {
   static Future<SuperResponse<NonLoginResponse>> getNonAuthToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var uuid = Uuid();
     // final fcmToken = await firebaseMessaging.getToken();
     final body = {};
 
@@ -35,8 +37,7 @@ class AuthService {
           userAgent: 'Android',
           platform: 'APP');
 
-      body['androidUniqueId'] =
-          '${androidInfo.androidId}_${DateTime.now().millisecondsSinceEpoch}';
+      body['androidUniqueId'] = '${androidInfo.androidId}_${uuid.v4()}';
       body['infoBean'] = infoBean;
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -143,9 +144,43 @@ class AuthService {
           SuperResponse.fromJson(map, LoginPhoneResponse.fromJson(map['data']));
       if (output.data.authToken != null) {
         AppSessionManager.setLoginAuthToken(output.data.authToken);
+        AppSessionManager.setRefreshToken(output.data.refreshToken);
         AppSessionManager.saveUserProfileObject(output.data.userProfile);
       }
       return output;
+    });
+  }
+
+  static Future<SuperResponse<String>> refreshToken() async {
+    final infoBean = await AppSessionManager.getInfoBean();
+    final refreshToken = await AppSessionManager.getRefreshToken();
+
+    Map<String, dynamic> body = Map<String, dynamic>();
+    body['infoBean'] = infoBean;
+    body['refreshToken'] = refreshToken;
+
+    debugPrint("${Constants.BaseUrl}${Constants.RefreshSession}");
+    debugPrint(json.encode(body));
+    return http
+        .post("${Constants.BaseUrl}${Constants.RefreshSession}",
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: json.encode(body))
+        .then((http.Response response) {
+      if (response.statusCode < 200 ||
+          response.statusCode > 400 ||
+          json == null) {
+        throw new Exception("Error while fetching data");
+      }
+
+      debugPrint(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      if (map['error'] == null) {
+        final output = SuperResponse.fromJson(map, "");
+        AppSessionManager.setLoginAuthToken(map['data']['authToken']);
+        AppSessionManager.setRefreshToken(map['data']['refreshToken']);
+        return output;
+      } else
+        return SuperResponse.fromJson(map, null);
     });
   }
 }

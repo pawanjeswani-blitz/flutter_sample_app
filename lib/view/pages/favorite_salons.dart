@@ -10,6 +10,7 @@ import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/salon_services_tabview.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FavoriteSalonsScreen extends StatefulWidget {
   @override
@@ -94,11 +95,35 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
                     },
                     itemCount: _salonData.length,
                   )
-                : Center(child: CircularProgressIndicator()),
+                : _loadingWidget(),
           )
         ],
       ),
     );
+  }
+
+  Widget _loadingWidget() {
+    return Container(
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              int offset = 0;
+              int time = 400;
+              offset += 5;
+              time = 400 + offset;
+              return Shimmer.fromColors(
+                highlightColor: Colors.white,
+                baseColor: Colors.grey[300],
+                child: FavoriteSalonCard(
+                  title: " ",
+                  distance: " ",
+                  redirect: () {},
+                  customfunction: () {},
+                ),
+                period: Duration(milliseconds: time),
+              );
+            }));
   }
 
   Future<SuperResponse<bool>> _onRemoveFavorite(int salonId) async {

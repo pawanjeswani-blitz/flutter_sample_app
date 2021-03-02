@@ -17,17 +17,17 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // _checkAndSetInfoBean();
+    _refreshToken();
     _startTime();
   }
 
-  // _checkAndSetInfoBean() async {
-  //   final nonLoginAuthToken = await AppSessionManager.getNonLoginAuthToken();
-  //   if (nonLoginAuthToken == null) {
-  //     //info bean is not set. call the api to set the info bean
-  //     AuthService.getNonAuthToken();
-  //   }
-  // }
+  _refreshToken() async {
+    final refreshToken = await AppSessionManager.getRefreshToken();
+    if (refreshToken != null) {
+      //if user is login then refresh his token
+      AuthService.refreshToken();
+    }
+  }
 
   _startTime() async {
     final authToken = await AppSessionManager.getLoginAuthToken();

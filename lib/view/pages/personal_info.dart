@@ -23,7 +23,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
   String dob = DateUtil.getDisplayFormatDate(DateTime.now());
   // Text Controllers for taking input from text form field
   TextEditingController dobController = TextEditingController();
-  String firstName, lastName, city, state;
+  String firstName, lastName, city, state, email, address;
   double defaultSizeOveride;
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -74,7 +74,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                             final value1 = values[0];
                             final value2 = values[1];
                             firstName = value1;
-                            lastName = value2;
+                            lastName = value2 == null ? " " : value2;
                           },
                           enableSuggestions: false,
                           autocorrect: false,
@@ -156,9 +156,48 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           style:
                               GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
                           maxLines: 1,
+                          onChanged: (value) => email = value,
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: 'email@example.com',
+                            suffixIcon: Icon(
+                              Icons.email_rounded,
+                              color: AppColor.PRIMARY_DARK,
+                            ),
+                            prefixIcon: Container(
+                              margin: EdgeInsets.only(left: defaultSize * 1.25),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Email  ',
+                                    style: GoogleFonts.poppins(
+                                        color: AppColor.PRIMARY_DARK,
+                                        fontSize: defaultSize * 1.8
+                                        // fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: defaultSize * 2.5,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: defaultSize * 2.2, right: defaultSize * 2.2),
+                        child: TextFormField(
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          cursorColor: AppColor.PRIMARY_DARK,
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 1,
                           onChanged: (value) => city = value,
                           decoration: _getTextFormFieldInputDecoration.copyWith(
-                            hintText: 'City',
+                            hintText: 'example: Mumbai',
                             suffixIcon: Icon(
                               Icons.location_city,
                               color: AppColor.PRIMARY_DARK,
@@ -204,7 +243,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           maxLines: 1,
                           onChanged: (value) => state = value,
                           decoration: _getTextFormFieldInputDecoration.copyWith(
-                            hintText: 'State',
+                            hintText: 'example: Maharashtra',
                             suffixIcon: Icon(
                               Icons.location_on,
                               color: AppColor.PRIMARY_DARK,
@@ -229,6 +268,31 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           validator: (value) {
                             if (value.isEmpty) {
                               return "State Name cannot be empty";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: defaultSize * 2.5,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: defaultSize * 2.2, right: defaultSize * 2.2),
+                        child: TextFormField(
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          cursorColor: AppColor.PRIMARY_DARK,
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 4,
+                          onChanged: (value) => address = value,
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: 'Address',
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Address cannot be empty";
                             }
                             return null;
                           },
@@ -322,7 +386,14 @@ class _PersonalInfoState extends State<PersonalInfo> {
       ProgressDialog.showProgressDialog(context);
       try {
         final response = await UserProfileService.updateUserProfile(
-            firstName, lastName, dob, city, state, widget.gender);
+            firstName,
+            lastName,
+            dob,
+            city,
+            state,
+            widget.gender,
+            email == null && email == "" ? "" : email,
+            address);
         //close the progress dialog
         Navigator.of(context).pop();
         if (response.error == null) {
