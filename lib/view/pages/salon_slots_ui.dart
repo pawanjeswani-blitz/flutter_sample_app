@@ -346,7 +346,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
       );
 
   void _loadAvaiableTimeSlotFromApi(DateTime dateTime) async {
-    final res = await FetchSlots.getTitleSlot(dateTime);
+    final res = await FetchSlots.getTitleSlot(dateTime, widget.salonId);
     setState(() {
       _availableSlotsResponse = res.data;
     });

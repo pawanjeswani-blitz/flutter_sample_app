@@ -8,6 +8,7 @@ import 'package:saloonwala_consumer/model/salon_data.dart';
 import 'package:saloonwala_consumer/model/salon_services.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
+import 'package:saloonwala_consumer/view/pages/random_tests.dart';
 import 'package:saloonwala_consumer/view/pages/salon_slots_ui.dart';
 
 class SalonServicesUI extends StatefulWidget {
@@ -123,7 +124,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                   final userProfile =
                                       await AppSessionManager.getUserProfile();
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SalonSlotsUI(
+                                      builder: (context) => RandomTestUI(
                                             selectedServiceList:
                                                 _selectedServiceList,
                                             salonId: widget.salonId,

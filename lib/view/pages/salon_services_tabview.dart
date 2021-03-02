@@ -89,7 +89,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                   ),
                 ),
               ),
-              expandedHeight: defaultSize * 20.0,
+              expandedHeight: defaultSize * 25.0,
               elevation: 0,
               floating: true,
               pinned: true,
@@ -104,14 +104,19 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                         autoPlay: true,
                         // aspectRatio: 0.5,
                         viewportFraction: 1.0,
+                        // aspectRatio: 16 / 9,
+                        // height: defaultSize * 100.0,
                         autoPlayCurve: Curves.easeInOut,
                         // enlargeCenterPage: true,
                       ),
                       items: _getImages()
                           .map((item) => Container(
                                 width: double.infinity,
-                                child: Image.network(item,
-                                    fit: BoxFit.cover, width: 1000.0),
+                                child: Image.network(
+                                  item,
+                                  fit: BoxFit.fitHeight,
+                                  width: 1000.0,
+                                ),
                               ))
                           .toList(),
                     ),

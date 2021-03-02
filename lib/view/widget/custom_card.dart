@@ -59,9 +59,8 @@ class _SalonCardState extends State<SalonCard> {
                       decoration: BoxDecoration(
                         color: Colors.blueGrey,
                         image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.thumb),
                         ),
                       ),
                     )
@@ -188,9 +187,15 @@ class FavoriteSalonCard extends StatefulWidget {
   final String title;
   final dynamic distance;
   final Function customfunction, redirect;
+  final String thumb;
 
   const FavoriteSalonCard(
-      {Key key, this.title, this.distance, this.customfunction, this.redirect})
+      {Key key,
+      this.title,
+      this.distance,
+      this.customfunction,
+      this.redirect,
+      this.thumb})
       : super(key: key);
   @override
   _FavoriteSalonCardState createState() => _FavoriteSalonCardState();
@@ -221,8 +226,19 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
           ),
           child: Column(
             children: [
-              sample != null && sample.isNotEmpty
+              widget.thumb != null && widget.thumb.isNotEmpty
                   ? Container(
+                      height: defaultSize * 12.5,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.thumb),
+                        ),
+                      ),
+                    )
+                  : Container(
                       height: defaultSize * 12.5,
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -232,16 +248,6 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
                           image: NetworkImage(
                               "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
                         ),
-                      ),
-                    )
-                  : Container(
-                      height: defaultSize * 1,
-                      width: defaultSize * 15,
-                      color: Colors.blueGrey,
-                      child: Icon(
-                        Icons.home,
-                        size: defaultSize * 3.0,
-                        color: Colors.white,
                       ),
                     ),
               SizedBox(

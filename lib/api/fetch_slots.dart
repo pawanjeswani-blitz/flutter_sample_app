@@ -12,7 +12,7 @@ import 'package:saloonwala_consumer/utils/date_util.dart';
 
 class FetchSlots {
   static Future<SuperResponse<AvailableSlotsResponse>> getTitleSlot(
-      DateTime dateTime) async {
+      DateTime dateTime, int salonId) async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {
       "authToken": loginAuthToken,

@@ -19,6 +19,7 @@ class FavoriteSalonsScreen extends StatefulWidget {
 
 class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
   List<SalonData> _salonData;
+  SalonData _wsalonData;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
     final res = await FavoriteService.getSalonFeedForFavorite();
     setState(() {
       _salonData = res.data.list;
+      // _wsalonData = res.data.list.a;
     });
   }
 
@@ -76,6 +78,7 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
                           await _onRemoveFavorite(_salonData[position].id);
                           _loadSalons();
                         },
+                        thumb: _salonData[position].thumbnail1,
                         redirect: () async {
                           final userProfile = await AppSessionManager
                               .getUserProfileAfterLogin();
@@ -85,8 +88,8 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
                                 salonId: _salonData[position].id,
                                 salonName: _salonData[position].name,
                                 userprofile: userProfile,
-                                // salonInfo: ,
                                 salonList: _salonData,
+                                // salonInfo: _salonData,
                               ),
                             ),
                           );

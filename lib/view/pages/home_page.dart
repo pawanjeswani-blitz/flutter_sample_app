@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   final PagingController<int, SalonData> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;
+  bool liked = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -213,8 +214,11 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     },
                                     customFunctionLike: () {
-                                      _onAddFavorite(item.id);
+                                      item.like == true
+                                          ? _onRemoveFavorite(item.id)
+                                          : _onAddFavorite(item.id);
                                     },
+                                    // liked: ,
                                     color: item.like == true
                                         ? Colors.red[800]
                                         : Colors.grey[400],
@@ -255,6 +259,32 @@ class _HomePageState extends State<HomePage> {
                 period: Duration(milliseconds: time),
               );
             }));
+  }
+
+  Future<SuperResponse<bool>> _onRemoveFavorite(int salonId) async {
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await FavoriteService.favoriteRemove(salonId);
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          //check the user is already register or not
+          if (response.data == null) {
+            //user is register
+            print(response.data);
+            showSnackBar("Salon removed from favorites succesfully");
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
   }
 
   Future<SuperResponse<bool>> _onAddFavorite(int salonId) async {

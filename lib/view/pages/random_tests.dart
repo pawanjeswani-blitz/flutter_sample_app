@@ -51,7 +51,7 @@ class _RandomTestUIState extends State<RandomTestUI> {
   var dateString = "";
   double defaultSizeOveride;
   List<int> service = [];
-  List seletcedSlots = [];
+  List<Slots> seletcedSlots = [];
   List<Slots> hi = [];
   bool _checked = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -72,14 +72,17 @@ class _RandomTestUIState extends State<RandomTestUI> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: new Text(
-          'user ,'
+          '${widget.userProfile.firstName},'
           '\nPlease Select date and time',
           style: GoogleFonts.poppins(
               fontWeight: FontWeight.w400, fontSize: defaultSize * 1.5),
         ),
         elevation: 0.0,
         leading: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.pop(context);
+            widget.selectedServiceList.clear();
+          },
           child: Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
@@ -349,7 +352,7 @@ class _RandomTestUIState extends State<RandomTestUI> {
   //           }),
   //     );
   void _loadAvaiableTimeSlotFromApi(DateTime dateTime) async {
-    final res = await FetchSlots.getTitleSlot(dateTime);
+    final res = await FetchSlots.getTitleSlot(dateTime, widget.salonId);
     setState(() {
       _availableSlotsResponse = res.data;
     });
@@ -404,23 +407,32 @@ class _RandomTestUIState extends State<RandomTestUI> {
         height: defaultSizeOveride * 25.0,
         child: MultiSelectDialog(
           items: _availableSlotsResponse.slots
-              .map((slot) => MultiSelectItem<Slots>(
-                  slot,
-                  DateUtil.getDisplayFormatHour(
-                      DateTime.fromMillisecondsSinceEpoch(slot.startTime))))
+              .map(
+                (slot) => MultiSelectItem<Slots>(slot,
+                    " ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.endTime))}"),
+              )
               .toList(),
+          itemsTextStyle:
+              GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.75),
+          selectedItemsTextStyle:
+              GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.5),
+          // listType: List<Slots>,
+          unselectedColor: Color.fromRGBO(172, 125, 83, 1),
+          selectedColor: Color.fromRGBO(172, 125, 83, 1),
           initialValue: [],
           // listType: MultiSelectListType.CHIP,
           onSelectionChanged: (_selectedValues) {
             setState(() {
               _selectedEmployee = null;
-              seletcedSlots = _selectedValues;
-              for (int i = 0; i < _selectedValues.length; i++) {
-                hed.add(_availableSlotsResponse.slots[i].startTime.toString());
-              }
+              seletcedSlots = _selectedValues.cast<Slots>();
             });
-
-            print(hed);
+            for (int i = 0; i < seletcedSlots.length; i++) {
+              setState(() {
+                _selectedTimeSlot = seletcedSlots[i];
+              });
+              print(
+                  "${seletcedSlots[i].startTime} - ${seletcedSlots[i].endTime}");
+            }
           },
         ),
       );
@@ -441,9 +453,9 @@ class _RandomTestUIState extends State<RandomTestUI> {
         final response = await FetchSlots.bookSlot(
             DateUtil.getDisplayFormatDate(_selectedDateTime),
             _selectedEmployee.id,
-            _selectedTimeSlot.endTime,
+            seletcedSlots.last.endTime,
             widget.salonId,
-            _selectedTimeSlot.startTime,
+            seletcedSlots.first.startTime,
             service);
         //close the progress dialog
         Navigator.of(context).pop();
@@ -457,9 +469,8 @@ class _RandomTestUIState extends State<RandomTestUI> {
                       salonName: widget.salonName,
                       selectedServiceList: widget.selectedServiceList,
                       employeeName: _selectedEmployee.firstName.toString(),
-                      dateString: DateUtil.getDisplayFormatHour(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              _selectedTimeSlot.startTime)),
+                      dateString:
+                          " ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(seletcedSlots.first.startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(seletcedSlots.last.endTime))}",
                       dayMonth: DateUtil.getDisplayFormatDay(_selectedDateTime),
                       userProfile: widget.userProfile,
                     )));
@@ -482,194 +493,3 @@ class _RandomTestUIState extends State<RandomTestUI> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }
-
-class SelectedActions<Slots> {
-  List<Slots> onItemCheckedChange(
-      List<Slots> selectedValues, Slots itemValue, bool checked) {
-    if (checked) {
-      selectedValues.add(itemValue);
-    } else {
-      selectedValues.remove(itemValue);
-    }
-    return selectedValues;
-  }
-}
-
-class MultiSelectItem<Slots> {
-  final Slots value;
-  final String label;
-  MultiSelectItem(this.value, this.label);
-}
-
-class MultiSelectDialog<Slots> extends StatefulWidget
-    with MultiSelectActions<Slots> {
-  final List<MultiSelectItem<Slots>> items;
-
-  final List<Slots> initialValue;
-
-  final void Function(List<Slots>) onSelectionChanged;
-
-  final MultiSelectListType listType;
-
-  final Color selectedColor;
-
-  final double height;
-
-  final Color Function(Slots) colorator;
-
-  final Color unselectedColor;
-
-  final TextStyle itemsTextStyle;
-
-  final TextStyle selectedItemsTextStyle;
-
-  final Color checkColor;
-
-  MultiSelectDialog({
-    @required this.items,
-    this.initialValue,
-    @required this.onSelectionChanged,
-    this.listType,
-    this.selectedColor,
-    this.height,
-    this.colorator,
-    this.unselectedColor,
-    this.itemsTextStyle,
-    this.selectedItemsTextStyle,
-    this.checkColor,
-  });
-
-  @override
-  State<StatefulWidget> createState() => _MultiSelectDialogState<Slots>(items);
-}
-
-class _MultiSelectDialogState<Slots> extends State<MultiSelectDialog<Slots>> {
-  List<Slots> _selectedValues = [];
-  bool _showSearch = false;
-  List<MultiSelectItem<Slots>> _items;
-
-  _MultiSelectDialogState(this._items);
-
-  void initState() {
-    super.initState();
-    if (widget.initialValue != null) {
-      _selectedValues.addAll(widget.initialValue);
-    }
-  }
-
-  Widget _buildListItem(MultiSelectItem<Slots> item) {
-    return Theme(
-      data: ThemeData(
-        unselectedWidgetColor: widget.unselectedColor ?? Colors.black54,
-        accentColor: widget.selectedColor ?? Theme.of(context).primaryColor,
-      ),
-      child: CheckboxListTile(
-        checkColor: widget.checkColor,
-        value: _selectedValues.contains(item.value),
-        activeColor: widget.colorator != null
-            ? widget.selectedColor
-            : widget.selectedColor,
-        title: Text(
-          item.label,
-          style: _selectedValues.contains(item.value)
-              ? widget.selectedItemsTextStyle
-              : widget.itemsTextStyle,
-        ),
-        controlAffinity: ListTileControlAffinity.trailing,
-        onChanged: (checked) {
-          setState(() {
-            _selectedValues = widget.onItemCheckedChange(
-                _selectedValues, item.value, checked);
-          });
-          if (widget.onSelectionChanged != null) {
-            widget.onSelectionChanged(_selectedValues);
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildChipItem(MultiSelectItem<Slots> item) {
-    return Container(
-      padding: const EdgeInsets.all(2.0),
-      child: ChoiceChip(
-        backgroundColor: widget.unselectedColor,
-        selectedColor:
-            widget.colorator != null && widget.colorator(item.value) != null
-                ? widget.colorator(item.value)
-                : widget.selectedColor != null
-                    ? widget.selectedColor
-                    : Theme.of(context).primaryColor.withOpacity(0.35),
-        label: Text(
-          item.label,
-          style: _selectedValues.contains(item.value)
-              ? TextStyle(
-                  color: widget.colorator != null &&
-                          widget.colorator(item.value) != null
-                      ? widget.selectedItemsTextStyle != null
-                          ? widget.selectedItemsTextStyle.color ??
-                              widget.colorator(item.value).withOpacity(1)
-                          : widget.colorator(item.value).withOpacity(1)
-                      : widget.selectedItemsTextStyle != null
-                          ? widget.selectedItemsTextStyle.color ??
-                              (widget.selectedColor != null
-                                  ? widget.selectedColor.withOpacity(1)
-                                  : Theme.of(context).primaryColor)
-                          : widget.selectedColor != null
-                              ? widget.selectedColor.withOpacity(1)
-                              : null,
-                  fontSize: widget.selectedItemsTextStyle != null
-                      ? widget.selectedItemsTextStyle.fontSize
-                      : null,
-                )
-              : widget.itemsTextStyle,
-        ),
-        selected: _selectedValues.contains(item.value),
-        onSelected: (checked) {
-          setState(() {
-            _selectedValues = widget.onItemCheckedChange(
-                _selectedValues, item.value, checked);
-          });
-          if (widget.onSelectionChanged != null) {
-            widget.onSelectionChanged(_selectedValues);
-          }
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: widget.height,
-      width: MediaQuery.of(context).size.width * 0.92,
-      child:
-          widget.listType == null || widget.listType == MultiSelectListType.LIST
-              ? ListView.builder(
-                  itemCount: _items.length,
-                  itemBuilder: (context, index) {
-                    return _buildListItem(_items[index]);
-                  },
-                )
-              : SingleChildScrollView(
-                  child: Wrap(
-                    children: _items.map(_buildChipItem).toList(),
-                  ),
-                ),
-    );
-  }
-}
-
-class MultiSelectActions<Slots> {
-  List<Slots> onItemCheckedChange(
-      List<Slots> selectedValues, Slots itemValue, bool checked) {
-    if (checked) {
-      selectedValues.add(itemValue);
-    } else {
-      selectedValues.remove(itemValue);
-    }
-    return selectedValues;
-  }
-}
-
-enum MultiSelectListType { LIST, CHIP }

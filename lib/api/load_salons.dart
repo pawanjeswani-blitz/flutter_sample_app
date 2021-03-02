@@ -60,7 +60,10 @@ class LoadSalons {
 
   static Future<SuperResponse<SaloonServices>> getService(int salonId) async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
-    final body = {"authToken": loginAuthToken, "salonId": 1};
+    final body = {"authToken": loginAuthToken, "salonId": salonId};
+    debugPrint(
+        "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services");
+    debugPrint(jsonEncode(body));
     return http
         .post(
             "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services",
