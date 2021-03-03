@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -46,16 +47,16 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
     bannerImagesList = [
       widget.salonInfo.thumbnail1 != null
           ? widget.salonInfo.thumbnail1
-          : "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg",
+          : "https://i.postimg.cc/D052dhhF/saloonwala-nobg.png",
       widget.salonInfo.thumbnail2 != null
           ? widget.salonInfo.thumbnail2
-          : 'https://s17026.pcdn.co/wp-content/uploads/sites/9/2016/06/1-229.jpg',
+          : 'https://i.postimg.cc/D052dhhF/saloonwala-nobg.png',
       widget.salonInfo.thumbnail3 != null
           ? widget.salonInfo.thumbnail3
-          : 'https://www.applesalon.in/images/services1.png',
+          : 'https://i.postimg.cc/D052dhhF/saloonwala-nobg.png',
       widget.salonInfo.thumbnail4 != null
           ? widget.salonInfo.thumbnail4
-          : 'https://www.greenshootmarketing.co.uk/wp-content/uploads/2019/10/guilherme-petri-PtOfbGkU3uI-unsplash.jpg'
+          : 'https://i.postimg.cc/D052dhhF/saloonwala-nobg.png'
     ];
     return bannerImagesList;
   }
@@ -89,7 +90,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                   ),
                 ),
               ),
-              expandedHeight: defaultSize * 25.0,
+              expandedHeight: defaultSize * 22.0,
               elevation: 0,
               floating: true,
               pinned: true,
@@ -102,6 +103,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                     child: CarouselSlider(
                       options: CarouselOptions(
                         autoPlay: true,
+                        // autoPlayInterval: Duration(seconds: 2),
                         // aspectRatio: 0.5,
                         viewportFraction: 1.0,
                         // aspectRatio: 16 / 9,
@@ -110,12 +112,19 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                         // enlargeCenterPage: true,
                       ),
                       items: _getImages()
-                          .map((item) => Container(
-                                width: double.infinity,
-                                child: Image.network(
-                                  item,
-                                  fit: BoxFit.fitHeight,
-                                  width: 1000.0,
+                          .map((item) => SafeArea(
+                                child: Container(
+                                  width: double.infinity,
+                                  // height: defaultSize * 39.0,
+                                  child: CachedNetworkImage(
+                                    imageUrl: item,
+                                    fit: BoxFit.fill,
+                                    height: defaultSize * 30.0,
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
                                 ),
                               ))
                           .toList(),

@@ -12,6 +12,7 @@ import 'package:saloonwala_consumer/view/widget/custom_appbar.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_menu_item.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileUI extends StatefulWidget {
   @override
@@ -58,72 +59,85 @@ class _UserProfileUIState extends State<UserProfileUI> {
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ProfileInfoUI(
-              title: 'Profile',
-              image: 'assets/images/profile.jpg',
-              name: _userProfileLogin == null
-                  ? ""
-                  : _userProfileLogin.firstName.toString(),
-              email: _userProfileLogin == null
-                  ? ""
-                  : _userProfileLogin.email.toString(),
-            ),
-            SizedBox(
-              height: defaultSize * 2.0,
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.person,
-              title: 'Edit Profile',
-              press: () async {
-                final userProfile =
-                    await AppSessionManager.getUserProfileAfterLogin();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => EditProfile(
-                          userProfile: userProfile,
-                        )));
-              },
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.access_time,
-              title: 'Upcoming Appointments',
-              press: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => UpcomingAppointmentScreen()));
-              },
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.content_paste,
-              title: 'Past Appointments',
-              press: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PastAppointments()));
-              },
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.privacy_tip,
-              title: 'Privacy Policy',
-              press: () {},
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.assignment_returned,
-              title: 'Terms & Conditions',
-              press: () {},
-            ),
-            ProfileMenuItem(
-              iconSrc: Icons.logout,
-              title: 'Logout',
-              press: () {},
-              hasNavigation: false,
-            ),
-            SizedBox(
-              height: defaultSize * 2.5,
-            )
-          ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              ProfileInfoUI(
+                title: 'Profile',
+                image: 'assets/images/profile.jpg',
+                name: _userProfileLogin == null
+                    ? ""
+                    : _userProfileLogin.firstName.toString(),
+                email: _userProfileLogin == null
+                    ? ""
+                    : _userProfileLogin.email.toString(),
+              ),
+              SizedBox(
+                height: defaultSize * 2.0,
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.person,
+                title: 'Edit Profile',
+                press: () async {
+                  final userProfile =
+                      await AppSessionManager.getUserProfileAfterLogin();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditProfile(
+                            userProfile: userProfile,
+                          )));
+                },
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.access_time,
+                title: 'Upcoming Appointments',
+                press: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => UpcomingAppointmentScreen()));
+                },
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.content_paste,
+                title: 'Past Appointments',
+                press: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PastAppointments()));
+                },
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.privacy_tip,
+                title: 'Privacy Policy',
+                press: () {},
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.assignment_returned,
+                title: 'Terms & Conditions',
+                press: () {
+                  _launchURL();
+                },
+              ),
+              ProfileMenuItem(
+                iconSrc: Icons.logout,
+                title: 'Logout',
+                press: () {},
+                hasNavigation: false,
+              ),
+              SizedBox(
+                height: defaultSize * 2.5,
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  _launchURL() async {
+    const url = 'http://saloonwala.in/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void showSnackBar(String errorText) {

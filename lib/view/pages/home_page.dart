@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                               },
                               itemBuilder: (context, item, index) => SalonCard(
                                     title: item.name.toString(),
-                                    distance: item.distance.toStringAsFixed(1),
+                                    distance: item.address.toString(),
                                     customfunction: () async {
                                       final userProfile =
                                           await AppSessionManager

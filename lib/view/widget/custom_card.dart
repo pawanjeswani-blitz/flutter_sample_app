@@ -77,7 +77,7 @@ class _SalonCardState extends State<SalonCard> {
                       ),
                     ),
               ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: defaultSize * 15.0),
+                constraints: BoxConstraints(maxWidth: defaultSize * 17.0),
                 child: Container(
                   margin: EdgeInsets.only(left: defaultSize * 1.35),
                   child: Column(
@@ -92,51 +92,56 @@ class _SalonCardState extends State<SalonCard> {
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        height: defaultSize * 1.5,
+                        height: defaultSize * 1.0,
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Color.fromRGBO(96, 127, 99, 1.0),
-                            size: defaultSize * 1.5,
-                          ),
-                          SizedBox(width: defaultSize * 0.5),
-                          Text(
-                            widget.distance,
-                            style: GoogleFonts.poppins(
-                                fontSize: defaultSize * 1.25,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.PRIMARY_MEDIUM),
-                          ),
-                          // SizedBox(width: defaultSize * 0.5),
-                          // Text(
-                          //   "|",
-                          //   style: GoogleFonts.poppins(
-                          //       fontSize: defaultSize * 1.5,
-                          //       fontWeight: FontWeight.w500,
-                          //       color: AppColor.PRIMARY_MEDIUM),
-                          // ),
-                          // SizedBox(width: defaultSize * 0.5),
-                          // Icon(
-                          //   Icons.star,
-                          //   color: Color.fromRGBO(96, 127, 99, 1.0),
-                          //   size: defaultSize * 1.5,
-                          // ),
-                          // SizedBox(width: defaultSize * 0.5),
-                          // Text(
-                          //   "4.0 / 5",
-                          //   style: GoogleFonts.poppins(
-                          //       fontSize: defaultSize * 1.25,
-                          //       fontWeight: FontWeight.w400,
-                          //       color: AppColor.PRIMARY_MEDIUM),
-                          // ),
-                        ],
-                      ),
+                      Text(widget.distance,
+                          style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 1.25,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.PRIMARY_MEDIUM)),
+                      // Row(
+                      //   children: [
+                      //     Icon(
+                      //       Icons.location_on,
+                      //       color: Color.fromRGBO(96, 127, 99, 1.0),
+                      //       size: defaultSize * 1.5,
+                      //     ),
+                      //     SizedBox(width: defaultSize * 0.5),
+                      //     Text(
+                      //       widget.distance,
+                      //       style: GoogleFonts.poppins(
+                      //           fontSize: defaultSize * 1.25,
+                      //           fontWeight: FontWeight.w400,
+                      //           color: AppColor.PRIMARY_MEDIUM),
+                      //     ),
+                      // SizedBox(width: defaultSize * 0.5),
+                      // Text(
+                      //   "|",
+                      //   style: GoogleFonts.poppins(
+                      //       fontSize: defaultSize * 1.5,
+                      //       fontWeight: FontWeight.w500,
+                      //       color: AppColor.PRIMARY_MEDIUM),
+                      // ),
+                      // SizedBox(width: defaultSize * 0.5),
+                      // Icon(
+                      //   Icons.star,
+                      //   color: Color.fromRGBO(96, 127, 99, 1.0),
+                      //   size: defaultSize * 1.5,
+                      // ),
+                      // SizedBox(width: defaultSize * 0.5),
+                      // Text(
+                      //   "4.0 / 5",
+                      //   style: GoogleFonts.poppins(
+                      //       fontSize: defaultSize * 1.25,
+                      //       fontWeight: FontWeight.w400,
+                      //       color: AppColor.PRIMARY_MEDIUM),
+                      // ),
                     ],
                   ),
+                  // ],
                 ),
               ),
+              // ),
               Spacer(),
               Container(
                 margin: EdgeInsets.only(right: defaultSize * 2.5),
