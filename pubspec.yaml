@@ -29,7 +29,7 @@ dependencies:
   smooth_star_rating: ^1.1.1
   uuid: ^2.2.2
   cached_network_image: ^2.5.0
-  url_launcher: ^5.7.10
+  webview_flutter: 
 dev_dependencies:
   flutter_test:
     sdk: flutter

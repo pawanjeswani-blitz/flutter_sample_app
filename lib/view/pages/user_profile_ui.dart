@@ -11,13 +11,14 @@ import 'package:saloonwala_consumer/view/pages/edit_profile.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/login_page.dart';
 import 'package:saloonwala_consumer/view/pages/past_appointments.dart';
+import 'package:saloonwala_consumer/view/pages/saloonawala_terms.dart';
+import 'package:saloonwala_consumer/view/pages/saloonwala_privacy.dart';
 import 'package:saloonwala_consumer/view/pages/upcoming_appointments_screen.dart';
 import 'package:saloonwala_consumer/view/widget/custom_appbar.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_menu_item.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileUI extends StatefulWidget {
   @override
@@ -112,13 +113,18 @@ class _UserProfileUIState extends State<UserProfileUI> {
               ProfileMenuItem(
                 iconSrc: Icons.privacy_tip,
                 title: 'Privacy Policy',
-                press: () {},
+                press: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SaloonWalaPrivacy()));
+                },
               ),
               ProfileMenuItem(
                 iconSrc: Icons.assignment_returned,
                 title: 'Terms & Conditions',
                 press: () {
-                  _launchURL();
+                  // _launchURL();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SaloonWalaTerms()));
                 },
               ),
               ProfileMenuItem(
@@ -193,14 +199,14 @@ class _UserProfileUIState extends State<UserProfileUI> {
     );
   }
 
-  _launchURL() async {
-    const url = 'http://saloonwala.in/';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  // _launchURL() async {
+  //   const url = 'http://saloonwala.in/';
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
