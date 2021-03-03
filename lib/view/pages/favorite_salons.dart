@@ -31,7 +31,6 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
     final res = await FavoriteService.getSalonFeedForFavorite();
     setState(() {
       _salonData = res.data.list;
-      // _wsalonData = res.data.list.a;
     });
   }
 
@@ -80,6 +79,11 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
                         },
                         thumb: _salonData[position].thumbnail1,
                         redirect: () async {
+                          for (int i = 0; i < _salonData.length; i++) {
+                            setState(() {
+                              _wsalonData = _salonData[i];
+                            });
+                          }
                           final userProfile = await AppSessionManager
                               .getUserProfileAfterLogin();
                           Navigator.of(context).push(
@@ -89,7 +93,7 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
                                 salonName: _salonData[position].name,
                                 userprofile: userProfile,
                                 salonList: _salonData,
-                                // salonInfo: _salonData,
+                                salonInfo: _wsalonData,
                               ),
                             ),
                           );

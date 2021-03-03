@@ -112,9 +112,16 @@ class _SearchSalonsState extends State<SearchSalons> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: FloatingSearchBar(
+        child: FloatingSearchAppBar(
+          alwaysOpened: true,
           iconColor: Colors.grey[500],
           controller: controller,
+          colorOnScroll: Colors.white,
+          hintStyle: GoogleFonts.poppins(),
+          transitionCurve: Curves.easeInOut,
+          // progress: 70.0,
+          // clearQueryOnClose: true,
+          // alwaysOpened:true,
           body: selectedTerm == null
               ? Center(
                   child: Column(
@@ -132,39 +139,35 @@ class _SearchSalonsState extends State<SearchSalons> {
                     ],
                   ),
                 )
-              : Padding(
-                  padding: EdgeInsets.only(top: defaultSize * 7.0),
-                  child: Container(
-                    child: PagedListView<int, SalonData>(
-                      shrinkWrap: true,
-                      pagingController: _pagingController,
-                      builderDelegate: PagedChildBuilderDelegate<SalonData>(
-                          firstPageProgressIndicatorBuilder: (context) =>
-                              Center(child: CircularProgressIndicator()),
-                          itemBuilder: (context, item, index) =>
-                              SearchSalonCard(
-                                title: item.name.toString(),
-                                distance: item.distance.toStringAsFixed(1),
-                                customfunction: () async {
-                                  final userProfile = await AppSessionManager
-                                      .getUserProfileAfterLogin();
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          SalonServicesTabView(
-                                            salonId: item.id,
-                                            salonName: item.name,
-                                            userprofile: userProfile,
-                                          )));
-                                },
-                                customFunctionLike: () {
-                                  // _onAddFavorite(item.id);
-                                },
-                              )),
-                    ),
+              : Container(
+                  child: PagedListView<int, SalonData>(
+                    shrinkWrap: true,
+                    pagingController: _pagingController,
+                    builderDelegate: PagedChildBuilderDelegate<SalonData>(
+                        firstPageProgressIndicatorBuilder: (context) =>
+                            Center(child: CircularProgressIndicator()),
+                        itemBuilder: (context, item, index) => SearchSalonCard(
+                              title: item.name.toString(),
+                              distance: item.distance.toStringAsFixed(1),
+                              customfunction: () async {
+                                final userProfile = await AppSessionManager
+                                    .getUserProfileAfterLogin();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => SalonServicesTabView(
+                                          salonId: item.id,
+                                          salonName: item.name,
+                                          userprofile: userProfile,
+                                          salonInfo: item,
+                                        )));
+                              },
+                              customFunctionLike: () {
+                                // _onAddFavorite(item.id);
+                              },
+                            )),
                   ),
                 ),
-          transition: CircularFloatingSearchBarTransition(),
-          physics: BouncingScrollPhysics(),
+          // transition: CircularFloatingSearchBarTransition(),
+          // physics: BouncingScrollPhysics(),
           title: Text(
             selectedTerm ?? 'Start Typing...',
             style: GoogleFonts.poppins(
@@ -190,79 +193,6 @@ class _SearchSalonsState extends State<SearchSalons> {
 
             controller.close();
             _fetchPage(1);
-          },
-          builder: (context, transition) {
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Material(
-                color: Colors.white,
-                elevation: 4,
-                child: Builder(
-                  builder: (context) {
-                    if (filteredSearchHistory.isEmpty &&
-                        controller.query.isEmpty) {
-                      return Container(
-                        height: defaultSize * 6.0,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Start searching',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 1.5,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      );
-                    } else if (filteredSearchHistory.isEmpty) {
-                      return ListTile(
-                        title: Text(controller.query),
-                        leading: const Icon(Icons.search),
-                        onTap: () {
-                          setState(() {
-                            addSearchTerm(controller.query);
-                            selectedTerm = controller.query;
-                          });
-                          controller.close();
-                        },
-                      );
-                    } else {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: filteredSearchHistory
-                            .map(
-                              (term) => ListTile(
-                                title: Text(
-                                  term,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                leading: const Icon(Icons.history),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  onPressed: () {
-                                    setState(() {
-                                      deleteSearchTerm(term);
-                                    });
-                                  },
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    putSearchTermFirst(term);
-                                    selectedTerm = term;
-                                  });
-                                  controller.close();
-                                },
-                              ),
-                            )
-                            .toList(),
-                      );
-                    }
-                  },
-                ),
-              ),
-            );
           },
         ),
       ),
