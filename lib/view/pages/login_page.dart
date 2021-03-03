@@ -22,8 +22,8 @@ import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 // Text Controllers for taking input from text form field
-TextEditingController mobilenoController = TextEditingController();
-TextEditingController otpController = TextEditingController();
+TextEditingController _mobilenoController = TextEditingController();
+TextEditingController _otpController = TextEditingController();
 
 class LoginPage extends StatefulWidget {
   @override
@@ -204,6 +204,7 @@ class _LoginPageState extends State<LoginPage> {
               child: TextFormField(
                 validator: _validatePhoneNumber,
                 cursorColor: AppColor.PRIMARY_DARK,
+                enableSuggestions: true,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(10)
@@ -259,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                 key: ObjectKey('otp'),
                 readOnly: readOnly,
                 validator: _validateOTP,
-                controller: otpController,
+                // controller: _otpController,
                 enableSuggestions: false,
                 autocorrect: false,
                 cursorColor: AppColor.PRIMARY_DARK,

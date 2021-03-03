@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
+import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/edit_profile.dart';
+import 'package:saloonwala_consumer/view/pages/home_page.dart';
+import 'package:saloonwala_consumer/view/pages/login_page.dart';
 import 'package:saloonwala_consumer/view/pages/past_appointments.dart';
 import 'package:saloonwala_consumer/view/pages/upcoming_appointments_screen.dart';
 import 'package:saloonwala_consumer/view/widget/custom_appbar.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_menu_item.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileUI extends StatefulWidget {
@@ -22,6 +27,7 @@ class UserProfileUI extends StatefulWidget {
 class _UserProfileUIState extends State<UserProfileUI> {
   UserProfileLogin _userProfileLogin;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  double defaultOverride;
   @override
   void initState() {
     super.initState();
@@ -55,7 +61,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
-
+    defaultOverride = defaultSize;
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
@@ -118,7 +124,9 @@ class _UserProfileUIState extends State<UserProfileUI> {
               ProfileMenuItem(
                 iconSrc: Icons.logout,
                 title: 'Logout',
-                press: () {},
+                press: () async {
+                  _showLogout();
+                },
                 hasNavigation: false,
               ),
               SizedBox(
@@ -128,6 +136,60 @@ class _UserProfileUIState extends State<UserProfileUI> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _showLogout() {
+    Widget cancelButton = FlatButton(
+      child: Text(
+        "Cancel",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text(
+        "Logout",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () async {
+        Navigator.pop(context);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.clear();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Are you sure you want to logout",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.49,
+          color: Colors.grey[500],
+        ),
+      ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
