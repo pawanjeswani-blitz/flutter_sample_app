@@ -12,12 +12,14 @@ import 'package:saloonwala_consumer/model/non_login_response.dart';
 import 'package:saloonwala_consumer/model/otp_response.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:package_info/package_info.dart';
+import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:uuid/uuid.dart';
 
 class AuthService {
   static Future<SuperResponse<NonLoginResponse>> getNonAuthToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    // final fcmToken = await firebaseMessaging.getToken();
     var uuid = Uuid();
     // final fcmToken = await firebaseMessaging.getToken();
     final body = {};

@@ -41,7 +41,7 @@ class SalonSlotsUI extends StatefulWidget {
 class _SalonSlotsUIState extends State<SalonSlotsUI> {
   DateTime _selectedDateTime;
   AvailableSlotsResponse _availableSlotsResponse;
-  Slots _selectedTimeSlot;
+  List<Slots> _selectedTimeSlot = [];
   Employee _selectedEmployee;
   DateTime _currentDate = DateTime.now(); // DateTime.now for current Date
   DateFormat formatSelectedDate = DateFormat(
@@ -75,7 +75,10 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
         ),
         elevation: 0.0,
         leading: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.pop(context);
+            widget.selectedServiceList.clear();
+          },
           child: Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
@@ -110,7 +113,6 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                       print(currentDateFormat);
                       if (_selectedDateTime != null) {
                         _availableSlotsResponse = null;
-                        _selectedTimeSlot = null;
                         _selectedEmployee = null;
                         _loadAvaiableTimeSlotFromApi(_selectedDateTime);
                         setState(() {});
@@ -198,7 +200,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                   ],
                 ),
               ),
-              if (_selectedTimeSlot != null) _getEmployeeListWidget(),
+              if (_selectedTimeSlot.isNotEmpty) _getEmployeeListWidget(),
 
               SizedBox(
                 height: defaultSize * 0.0,
@@ -228,8 +230,8 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
   }
 
   Widget _getEmployeeListWidget() {
-    final List<Employee> emmployeeList =
-        _availableSlotsResponse.slotMap[_selectedTimeSlot.startTime.toString()];
+    final List<Employee> emmployeeList = _availableSlotsResponse
+        .slotMap[_selectedTimeSlot.first.startTime.toString()];
 
     return Container(
       height: defaultSizeOveride * 15.0,
@@ -292,61 +294,90 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
     );
   }
 
-  Widget _getTimeSelectListViewWidget() => Container(
-        height: defaultSizeOveride * 25.0,
-        margin: EdgeInsets.symmetric(horizontal: defaultSizeOveride * 2.0),
-        child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 4.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 2.8),
-            // scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _availableSlotsResponse.slots.length,
-            itemBuilder: (BuildContext context, int position) {
-              DateTime date = new DateTime.fromMillisecondsSinceEpoch(
-                  _availableSlotsResponse.slots[position].startTime);
-              var formatting = new DateFormat("hh:mm a");
-              dateString = formatting.format(date);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedEmployee = null;
-                    _selectedTimeSlot = _availableSlotsResponse.slots[position];
-                  });
-                },
-                child: Container(
-                  // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Color.fromRGBO(172, 125, 83, 1),
+  Widget _getTimeSelectListViewWidget() => SizedBox(
+        height: defaultSizeOveride * 28.0,
+        child: Container(
+          margin: EdgeInsets.only(
+            left: defaultSizeOveride * 2.25,
+            right: defaultSizeOveride * 2.25,
+          ),
+          child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 7.5,
+                  mainAxisSpacing: 15.0,
+                  childAspectRatio: 3.5),
+              shrinkWrap: true,
+              // scrollDirection: Axis.horizontal,
+              // physics: const NeverScrollableScrollPhysics(),
+              itemCount: _availableSlotsResponse.slots.length,
+              itemBuilder: (BuildContext context, int position) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedEmployee = null;
+                      if (_selectedTimeSlot
+                          .contains(_availableSlotsResponse.slots[position])) {
+                        //Remove Time Slots From Lists
+                        if (_selectedTimeSlot.last.startTime ==
+                            _availableSlotsResponse.slots[position].endTime) {
+                          showSnackBar("Cannot remove slot");
+                        } else {
+                          _selectedTimeSlot
+                              .remove(_availableSlotsResponse.slots[position]);
+                        }
+                      } else {
+                        //add time slots to list
+                        //to do check sequencing
+                        if (_selectedTimeSlot.isEmpty) {
+                          _selectedTimeSlot
+                              .add(_availableSlotsResponse.slots[position]);
+                        } else {
+                          if (_selectedTimeSlot.last.endTime ==
+                              _availableSlotsResponse
+                                  .slots[position].startTime) {
+                            _selectedTimeSlot
+                                .add(_availableSlotsResponse.slots[position]);
+                          } else {
+                            showSnackBar(
+                                "Please Select slots in sequence manner");
+                          }
+                        }
+                      }
+                      // _selectedTimeSlot = _availableSlotsResponse.slots[position];
+                    });
+                  },
+                  child: Container(
+                    // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color.fromRGBO(172, 125, 83, 1),
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                      color: _selectedTimeSlot
+                              .contains(_availableSlotsResponse.slots[position])
+                          ? Color.fromRGBO(172, 125, 83, 1)
+                          : Colors.transparent,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    color: _selectedTimeSlot?.startTime ==
-                            _availableSlotsResponse.slots[position].startTime
-                        ? Color.fromRGBO(172, 125, 83, 1)
-                        : Colors.transparent,
-                  ),
-                  child: Center(
-                    child: Text(
-                      dateString.toString(),
-                      style: GoogleFonts.poppins(
-                        color: _selectedTimeSlot?.startTime ==
-                                _availableSlotsResponse
-                                    .slots[position].startTime
-                            ? Colors.white
-                            : Colors.black,
+                    child: Center(
+                      child: Text(
+                        "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].endTime))}",
+                        style: GoogleFonts.poppins(
+                            color: _selectedTimeSlot.contains(
+                                    _availableSlotsResponse.slots[position])
+                                ? Colors.white
+                                : Colors.grey[800],
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+        ),
       );
 
   void _loadAvaiableTimeSlotFromApi(DateTime dateTime) async {
-    final res = await FetchSlots.getTitleSlot(dateTime, widget.salonId);
+    final res = await FetchSlots.getTitleSlot(dateTime, 99);
     setState(() {
       _availableSlotsResponse = res.data;
     });
@@ -368,25 +399,25 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
         final response = await FetchSlots.bookSlot(
             DateUtil.getDisplayFormatDate(_selectedDateTime),
             _selectedEmployee.id,
-            _selectedTimeSlot.endTime,
+            _selectedTimeSlot.last.endTime,
             widget.salonId,
-            _selectedTimeSlot.startTime,
+            _selectedTimeSlot.first.startTime,
             service);
         //close the progress dialog
         Navigator.of(context).pop();
         if (response.error == null) {
           //check the user is already register or not
           if (response.data == null) {
-            final userProfile = await AppSessionManager.getUserProfile();
+            // final userProfile = await AppSessionManager.getUserProfile();
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => BookingDetails(
                       salonId: widget.salonId,
                       salonName: widget.salonName,
                       selectedServiceList: widget.selectedServiceList,
-                      employeeName: _selectedEmployee.firstName.toString(),
-                      dateString: DateUtil.getDisplayFormatHour(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              _selectedTimeSlot.startTime)),
+                      employeeName:
+                          "${_selectedEmployee.firstName.toString()} ${_selectedEmployee.lastName.toString()}",
+                      dateString:
+                          " ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_selectedTimeSlot.first.startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_selectedTimeSlot.last.endTime))}",
                       dayMonth: DateUtil.getDisplayFormatDay(_selectedDateTime),
                       userProfile: widget.userProfile,
                     )));

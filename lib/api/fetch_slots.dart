@@ -17,7 +17,7 @@ class FetchSlots {
     final body = {
       "authToken": loginAuthToken,
       "date": DateUtil.getDisplayFormatDate(dateTime),
-      "salonId": 1
+      "salonId": salonId
     };
     debugPrint("${Constants.SecondryUrl}${Constants.GetSalonSlots}");
     debugPrint(jsonEncode(body));

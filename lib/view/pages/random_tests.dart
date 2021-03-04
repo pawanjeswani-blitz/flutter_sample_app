@@ -52,9 +52,11 @@ class _RandomTestUIState extends State<RandomTestUI> {
   double defaultSizeOveride;
   List<int> service = [];
   List<Slots> seletcedSlots = [];
-  List<Slots> hi = [];
+  List<Slots> newSlots = [];
   bool _checked = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scrollController = ScrollController();
+  final _scrollController1 = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -90,144 +92,170 @@ class _RandomTestUIState extends State<RandomTestUI> {
         ),
         backgroundColor: Color.fromRGBO(172, 125, 83, 1),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: defaultSize * 34.0,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(172, 125, 83, 1),
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(45.0),
-                      bottomRight: Radius.circular(45.0)),
+      body: Scrollbar(
+        controller: _scrollController1,
+        // isAlwaysShown: true,
+
+        radius: Radius.circular(5.0),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: defaultSize * 34.0,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(172, 125, 83, 1),
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(45.0),
+                        bottomRight: Radius.circular(45.0)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: defaultSize * 2.0,
+                        vertical: defaultSize * 1.5),
+                    child: CalendarCarousel<Event>(
+                      onDayPressed: (DateTime date, List<Event> events) {
+                        this.setState(() {
+                          _currentDate = date;
+                          currentDateFormat =
+                              formatSelectedDate.format(_currentDate);
+                          _selectedDateTime = _currentDate;
+                        });
+                        print(currentDateFormat);
+                        if (_selectedDateTime != null) {
+                          _availableSlotsResponse = null;
+                          _selectedTimeSlot = null;
+                          _selectedEmployee = null;
+                          _loadAvaiableTimeSlotFromApi(_selectedDateTime);
+                          setState(() {});
+                        }
+                      },
+                      todayButtonColor: Colors.transparent,
+                      // customGridViewPhysics: NeverScrollableScrollPhysics(),
+                      pageScrollPhysics: NeverScrollableScrollPhysics(),
+                      weekendTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                      ),
+                      headerTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: defaultSize * 2.154,
+                      ),
+                      iconColor: Colors.white,
+                      childAspectRatio: 1.525685845,
+                      weekdayTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                      ),
+                      selectedDayButtonColor: Color.fromRGBO(204, 168, 134, 1),
+                      selectedDayTextStyle:
+                          GoogleFonts.poppins(color: Colors.black),
+                      daysTextStyle: GoogleFonts.poppins(color: Colors.white),
+                      minSelectedDate:
+                          DateTime.now().subtract(Duration(days: 1)),
+                      maxSelectedDate: DateTime.now().add(Duration(days: 30)),
+                      selectedDateTime: _currentDate,
+                    ),
+                  ),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 2.0,
-                      vertical: defaultSize * 1.5),
-                  child: CalendarCarousel<Event>(
-                    onDayPressed: (DateTime date, List<Event> events) {
-                      this.setState(() {
-                        _currentDate = date;
-                        currentDateFormat =
-                            formatSelectedDate.format(_currentDate);
-                        _selectedDateTime = _currentDate;
-                      });
-                      print(currentDateFormat);
-                      if (_selectedDateTime != null) {
-                        _availableSlotsResponse = null;
-                        _selectedTimeSlot = null;
-                        _selectedEmployee = null;
-                        _loadAvaiableTimeSlotFromApi(_selectedDateTime);
-                        setState(() {});
-                      }
+                SizedBox(
+                  height: defaultSize * 2.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(defaultSize * 2.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            "AVAILABLE SLOTS",
+                            style: GoogleFonts.poppins(
+                              color: Color.fromRGBO(172, 125, 83, 1),
+                              fontSize: defaultSize * 2.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: defaultSize * 1.85),
+                          Expanded(
+                            child: Divider(
+                              color: Color.fromRGBO(216, 206, 197, 0.32),
+                              thickness: defaultSize * 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: defaultSize * 1.0,
+                      ),
+                      Text(
+                        "kindly select slots in sequential order",
+                        style: GoogleFonts.poppins(
+                          color: Color.fromRGBO(172, 125, 83, 1),
+                          fontSize: defaultSize * 1.5,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //show the avaiable time slot if the data is present else show the laoder
+                _availableSlotsResponse == null
+                    ? CircularProgressIndicator()
+                    : _getTimeSelectListViewWidget(),
+
+                // SizedBox(
+                //   height: width * 0.045,
+                // ),
+                //show employee if the slot is selected
+                //NOTE: this kidnd of condition writing is only supported in dart 2.2.2 and above
+                Padding(
+                  padding: EdgeInsets.all(defaultSize * 2.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "SPECIALIST",
+                        style: GoogleFonts.poppins(
+                          color: Color.fromRGBO(172, 125, 83, 1),
+                          fontSize: defaultSize * 2.32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: defaultSize * 1.0),
+                      Expanded(
+                        child: Divider(
+                          color: Color.fromRGBO(216, 206, 197, 0.32),
+                          thickness: defaultSize * 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_selectedTimeSlot != null) _getEmployeeListWidget(),
+
+                SizedBox(
+                  height: defaultSize * 0.0,
+                ),
+
+                //if staff is selected then show the book appointment button
+                if (_selectedEmployee != null)
+                  GestureDetector(
+                    onTap: () {
+                      onBookAppointmentButtonClick();
                     },
-                    todayButtonColor: Colors.transparent,
-                    // customGridViewPhysics: NeverScrollableScrollPhysics(),
-                    pageScrollPhysics: NeverScrollableScrollPhysics(),
-                    weekendTextStyle: GoogleFonts.poppins(
-                      color: Colors.white,
-                    ),
-                    headerTextStyle: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: defaultSize * 2.154,
-                    ),
-                    iconColor: Colors.white,
-                    childAspectRatio: 1.525685845,
-                    weekdayTextStyle: GoogleFonts.poppins(
-                      color: Colors.white,
-                    ),
-                    selectedDayButtonColor: Color.fromRGBO(204, 168, 134, 1),
-                    selectedDayTextStyle:
-                        GoogleFonts.poppins(color: Colors.black),
-                    daysTextStyle: GoogleFonts.poppins(color: Colors.white),
-                    minSelectedDate: DateTime.now().subtract(Duration(days: 1)),
-                    maxSelectedDate: DateTime.now().add(Duration(days: 30)),
-                    selectedDateTime: _currentDate,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: defaultSize * 2.0,
-              ),
-              Padding(
-                padding: EdgeInsets.all(defaultSize * 2.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "AVAILABLE SLOTS",
-                      style: GoogleFonts.poppins(
-                        color: Color.fromRGBO(172, 125, 83, 1),
-                        fontSize: defaultSize * 2.0,
-                        fontWeight: FontWeight.bold,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.8,
+                          vertical: defaultSize * 1.25),
+                      child: RoundedButtonSlot(
+                        buttontext: 'Book Appointment',
                       ),
-                    ),
-                    SizedBox(width: defaultSize * 1.85),
-                    Expanded(
-                      child: Divider(
-                        color: Color.fromRGBO(216, 206, 197, 0.32),
-                        thickness: defaultSize * 1.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              //show the avaiable time slot if the data is present else show the laoder
-              _availableSlotsResponse == null
-                  ? CircularProgressIndicator()
-                  : _getTimeSelectListViewWidget(),
-
-              // SizedBox(
-              //   height: width * 0.045,
-              // ),
-              //show employee if the slot is selected
-              //NOTE: this kidnd of condition writing is only supported in dart 2.2.2 and above
-              Padding(
-                padding: EdgeInsets.all(defaultSize * 2.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "SPECIALIST",
-                      style: GoogleFonts.poppins(
-                        color: Color.fromRGBO(172, 125, 83, 1),
-                        fontSize: defaultSize * 2.32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: defaultSize * 1.0),
-                    Expanded(
-                      child: Divider(
-                        color: Color.fromRGBO(216, 206, 197, 0.32),
-                        thickness: defaultSize * 1.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (_selectedTimeSlot != null) _getEmployeeListWidget(),
-
-              SizedBox(
-                height: defaultSize * 0.0,
-              ),
-
-              //if staff is selected then show the book appointment button
-              if (_selectedEmployee != null)
-                GestureDetector(
-                  onTap: () {
-                    onBookAppointmentButtonClick();
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: defaultSize * 1.8),
-                    child: RoundedButtonSlot(
-                      buttontext: 'Book Appointment',
                     ),
                   ),
-                ),
-              SizedBox(
-                height: defaultSize * 2.0,
-              )
-            ],
+                SizedBox(
+                  height: defaultSize * 2.0,
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -240,65 +268,91 @@ class _RandomTestUIState extends State<RandomTestUI> {
 
     return Container(
       height: defaultSizeOveride * 15.0,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: emmployeeList.length,
-          itemBuilder: (BuildContext context, int position) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedEmployee = emmployeeList[position];
-                });
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: defaultSizeOveride * 5.25,
-                    width: defaultSizeOveride * 5.25,
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    decoration: BoxDecoration(
-                      border:
-                          Border.all(color: Color.fromRGBO(172, 125, 83, 1)),
-                      color: _selectedEmployee?.id == emmployeeList[position].id
-                          ? Color.fromRGBO(172, 125, 83, 1)
-                          : Colors.transparent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        emmployeeList[position].firstName[0],
-                        style: GoogleFonts.poppins(
-                          color: _selectedEmployee?.id ==
-                                  emmployeeList[position].id
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: defaultSizeOveride * 1.85,
+      child: Scrollbar(
+        controller: _scrollController,
+        isAlwaysShown: true,
+        radius: Radius.circular(
+          25.0,
+        ),
+        child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: emmployeeList.length,
+            itemBuilder: (BuildContext context, int position) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedEmployee = emmployeeList[position];
+                  });
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      height: defaultSizeOveride * 5.25,
+                      width: defaultSizeOveride * 5.25,
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Color.fromRGBO(172, 125, 83, 1)),
+                        color:
+                            _selectedEmployee?.id == emmployeeList[position].id
+                                ? Color.fromRGBO(172, 125, 83, 1)
+                                : Colors.transparent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          emmployeeList[position].firstName[0],
+                          style: GoogleFonts.poppins(
+                            color: _selectedEmployee?.id ==
+                                    emmployeeList[position].id
+                                ? Colors.white
+                                : Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: defaultSizeOveride * 1.85,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: defaultSizeOveride * 1.5),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: defaultSizeOveride * 2.0, vertical: 0.0),
-                      child: Text(
-                        emmployeeList[position].firstName,
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: defaultSizeOveride * 1.5,
+                    SizedBox(height: defaultSizeOveride * 1.5),
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: defaultSizeOveride * 2.0,
+                            vertical: 0.0),
+                        child: Text(
+                          emmployeeList[position].firstName,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: defaultSizeOveride * 1.5,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }),
+                    SizedBox(height: defaultSizeOveride * 1.25),
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: defaultSizeOveride * 2.0,
+                            vertical: 0.0),
+                        child: Text(
+                          emmployeeList[position].type,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: defaultSizeOveride * 1.35,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+      ),
     );
   }
 
+  // _animateToIndex(i) => _scrollController.animateTo(defaultSizeOveride * i,
+  //     duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn);
   // Widget _getTimeSelectListViewWidget() => Container(
   //       height: defaultSizeOveride * 25.0,
   //       margin: EdgeInsets.symmetric(horizontal: defaultSizeOveride * 2.0),
@@ -394,46 +448,48 @@ class _RandomTestUIState extends State<RandomTestUI> {
   //         },
   //       ),
   //     );
-  dynamic getdata(Slots value) {
-    List<String> hed = [];
-    for (int i = 0; i < _availableSlotsResponse.slots.length; i++) {
-      hed.add(hi[i].startTime.toString());
-    }
-    return hed;
-  }
 
   List<String> hed = [];
-  Widget _getTimeSelectListViewWidget() => SizedBox(
-        height: defaultSizeOveride * 25.0,
-        child: MultiSelectDialog(
-          items: _availableSlotsResponse.slots
-              .map(
-                (slot) => MultiSelectItem<Slots>(slot,
-                    " ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.endTime))}"),
-              )
-              .toList(),
-          itemsTextStyle:
-              GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.75),
-          selectedItemsTextStyle:
-              GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.5),
-          // listType: List<Slots>,
-          unselectedColor: Color.fromRGBO(172, 125, 83, 1),
-          selectedColor: Color.fromRGBO(172, 125, 83, 1),
-          initialValue: [],
-          // listType: MultiSelectListType.CHIP,
-          onSelectionChanged: (_selectedValues) {
-            setState(() {
-              _selectedEmployee = null;
-              seletcedSlots = _selectedValues.cast<Slots>();
-            });
-            for (int i = 0; i < seletcedSlots.length; i++) {
-              setState(() {
-                _selectedTimeSlot = seletcedSlots[i];
-              });
-              print(
-                  "${seletcedSlots[i].startTime} - ${seletcedSlots[i].endTime}");
-            }
-          },
+  Widget _getTimeSelectListViewWidget() => Scrollbar(
+        controller: _scrollController,
+        radius: Radius.circular(5.0),
+        isAlwaysShown: true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: SizedBox(
+            height: defaultSizeOveride * 25.0,
+            child: MultiSelectDialog(
+              items: _availableSlotsResponse.slots
+                  .map(
+                    (slot) => MultiSelectItem<Slots>(slot,
+                        " ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(slot.endTime))}"),
+                  )
+                  .toList(),
+              itemsTextStyle:
+                  GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.75),
+              selectedItemsTextStyle:
+                  GoogleFonts.poppins(fontSize: defaultSizeOveride * 1.5),
+
+              // listType: List<Slots>,
+              unselectedColor: Color.fromRGBO(172, 125, 83, 1),
+              selectedColor: Color.fromRGBO(172, 125, 83, 1),
+              initialValue: [],
+              // listType: MultiSelectListType.CHIP,
+              onSelectionChanged: (_selectedValues) {
+                setState(() {
+                  _selectedEmployee = null;
+                  seletcedSlots = _selectedValues.cast<Slots>();
+                });
+                for (int i = 1; i < seletcedSlots.length; i++) {
+                  setState(() {
+                    _selectedTimeSlot = seletcedSlots[i];
+                  });
+                  print(
+                      "${seletcedSlots[i].startTime} - ${seletcedSlots[i].endTime}");
+                }
+              },
+            ),
+          ),
         ),
       );
 

@@ -124,7 +124,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                   final userProfile =
                                       await AppSessionManager.getUserProfile();
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => RandomTestUI(
+                                      builder: (context) => SalonSlotsUI(
                                             selectedServiceList:
                                                 _selectedServiceList,
                                             salonId: widget.salonId,

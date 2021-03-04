@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:like_button/like_button.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
@@ -7,7 +8,7 @@ import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 class SalonCard extends StatefulWidget {
   final String title;
   final dynamic distance;
-  final Function customfunction, customFunctionLike;
+  final Function customfunction, customFunctionLike, customFnc;
   final Color color;
   final String thumb;
   final bool liked;
@@ -18,9 +19,10 @@ class SalonCard extends StatefulWidget {
     this.distance,
     this.customfunction,
     this.customFunctionLike,
+    this.customFnc,
     this.color,
     this.thumb,
-    this.liked = false,
+    this.liked,
   }) : super(key: key);
 
   @override
@@ -144,39 +146,86 @@ class _SalonCardState extends State<SalonCard> {
               // ),
               Spacer(),
               Container(
-                margin: EdgeInsets.only(right: defaultSize * 2.5),
+                margin: EdgeInsets.only(
+                  right: defaultSize * 2.5,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        widget.customFunctionLike();
-                      },
+                    Container(
+                      height: defaultSize * 3.0,
+                      width: defaultSize * 3.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: Offset(0, 0), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       child: Container(
-                        height: defaultSize * 2.8,
-                        width: defaultSize * 2.8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 0), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.favorite,
-                          size: defaultSize * 1.85,
-                          color: widget.liked ? widget.color : widget.color,
+                        margin: EdgeInsets.only(left: defaultSize * 0.30),
+                        child: LikeButton(
+                          isLiked: widget.liked,
+                          onTap: (bool isLiked) async {
+                            if (isLiked) {
+                              widget.customFunctionLike();
+                            } else {
+                              widget.customFnc();
+                            }
+                            return !isLiked;
+                          },
+                          size: defaultSize * 1.82,
+                          circleColor: CircleColor(
+                              start: Color(0xff00ddff), end: Color(0xff0099cc)),
+                          bubblesColor: BubblesColor(
+                            dotPrimaryColor: Color(0xff33b5e5),
+                            dotSecondaryColor: Color(0xff0099cc),
+                          ),
+                          likeBuilder: (bool isLiked) {
+                            return Icon(
+                              Icons.favorite,
+                              color:
+                                  isLiked ? Colors.red[800] : Colors.grey[400],
+                              size: defaultSize * 1.82,
+                            );
+                          },
                         ),
                       ),
                     ),
+                    // InkWell(
+                    //   splashColor: Colors.transparent,
+                    //   highlightColor: Colors.transparent,
+                    //   onTap: () {
+                    //     widget.customFunctionLike();
+                    //   },
+                    //   child: Container(
+                    //     height: defaultSize * 2.8,
+                    //     width: defaultSize * 2.8,
+                    //     decoration: BoxDecoration(
+                    //       shape: BoxShape.circle,
+                    //       color: Colors.white,
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.grey.withOpacity(0.5),
+                    //           spreadRadius: 1,
+                    //           blurRadius: 3,
+                    //           offset:
+                    //               Offset(0, 0), // changes position of shadow
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     child: Icon(
+                    //       Icons.favorite,
+                    //       size: defaultSize * 1.85,
+                    //       color: widget.color,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

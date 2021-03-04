@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloonwala_consumer/api/feedback_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
+import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
+import 'package:saloonwala_consumer/model/salon_data.dart';
+import 'package:saloonwala_consumer/model/super_response.dart';
+import 'package:saloonwala_consumer/utils/internet_util.dart';
+import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
+import 'package:saloonwala_consumer/view/pages/home_page.dart';
+import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class SalonRatingScreen extends StatefulWidget {
+  final int bookingId;
+  final SalonDetails salonData;
+
+  const SalonRatingScreen({Key key, this.bookingId, this.salonData})
+      : super(key: key);
   @override
   _SalonRatingScreenState createState() => _SalonRatingScreenState();
 }
@@ -13,11 +26,13 @@ class SalonRatingScreen extends StatefulWidget {
 class _SalonRatingScreenState extends State<SalonRatingScreen> {
   double rating = 0;
   String comment;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
@@ -85,7 +100,7 @@ class _SalonRatingScreenState extends State<SalonRatingScreen> {
               child: Row(
                 children: [
                   Text(
-                    "Rate BBLUNT",
+                    "Rate ${widget.salonData.name.toUpperCase()}",
                     style: GoogleFonts.poppins(
                       fontSize: defaultSize * 2.0,
                       color: AppColor.PRIMARY_DARK,
@@ -141,26 +156,105 @@ class _SalonRatingScreenState extends State<SalonRatingScreen> {
               child: TextFormField(
                 maxLines: 4,
                 decoration: _getTextFormFieldInputDecoration.copyWith(
-                    hintText: 'Comment'),
+                  hintText:
+                      'Write your feedback for ${widget.salonData.name.toUpperCase()}.....',
+                  hintStyle: GoogleFonts.poppins(
+                      fontStyle: FontStyle.italic,
+                      fontSize: defaultSize * 1.5,
+                      letterSpacing: 1.0,
+                      fontWeight: FontWeight.w500),
+                ),
                 onChanged: (value) => comment = value,
               ),
             ),
             rating == 0.0
                 ? Container()
-                : Container(
-                    margin: EdgeInsets.only(
-                      top: defaultSize * 4.0,
-                      left: defaultSize * 2.0,
-                      right: defaultSize * 2.0,
-                    ),
-                    child: RoundedButtonDark(
-                      buttontext: 'Submit',
+                : GestureDetector(
+                    onTap: () async {
+                      await _onPostRating();
+                      await _onPostComment();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavBar()));
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        top: defaultSize * 4.0,
+                        left: defaultSize * 2.0,
+                        right: defaultSize * 2.0,
+                      ),
+                      child: RoundedButtonDark(
+                        buttontext: 'Submit',
+                      ),
                     ),
                   )
           ],
         ),
       ),
     );
+  }
+
+  Future<SuperResponse<bool>> _onPostRating() async {
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await FeedBackService.postsalonRating(
+            widget.salonData.id, widget.bookingId, rating.toInt());
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          //check the user is already register or not
+          if (response.data == null) {
+            //user is register
+            print(response.data);
+            showSnackBar("Feedback submitted succesfully");
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
+  }
+
+  Future<SuperResponse<bool>> _onPostComment() async {
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await FeedBackService.postsalonComment(
+            widget.salonData.id,
+            widget.bookingId,
+            comment == '' && comment == null ? '' : comment);
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          //check the user is already register or not
+          if (response.data == null) {
+            //user is register
+            print(response.data);
+            showSnackBar(" ");
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
+  }
+
+  void showSnackBar(String errorText) {
+    final snackBar = SnackBar(
+      content: Text(errorText),
+      duration: Duration(milliseconds: 1000),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   var _getTextFormFieldInputDecoration = InputDecoration(

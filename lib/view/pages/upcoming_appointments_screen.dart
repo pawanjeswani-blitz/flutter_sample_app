@@ -203,19 +203,13 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                     pagingController: _pagingController,
                     builderDelegate:
                         PagedChildBuilderDelegate<AppointmentResponse>(
-                            noMoreItemsIndicatorBuilder: (context) {
+                            noItemsFoundIndicatorBuilder: (context) {
                               return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: defaultSize * 25.0,
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "Your request is being proccessed",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
-                                    ),
+                                child: Text(
+                                  "Your request is being proccessed",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey[500],
+                                    fontSize: defaultSize * 2.0,
                                   ),
                                 ),
                               );

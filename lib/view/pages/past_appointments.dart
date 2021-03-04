@@ -7,6 +7,7 @@ import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/appointment_response.dart';
 import 'package:saloonwala_consumer/model/appointment_salon_details.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
+import 'package:saloonwala_consumer/view/pages/rating_screen.dart';
 import 'package:saloonwala_consumer/view/pages/view_booking_details.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 
@@ -169,11 +170,11 @@ class _PastAppointmentsState extends State<PastAppointments> {
                               return Center(
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                    top: defaultSize * 25.0,
+                                    top: defaultSize * 2.0,
                                     bottom: defaultSize * 2.0,
                                   ),
                                   child: Text(
-                                    "No Records",
+                                    "You've reached the end",
                                     style: GoogleFonts.poppins(
                                       color: Colors.grey[500],
                                       fontSize: defaultSize * 2.0,
@@ -203,7 +204,17 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                             ),
                                           );
                                         },
-                                        review: () {},
+                                        review: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SalonRatingScreen(
+                                                bookingId: item.id,
+                                                salonData: item.salonDetails,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : SizedBox()),
                   ),
@@ -215,19 +226,13 @@ class _PastAppointmentsState extends State<PastAppointments> {
                     pagingController: _pagingController,
                     builderDelegate:
                         PagedChildBuilderDelegate<AppointmentResponse>(
-                            noMoreItemsIndicatorBuilder: (context) {
+                            noItemsFoundIndicatorBuilder: (context) {
                               return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: defaultSize * 25.0,
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "No Records",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
-                                    ),
+                                child: Text(
+                                  "No cancelled bookings found",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey[500],
+                                    fontSize: defaultSize * 2.0,
                                   ),
                                 ),
                               );
@@ -266,19 +271,13 @@ class _PastAppointmentsState extends State<PastAppointments> {
                     pagingController: _pagingController,
                     builderDelegate:
                         PagedChildBuilderDelegate<AppointmentResponse>(
-                            noMoreItemsIndicatorBuilder: (context) {
+                            noItemsFoundIndicatorBuilder: (context) {
                               return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: defaultSize * 25.0,
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "No more Records",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
-                                    ),
+                                child: Text(
+                                  "No cancelled bookings found",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey[500],
+                                    fontSize: defaultSize * 2.0,
                                   ),
                                 ),
                               );

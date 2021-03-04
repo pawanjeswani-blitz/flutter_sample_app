@@ -20,4 +20,5 @@ class Constants {
   static const GetSingleAppointment = 'v1/service/get/an/appointment';
   static const PostStoreRating = 'v1/service/post/store/rating';
   static const PostStoreComment = 'v1/service/post/store/comment';
+  static const FeedBack = 'v1/service/get/feedback/';
 }

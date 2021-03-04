@@ -1,15 +1,15 @@
 class EmpInfo {
-  Null cityName;
-  Null stateName;
+  String cityName;
+  String stateName;
   String firstName;
   String lastName;
-  Null profileUrl;
+  String profileUrl;
   int creationDate;
   int age;
   String type;
   String email;
   String phoneNumber;
-  Null dob;
+  String dob;
   int roleId;
   int salonId;
 

@@ -44,8 +44,8 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
       });
     });
     setState(() {
-      time = DateUtil.getDisplayFormatHour(
-          DateTime.fromMillisecondsSinceEpoch(_appointmentResponse.startTime));
+      time =
+          "- ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_appointmentResponse.endTime))} ";
     });
   }
 
@@ -309,30 +309,23 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                                         fontWeight: FontWeight.w500,
                                         fontSize: defaultSize * 1.5),
                                   ),
-                                  if (_getDiscountedPrice(_appointmentResponse
-                                              .serviceInfo[index].femaleRate) !=
-                                          _appointmentResponse
-                                              .serviceInfo[index].femaleRate &&
-                                      _getDiscountedPrice(_appointmentResponse
-                                              .serviceInfo[index].maleRate) !=
-                                          _appointmentResponse
-                                              .serviceInfo[index].maleRate)
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: defaultSize * 1.0,
-                                      ),
-                                      child: Text(
-                                          _userProfileLogin.gender == "M"
-                                              ? "₹ ${_appointmentResponse.serviceInfo[index].maleRate}"
-                                              : "₹ ${_appointmentResponse.serviceInfo[index].femaleRate}",
-                                          style: GoogleFonts.poppins(
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              decorationThickness: 2.2,
-                                              color: AppColor.DARK_ACCENT,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: defaultSize * 1.5)),
+
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: defaultSize * 1.0,
                                     ),
+                                    child: Text(
+                                        _userProfileLogin.gender == "M"
+                                            ? "₹ ${_appointmentResponse.serviceInfo[index].maleRate}"
+                                            : "₹ ${_appointmentResponse.serviceInfo[index].femaleRate}",
+                                        style: GoogleFonts.poppins(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            decorationThickness: 2.2,
+                                            color: AppColor.DARK_ACCENT,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: defaultSize * 1.5)),
+                                  ),
                                   // Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(

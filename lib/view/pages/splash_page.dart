@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:saloonwala_consumer/api/auth_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -17,6 +18,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
+
     _refreshToken();
     _startTime();
   }

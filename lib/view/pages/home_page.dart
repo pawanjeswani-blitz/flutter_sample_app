@@ -18,6 +18,9 @@ import 'package:saloonwala_consumer/view/pages/search_salons.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,7 +31,8 @@ class _HomePageState extends State<HomePage> {
   final PagingController<int, SalonData> _pagingController =
       PagingController(firstPageKey: 1);
   double defaultOverride;
-  bool liked = false;
+  // List<bool> liked = [];
+  Color _color;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -209,19 +213,20 @@ class _HomePageState extends State<HomePage> {
                                             salonName: item.name,
                                             userprofile: userProfile,
                                             salonInfo: item,
+                                            // salonList: item,
                                           ),
                                         ),
                                       );
                                     },
+                                    liked: item.like,
                                     customFunctionLike: () {
-                                      item.like == true
-                                          ? _onRemoveFavorite(item.id)
-                                          : _onAddFavorite(item.id);
+                                      _onRemoveFavorite(item.id);
+                                    },
+                                    customFnc: () {
+                                      _onAddFavorite(item.id);
                                     },
                                     // liked: ,
-                                    color: item.like == true
-                                        ? Colors.red[800]
-                                        : Colors.grey[400],
+                                    color: _color,
                                     thumb: item.thumbnail1,
                                   )),
                         ),
@@ -237,6 +242,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  onResfe() => Future.sync(
+        () => _pagingController.refresh(),
+      );
   Widget _loadingWidget() {
     return Container(
         child: ListView.builder(
@@ -314,7 +322,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showSnackBar(String errorText) {
-    final snackBar = SnackBar(content: Text(errorText));
+    final snackBar = SnackBar(
+      content: Text(errorText),
+      duration: Duration(milliseconds: 500),
+    );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 

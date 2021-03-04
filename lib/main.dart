@@ -5,6 +5,7 @@ import 'package:saloonwala_consumer/view/pages/edit_profile.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/login_page.dart';
 import 'package:saloonwala_consumer/view/pages/personal_info.dart';
+import 'package:saloonwala_consumer/view/pages/ramndom_likes.dart';
 import 'package:saloonwala_consumer/view/pages/rating_screen.dart';
 import 'package:saloonwala_consumer/view/pages/test.dart';
 import 'package:saloonwala_consumer/view/pages/random_test_page.dart';

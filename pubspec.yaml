@@ -29,6 +29,7 @@ dependencies:
   smooth_star_rating: ^1.1.1
   uuid: ^2.2.2
   cached_network_image: ^2.5.0
+  like_button: ^1.0.4
   webview_flutter: 
 dev_dependencies:
   flutter_test:
