@@ -200,6 +200,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                               builder: (context) =>
                                                   ViewBookingDetails(
                                                 bookingId: item.id,
+                                                cardcolor: Colors.white,
                                               ),
                                             ),
                                           );
@@ -256,6 +257,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                               builder: (context) =>
                                                   ViewBookingDetails(
                                                 bookingId: item.id,
+                                                cardcolor: Colors.grey[200],
                                               ),
                                             ),
                                           );
@@ -276,7 +278,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                 child: Text(
                                   "No cancelled bookings found",
                                   style: GoogleFonts.poppins(
-                                    color: Colors.grey[500],
+                                    color: Colors.grey[200],
                                     fontSize: defaultSize * 2.0,
                                   ),
                                 ),
@@ -301,6 +303,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                                               builder: (context) =>
                                                   ViewBookingDetails(
                                                 bookingId: item.id,
+                                                cardcolor: Colors.grey[200],
                                               ),
                                             ),
                                           );

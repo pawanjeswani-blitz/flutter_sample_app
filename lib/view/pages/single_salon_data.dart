@@ -248,19 +248,19 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                   //     color: AppColor.PRIMARY_MEDIUM,
                                   //     fontWeight: FontWeight.w500),
                                   // ),
-                                  Expanded(
-                                    child: Text(
-                                      item.comment == null ? "" : item.comment,
-                                      maxLines: 8,
-                                      // overflow: TextOverflow.ellipsis,
-                                      // textDirection: TextDirection.rtl,
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: defaultSize * 1.5,
-                                        color: AppColor.PRIMARY_MEDIUM,
-                                      ),
-                                    ),
-                                  ),
+                                  // Expanded(
+                                  //   child: Text(
+                                  //     item.comment == null ? "" : item.comment,
+                                  //     maxLines: 8,
+                                  //     // overflow: TextOverflow.ellipsis,
+                                  //     // textDirection: TextDirection.rtl,
+                                  //     textAlign: TextAlign.start,
+                                  //     style: GoogleFonts.poppins(
+                                  //       fontSize: defaultSize * 1.5,
+                                  //       color: AppColor.PRIMARY_MEDIUM,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   // SizedBox(
                                   //   width:
                                   //       MediaQuery.of(context).size.width - 100,
@@ -274,6 +274,57 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                   //         fontSize: defaultSize * 1.5,
                                   //         color: AppColor.PRIMARY_MEDIUM,
                                   //         fontWeight: FontWeight.w500),
+                                  //   ),
+                                  // ),
+                                  // SizedBox(
+                                  //   width:
+                                  //       MediaQuery.of(context).size.width - 150,
+                                  //   child: Text(
+                                  //     item.comment == null ? "" : item.comment,
+                                  //     maxLines: 4,
+                                  //     textAlign: TextAlign.justify,
+                                  //     overflow: TextOverflow.ellipsis,
+                                  //     softWrap: true,
+                                  //   style: GoogleFonts.poppins(
+                                  //       fontSize: defaultSize * 1.5,
+                                  //       color: AppColor.PRIMARY_MEDIUM,
+                                  //       fontWeight: FontWeight.w500),
+                                  // ),
+                                  // ),
+                                  Row(
+                                    //Widgets which help to display a list of children widgets are the 'culprit', they make your text widget not know what the maximum width is. In OP's example it is the ButtonBar widget.
+                                    children: [
+                                      Container(
+                                        width: defaultSize *
+                                            28, //This helps the text widget know what the maximum width is again! You may also opt to use an Expanded widget instead of a Container widget, if you want to use all remaining space.
+                                        child: Container(
+                                          child: Text(
+                                            item.comment == null
+                                                ? ""
+                                                : item.comment,
+                                            textAlign: TextAlign.justify,
+                                            style: GoogleFonts.poppins(
+                                                fontSize: defaultSize * 1.5,
+                                                color: AppColor.PRIMARY_MEDIUM,
+                                                fontWeight: FontWeight.w500),
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  // Expanded(
+                                  //   child: Text(
+                                  //     item.comment == null ? "" : item.comment,
+                                  //     maxLines: 8,
+                                  //     // overflow: TextOverflow.ellipsis,
+                                  //     // textDirection: TextDirection.rtl,
+                                  //     textAlign: TextAlign.start,
+                                  //     style: GoogleFonts.poppins(
+                                  //       fontSize: defaultSize * 1.75,
+                                  //       color: AppColor.PRIMARY_MEDIUM,
+                                  //     ),
                                   //   ),
                                   // ),
                                 ],

@@ -1,746 +1,358 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloonwala_consumer/api/favorite_service.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/salon_data.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:saloonwala_consumer/model/super_response.dart';
-import 'package:saloonwala_consumer/utils/internet_util.dart';
-import 'package:saloonwala_consumer/view/pages/salon_servicesUI.dart';
-import 'package:saloonwala_consumer/view/pages/salon_services_tabview.dart';
-import 'package:saloonwala_consumer/view/pages/search_salons.dart';
-import 'package:saloonwala_consumer/view/widget/custom_card.dart';
-import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:like_button/like_button.dart';
+import 'package:saloonwala_consumer/model/salon_services.dart';
+import 'package:saloonwala_consumer/model/user_profile.dart';
+import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
+import 'package:saloonwala_consumer/view/pages/random_tests.dart';
+import 'package:saloonwala_consumer/view/pages/salon_slots_ui.dart';
 
-class RandomLikes extends StatefulWidget {
+class SalonTestDelegate extends StatefulWidget {
+  final int salonId;
+  final SalonData salonInfo;
+  final String salonName;
+  final UserProfileLogin userprofile;
+
+  const SalonTestDelegate({
+    Key key,
+    this.salonName,
+    this.salonId,
+    this.userprofile,
+    this.salonInfo,
+  }) : super(key: key);
   @override
-  _RandomLikesState createState() => _RandomLikesState();
+  _SalonTestDelegateState createState() => _SalonTestDelegateState();
 }
 
-class _RandomLikesState extends State<RandomLikes> {
-  final PagingController<int, SalonData> _pagingController =
-      PagingController(firstPageKey: 1);
-  double defaultOverride;
-  // List<bool> liked = [];
-  Color _color;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+class _SalonTestDelegateState extends State<SalonTestDelegate> {
+  int index;
+  TabController controller;
+  UserProfileLogin _userProfileLogin;
 
   @override
   void initState() {
     super.initState();
+    // controller = TabController(length: 2, vsync: this);
+    _loadServices();
+  }
 
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+  SaloonServices _services;
+  List<Services> _selectedServiceList = [];
+  double defaultOverride;
+  String genderFromUserProfile;
+  int sum = 0;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadServices();
+  // }
+
+  void _loadServices() async {
+    final res = await LoadSalons.getService(99);
+    final userProfile = await AppSessionManager.getUserProfileAfterLogin();
+    setState(() {
+      _services = res.data;
+      _userProfileLogin = userProfile;
     });
   }
 
-  Future<void> _fetchPage(int pageKey) async {
-    try {
-      final newItems = await LoadSalons.getSalonFeed(pageKey);
-      final hasMore = newItems.data.hasMore;
-      // if response from hasMore ==true change the pageNO that is pageKey in this case
-      if (hasMore == true) {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems.data.list, nextPageKey);
-      } else {
-        // _reachedEnd();
-        _pagingController.appendLastPage(newItems.data.list);
-      }
-    } catch (error) {
-      print(error);
-      _pagingController.error = error;
-    }
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    // widget.timer.cancel();
-    SizeConfig().init(context);
-    double defaultSize = SizeConfig.defaultSize;
-    defaultOverride = defaultSize;
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        key: _scaffoldKey,
-        // backgroundColor: Colors.white,
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                    backgroundColor: Colors.transparent,
-                    // pinned: true,
-                    floating: true,
-                    automaticallyImplyLeading: false,
-                    // expandedHeight: defaultSize * 10.0,
-                    title: _title(),
-                    elevation: 2.0,
-                    flexibleSpace: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    width: 0.0, color: AppColor.PRIMARY_MEDIUM),
-                              ),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [
-                                    AppColor.PRIMARY_LIGHT,
-                                    AppColor.PRIMARY_MEDIUM
-                                  ])),
-                        ),
-                      ],
-                    )),
-              ];
-            },
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Container(
-                    // color: Colors.white,
-                    // height: 60.0,
-
-                    width: double.infinity,
-                    margin: EdgeInsets.only(
-                      top: defaultSize * 1.0,
-                      bottom: defaultSize * 1.0,
-                      right: defaultSize * 2.0,
-                      left: defaultSize * 2.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(defaultSize * 3.2),
-                        color: Colors.white,
-                        boxShadow: kElevationToShadow[2],
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: defaultSize * 2.0),
-                        child: TextFormField(
-                          readOnly: true,
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SearchSalons()));
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Search Salons',
-                            hintStyle: GoogleFonts.poppins(
-                                color: AppColor.PRIMARY_MEDIUM),
-                            border: InputBorder.none,
-                            prefixIcon: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.search,
-                                  color: AppColor.PRIMARY_MEDIUM,
-                                ),
-                              ],
-                            ),
-                          ),
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          cursorColor: AppColor.PRIMARY_DARK,
-                          style:
-                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                          maxLines: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: RefreshIndicator(
-                        onRefresh: () => Future.sync(
-                          () => _pagingController.refresh(),
-                        ),
-                        child: PagedListView<int, SalonData>(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.all(0.0),
-                          pagingController: _pagingController,
-                          builderDelegate: PagedChildBuilderDelegate<SalonData>(
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _loadingWidget(),
-                            newPageProgressIndicatorBuilder: (context) =>
-                                _loadingWidget(),
-                            noMoreItemsIndicatorBuilder: (context) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "You've reached the end",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            itemBuilder: (context, item, index) =>
-                                GestureDetector(
-                              onTap: () async {
-                                final userProfile = await AppSessionManager
-                                    .getUserProfileAfterLogin();
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SalonServicesTabView(
-                                      salonId: item.id,
-                                      salonName: item.name,
-                                      userprofile: userProfile,
-                                      salonInfo: item,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    left: defaultSize * 1.0,
-                                    right: defaultSize * 1.0,
-                                    top: defaultSize * 0.5,
-                                    bottom: defaultSize * 1.2),
-                                child: Card(
-                                  elevation: 1.85,
-                                  color: Colors.white,
-                                  clipBehavior: Clip.antiAlias,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      item.thumbnail1 != null &&
-                                              item.thumbnail1.isNotEmpty
-                                          ? Container(
-                                              height: defaultSize * 10.5,
-                                              width: defaultSize * 15,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blueGrey,
-                                                image: DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: NetworkImage(
-                                                      item.thumbnail1),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              height: defaultSize * 10.5,
-                                              width: defaultSize * 15,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blueGrey,
-                                                image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image: NetworkImage(
-                                                      "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
-                                                ),
-                                              ),
-                                            ),
-                                      ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                            maxWidth: defaultSize * 17.0),
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              left: defaultSize * 1.35),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                item.name,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize:
-                                                        defaultSize * 1.70,
-                                                    color:
-                                                        AppColor.PRIMARY_MEDIUM,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              SizedBox(
-                                                height: defaultSize * 1.0,
-                                              ),
-                                              Text(item.address,
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize:
-                                                          defaultSize * 1.25,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: AppColor
-                                                          .PRIMARY_MEDIUM)),
-                                              // Row(
-                                              //   children: [
-                                              //     Icon(
-                                              //       Icons.location_on,
-                                              //       color: Color.fromRGBO(96, 127, 99, 1.0),
-                                              //       size: defaultSize * 1.5,
-                                              //     ),
-                                              //     SizedBox(width: defaultSize * 0.5),
-                                              //     Text(
-                                              //       widget.distance,
-                                              //       style: GoogleFonts.poppins(
-                                              //           fontSize: defaultSize * 1.25,
-                                              //           fontWeight: FontWeight.w400,
-                                              //           color: AppColor.PRIMARY_MEDIUM),
-                                              //     ),
-                                              // SizedBox(width: defaultSize * 0.5),
-                                              // Text(
-                                              //   "|",
-                                              //   style: GoogleFonts.poppins(
-                                              //       fontSize: defaultSize * 1.5,
-                                              //       fontWeight: FontWeight.w500,
-                                              //       color: AppColor.PRIMARY_MEDIUM),
-                                              // ),
-                                              // SizedBox(width: defaultSize * 0.5),
-                                              // Icon(
-                                              //   Icons.star,
-                                              //   color: Color.fromRGBO(96, 127, 99, 1.0),
-                                              //   size: defaultSize * 1.5,
-                                              // ),
-                                              // SizedBox(width: defaultSize * 0.5),
-                                              // Text(
-                                              //   "4.0 / 5",
-                                              //   style: GoogleFonts.poppins(
-                                              //       fontSize: defaultSize * 1.25,
-                                              //       fontWeight: FontWeight.w400,
-                                              //       color: AppColor.PRIMARY_MEDIUM),
-                                              // ),
-                                            ],
-                                          ),
-                                          // ],
-                                        ),
-                                      ),
-                                      // ),
-                                      Spacer(),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            right: defaultSize * 2.5),
-                                        child: Column(
-                                          // mainAxisAlignment:
-                                          //     MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Container(
-                                              height: defaultSize * 3.0,
-                                              width: defaultSize * 3.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5),
-                                                    spreadRadius: 1,
-                                                    blurRadius: 3,
-                                                    offset: Offset(0,
-                                                        0), // changes position of shadow
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Column(
-                                                // crossAxisAlignment:
-                                                //     CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  LikeButton(
-                                                    isLiked: item.like,
-                                                    onTap:
-                                                        (bool isLiked) async {
-                                                      if (isLiked) {
-                                                        _onRemoveFavorite(
-                                                            item.id);
-                                                      } else {
-                                                        _onAddFavorite(item.id);
-                                                      }
-                                                      return !isLiked;
-                                                    },
-                                                    size: defaultSize * 1.82,
-                                                    circleColor: CircleColor(
-                                                        start:
-                                                            Color(0xff00ddff),
-                                                        end: Color(0xff0099cc)),
-                                                    bubblesColor: BubblesColor(
-                                                      dotPrimaryColor:
-                                                          Color(0xff33b5e5),
-                                                      dotSecondaryColor:
-                                                          Color(0xff0099cc),
-                                                    ),
-                                                    likeBuilder:
-                                                        (bool isLiked) {
-                                                      print(isLiked);
-                                                      return Icon(
-                                                        Icons.favorite,
-                                                        color: isLiked
-                                                            ? Colors.red[800]
-                                                            : Colors.grey[400],
-                                                        size:
-                                                            defaultSize * 1.85,
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            // InkWell(
-                                            //   splashColor: Colors.transparent,
-                                            //   highlightColor: Colors.transparent,
-                                            //   onTap: () {
-                                            //     widget.customFunctionLike();
-                                            //   },
-                                            //   child: Container(
-                                            //     height: defaultSize * 2.8,
-                                            //     width: defaultSize * 2.8,
-                                            //     decoration: BoxDecoration(
-                                            //       shape: BoxShape.circle,
-                                            //       color: Colors.white,
-                                            //       boxShadow: [
-                                            //         BoxShadow(
-                                            //           color: Colors.grey.withOpacity(0.5),
-                                            //           spreadRadius: 1,
-                                            //           blurRadius: 3,
-                                            //           offset:
-                                            //               Offset(0, 0), // changes position of shadow
-                                            //         ),
-                                            //       ],
-                                            //     ),
-                                            //     child: Icon(
-                                            //       Icons.favorite,
-                                            //       size: defaultSize * 1.85,
-                                            //       color: widget.color,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Future<bool> onLikeButtonTapped(bool isLiked) async {
-  //   if (isLiked) {
-  //     _onRemoveFavorite(item.id);
-  //   } else {
-  //     _onAddFavorite(item.id);
-  //   }
-
-  /// send your request here
-  // final bool success= await sendRequest();
-
-  /// if failed, you can do nothing
-  // return success? !isLiked:isLiked;
-
-  //   return !isLiked;
-  // }
-
-  onResfe() => Future.sync(
-        () => _pagingController.refresh(),
-      );
-  Widget _loadingWidget() {
-    return Container(
-        child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              int offset = 0;
-              int time = 400;
-              offset += 5;
-              time = 400 + offset;
-              return Shimmer.fromColors(
-                highlightColor: Colors.white,
-                baseColor: Colors.grey[300],
-                child: SalonCard(
-                  title: "",
-                  distance: "",
-                  customFunctionLike: () {},
-                  customfunction: () {},
-                ),
-                period: Duration(milliseconds: time),
-              );
-            }));
-  }
-
-  Future<SuperResponse<bool>> _onRemoveFavorite(int salonId) async {
-    final isInternetConnected = await InternetUtil.isInternetConnected();
-    if (isInternetConnected) {
-      ProgressDialog.showProgressDialog(context);
-      try {
-        final response = await FavoriteService.favoriteRemove(salonId);
-        //close the progress dialog
-        Navigator.of(context).pop();
-        if (response.error == null) {
-          //check the user is already register or not
-          if (response.data == null) {
-            //user is register
-            print(response.data);
-            showSnackBar("Salon removed from favorites succesfully");
-          } else
-            showSnackBar("Something went wrong");
-        } else
-          showSnackBar(response.error);
-      } catch (ex) {
-        Navigator.of(context).pop();
-        showSnackBar("Something went wrong.");
-      }
-    } else
-      showSnackBar("No internet connected");
-  }
-
-  Future<SuperResponse<bool>> _onAddFavorite(int salonId) async {
-    final isInternetConnected = await InternetUtil.isInternetConnected();
-    if (isInternetConnected) {
-      ProgressDialog.showProgressDialog(context);
-      try {
-        final response = await FavoriteService.favoriteUpdate(salonId);
-        //close the progress dialog
-        Navigator.of(context).pop();
-        if (response.error == null) {
-          //check the user is already register or not
-          if (response.data == null) {
-            //user is register
-            print(response.data);
-            showSnackBar("Salon added to favorites succesfully");
-          } else
-            showSnackBar("Something went wrong");
-        } else
-          showSnackBar(response.error);
-      } catch (ex) {
-        Navigator.of(context).pop();
-        showSnackBar("Something went wrong.");
-      }
-    } else
-      showSnackBar("No internet connected");
-  }
-
-  void showSnackBar(String errorText) {
-    final snackBar = SnackBar(
-      content: Text(errorText),
-      duration: Duration(milliseconds: 500),
-    );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  Widget _title() => Container(
-        child: Row(
-          children: [
-            Column(
-              children: <Widget>[
-                Container(
-                  child: Image.asset(
-                    'assets/images/only_name_logo.png',
-                    height: defaultOverride * 3.2,
-                  ),
-                ),
-              ],
-            ),
-            Spacer(),
-            Container(),
-          ],
-        ),
-      );
-}
-
-class ShimmerList extends StatefulWidget {
-  @override
-  _ShimmerListState createState() => _ShimmerListState();
-}
-
-class _ShimmerListState extends State<ShimmerList> {
-  double defaultOverride;
-
-  @override
-  Widget build(BuildContext context) {
-    int offset = 0;
-    int time = 800;
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
     return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                  backgroundColor: Colors.transparent,
-                  // pinned: true,
-                  floating: true,
-                  automaticallyImplyLeading: false,
-                  // expandedHeight: defaultSize * 10.0,
-                  title: Container(
-                    child: Row(
-                      children: [
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              child: Image.asset(
-                                'assets/images/only_name_logo.png',
-                                height: defaultOverride * 3.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Container(),
-                      ],
-                    ),
-                  ),
-                  elevation: 2.0,
-                  flexibleSpace: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  width: 0.0, color: AppColor.PRIMARY_MEDIUM),
-                            ),
-                            gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  AppColor.PRIMARY_LIGHT,
-                                  AppColor.PRIMARY_MEDIUM
-                                ])),
-                      ),
-                    ],
-                  )),
-            ];
-          },
-          body: SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  // color: Colors.white,
-                  // height: 60.0,
-
-                  width: double.infinity,
-                  margin: EdgeInsets.only(
-                    top: defaultSize * 1.0,
-                    bottom: defaultSize * 1.0,
-                    right: defaultSize * 2.0,
-                    left: defaultSize * 2.0,
-                  ),
+      body: Column(
+        children: [
+          _services == null
+              ? Center(child: CircularProgressIndicator())
+              : _getServiceWidget(),
+          _selectedServiceList != null && _selectedServiceList.length > 0
+              ? Align(
+                  alignment: FractionalOffset.bottomCenter,
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(defaultSize * 3.2),
-                      color: Colors.white,
-                      boxShadow: kElevationToShadow[2],
-                    ),
+                    width: double.infinity,
+                    height: defaultSize * 10.0,
+                    color: Colors.white,
                     child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: defaultSize * 2.0),
-                      child: TextFormField(
-                        readOnly: true,
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SearchSalons()));
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search Salons',
-                          hintStyle: GoogleFonts.poppins(
-                              color: AppColor.PRIMARY_MEDIUM),
-                          border: InputBorder.none,
-                          prefixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      padding: EdgeInsets.all(defaultSize * 1.65),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: AppColor.PRIMARY_DARK,
+                              border: Border.all(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(defaultSize * 2.5))),
+                          child: Row(
                             children: [
-                              Icon(
-                                Icons.search,
-                                color: AppColor.PRIMARY_MEDIUM,
+                              Row(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: defaultSize * 2.5),
+                                    child: Text(
+                                        '${_selectedServiceList.length} Service Added',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: defaultSize * 1.6,
+                                            color: Colors.white)),
+                                  ),
+                                  SizedBox(
+                                    width: defaultSize * 1,
+                                  ),
+                                  SizedBox(
+                                    width: defaultSize * 1.25,
+                                    child: Text('|',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: defaultSize * 1.6,
+                                            color: Colors.white)),
+                                  ),
+                                  Container(
+                                      child: Text(sum.toString(),
+                                          style: GoogleFonts.poppins(
+                                              fontSize: defaultSize * 1.6,
+                                              color: Colors.white))),
+                                ],
+                              ),
+                              Spacer(),
+                              FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                // color: Colors.transparent,
+                                onPressed: () async {
+                                  final userProfile =
+                                      await AppSessionManager.getUserProfile();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SalonSlotsUI(
+                                            selectedServiceList:
+                                                _selectedServiceList,
+                                            salonId: widget.salonId,
+                                            salonName: widget.salonName,
+                                            userProfile: widget.userprofile,
+                                          )));
+                                },
+                                child: Text(" Book Now",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: defaultSize * 2.0,
+                                        color: AppColor.LOGIN_BACKGROUND)),
                               ),
                             ],
-                          ),
-                        ),
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        cursorColor: AppColor.PRIMARY_DARK,
-                        style:
-                            GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                        maxLines: 1,
-                      ),
+                          )),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                      child: ListView.builder(
-                          itemCount: 10,
-                          itemBuilder: (context, index) {
-                            offset += 5;
-                            time = 800 + offset;
-                            return Shimmer.fromColors(
-                                highlightColor: Colors.white,
-                                baseColor: Colors.grey[300],
-                                child: SalonCard(
-                                  title: "",
-                                  distance: "",
-                                  customFunctionLike: () {},
-                                  customfunction: () {},
-                                ),
-                                period: Duration(milliseconds: time));
-                          })),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  ))
+              : Align(
+                  alignment: FractionalOffset.bottomCenter, child: Text(" ")),
+        ],
       ),
     );
   }
+
+  getSalonServicesGenderRate() async {
+    Future<UserProfile> userProfileData = AppSessionManager.getUserProfile();
+    await userProfileData.then((value) {
+      genderFromUserProfile = value.gender;
+    });
+    return genderFromUserProfile;
+  }
+
+  Widget _imageTitle() => Image(
+        image: new AssetImage("assets/images/logo_with_circle.png"),
+        height: defaultOverride * 10.0,
+        width: double.infinity,
+        alignment: FractionalOffset.center,
+      );
+
+  Widget _getServiceWidget() => Expanded(
+        child: ListView.builder(
+          itemCount: _services.services.length,
+          itemBuilder: (BuildContext context, int index) {
+            index = index;
+            int _getDiscountPercentage() {
+              if (_services.services[index].globalDiscount != null &&
+                  _services.services[index].globalDiscount > 0)
+                return _services.services[index].globalDiscount;
+              else
+                return _services.services[index].serviceDiscount ?? 0;
+            }
+
+            int _getDiscountedPrice(int amount) {
+              int percentageDiscount = _getDiscountPercentage();
+              double discount = amount * percentageDiscount / 100;
+              return (amount - discount).toInt();
+            }
+
+            Widget _getTitleBar() => Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                      color: AppColor.PRIMARY_DARK,
+                      borderRadius: BorderRadius.circular(16.0)),
+                  child: Text(
+                      "${_services.services[index].id}. ${_services.services[index].serviceName}",
+                      style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16)),
+                );
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0),
+                  color: AppColor.VERY_LIGHT_GREEN),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _getTitleBar(),
+                  if (_services.services[index].maleRate != null &&
+                      _services.services[index].maleRate > 0)
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 16, right: 12),
+                      child: Row(
+                        children: [
+                          Text(
+                              "Male Rate: ₹${_getDiscountedPrice(_services.services[index].maleRate)}",
+                              style: GoogleFonts.poppins(
+                                  color: AppColor.PRIMARY_DARK,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15)),
+                          SizedBox(width: 8),
+                          if (_getDiscountedPrice(
+                                  _services.services[index].maleRate) !=
+                              _services.services[index].maleRate)
+                            Text("₹${_services.services[index].maleRate}",
+                                style: GoogleFonts.poppins(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: AppColor.PRIMARY_DARK,
+                                    fontSize: 15)),
+                          SizedBox(width: 24),
+                          if (_getDiscountedPrice(
+                                  _services.services[index].maleRate) !=
+                              _services.services[index].maleRate)
+                            Text("${_getDiscountPercentage()}% Off",
+                                style: GoogleFonts.poppins(
+                                    color: AppColor.PRIMARY_DARK,
+                                    fontSize: 15)),
+                        ],
+                      ),
+                    ),
+                  if (_services.services[index].femaleRate != null &&
+                      _services.services[index].femaleRate > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12, top: 2, right: 12, bottom: 8),
+                      child: Row(
+                        children: [
+                          Text(
+                              "Female Rate: ₹${_getDiscountedPrice(_services.services[index].femaleRate)}",
+                              style: GoogleFonts.poppins(
+                                  color: AppColor.PRIMARY_DARK,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15)),
+                          SizedBox(width: 8),
+                          if (_getDiscountedPrice(
+                                  _services.services[index].femaleRate) !=
+                              _services.services[index].femaleRate)
+                            Text("₹${_services.services[index].femaleRate}",
+                                style: GoogleFonts.poppins(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: AppColor.PRIMARY_DARK,
+                                    fontSize: 15)),
+                          SizedBox(width: 24),
+                          if (_getDiscountedPrice(
+                                  _services.services[index].femaleRate) !=
+                              _services.services[index].femaleRate)
+                            Text("${_getDiscountPercentage()}% Off",
+                                style: GoogleFonts.poppins(
+                                    color: AppColor.PRIMARY_DARK,
+                                    fontSize: 15)),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(),
+                      Spacer(),
+                      _selectedServiceList.contains(_services.services[index])
+                          ? Container(
+                              margin: EdgeInsets.only(right: 20.0),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    // sa = "BB";
+
+                                    _selectedServiceList
+                                        .remove(_services.services[index]);
+                                    sum -= _userProfileLogin.gender == "M"
+                                        ? _getDiscountedPrice(
+                                            _services.services[index].maleRate)
+                                        : _getDiscountedPrice(_services
+                                            .services[index].femaleRate);
+
+                                    print(_selectedServiceList.length);
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 7, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.DARK_ACCENT,
+                                      borderRadius:
+                                          BorderRadius.circular(50.0)),
+                                  child: Text(
+                                    '- Remove Service',
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.white, fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              margin: EdgeInsets.only(right: 20.0),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    // sa = "aa";
+                                    _selectedServiceList
+                                        .add(_services.services[index]);
+                                    sum += _userProfileLogin.gender == "M"
+                                        ? _getDiscountedPrice(
+                                            _services.services[index].maleRate)
+                                        : _getDiscountedPrice(_services
+                                            .services[index].femaleRate);
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 7, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.DARK_ACCENT,
+                                      borderRadius:
+                                          BorderRadius.circular(50.0)),
+                                  child: Text(
+                                    '+ Add Service',
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.white, fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        ),
+      );
 }
-
-// class DelayedList extends StatefulWidget {
-//   @override
-//   _DelayedListState createState() => _DelayedListState();
-// }
-
-// class _DelayedListState extends State<DelayedList> {
-//   bool isLoading = true;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     Timer timer = Timer(Duration(seconds: 3), () {
-//       setState(() {
-//         isLoading = false;
-//       });
-//     });
-
-//     return isLoading
-//         ? ShimmerList()
-//         : RandomLikes(
-//             timer: timer,
-//           );
-//   }
-// }

@@ -324,23 +324,33 @@ class _BookingDetailsState extends State<BookingDetails> {
                                         fontWeight: FontWeight.w500,
                                         fontSize: defaultSize * 1.5),
                                   ),
-
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: defaultSize * 1.0,
+                                  if (_getDiscountedPrice(widget
+                                              .selectedServiceList[index]
+                                              .femaleRate) !=
+                                          widget.selectedServiceList[index]
+                                              .femaleRate &&
+                                      _getDiscountedPrice(widget
+                                              .selectedServiceList[index]
+                                              .maleRate) !=
+                                          widget.selectedServiceList[index]
+                                              .maleRate)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: defaultSize * 1.0,
+                                      ),
+                                      child: Text(
+                                          widget.userProfile.gender == "M"
+                                              ? "₹ ${widget.selectedServiceList[index].maleRate}"
+                                              : "₹ ${widget.selectedServiceList[index].femaleRate}",
+                                          style: GoogleFonts.poppins(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              decorationThickness: 2.2,
+                                              color: AppColor.DARK_ACCENT,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: defaultSize * 1.5)),
                                     ),
-                                    child: Text(
-                                        widget.userProfile.gender == "M"
-                                            ? "₹ ${widget.selectedServiceList[index].maleRate}"
-                                            : "₹ ${widget.selectedServiceList[index].femaleRate}",
-                                        style: GoogleFonts.poppins(
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                            decorationThickness: 2.2,
-                                            color: AppColor.DARK_ACCENT,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: defaultSize * 1.5)),
-                                  ),
+
                                   // Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(

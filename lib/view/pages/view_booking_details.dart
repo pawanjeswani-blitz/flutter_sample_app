@@ -18,8 +18,9 @@ import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class ViewBookingDetails extends StatefulWidget {
   final int bookingId;
-
-  const ViewBookingDetails({Key key, this.bookingId}) : super(key: key);
+  final Color cardcolor;
+  const ViewBookingDetails({Key key, this.bookingId, this.cardcolor})
+      : super(key: key);
   @override
   _ViewBookingDetailsState createState() => _ViewBookingDetailsState();
 }
@@ -162,7 +163,7 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                 margin: EdgeInsets.symmetric(horizontal: defaultSize * 3.25),
                 child: Card(
                   elevation: defaultSize * 1.0,
-                  color: Colors.white,
+                  color: widget.cardcolor,
                   clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -294,6 +295,7 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                                 children: [
                                   Text(
                                     "${_appointmentResponse.serviceInfo[index].serviceName}",
+                                    overflow: TextOverflow.fade,
                                     style: GoogleFonts.poppins(
                                         color: AppColor.DARK_ACCENT,
                                         fontWeight: FontWeight.w500,
@@ -332,7 +334,9 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                                       left: defaultSize * 2.0,
                                     ),
                                     child: Text(
-                                      "${_getDiscountPercentage()}% Off",
+                                      _getDiscountPercentage() == 0
+                                          ? " "
+                                          : "${_getDiscountPercentage()}% Off",
                                       style: GoogleFonts.poppins(
                                           color: AppColor.DARK_ACCENT,
                                           fontWeight: FontWeight.w500,

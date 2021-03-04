@@ -148,21 +148,37 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
               ),
               Padding(
                 padding: EdgeInsets.all(defaultSize * 2.0),
-                child: Row(
-                  children: <Widget>[
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "AVAILABLE SLOTS",
+                          style: GoogleFonts.poppins(
+                            color: Color.fromRGBO(172, 125, 83, 1),
+                            fontSize: defaultSize * 2.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: defaultSize * 1.85),
+                        Expanded(
+                          child: Divider(
+                            color: Color.fromRGBO(216, 206, 197, 0.32),
+                            thickness: defaultSize * 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: defaultSize * 1.0,
+                    ),
                     Text(
-                      "AVAILABLE SLOTS",
+                      "you can select multilple time slots",
                       style: GoogleFonts.poppins(
                         color: Color.fromRGBO(172, 125, 83, 1),
-                        fontSize: defaultSize * 2.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: defaultSize * 1.85),
-                    Expanded(
-                      child: Divider(
-                        color: Color.fromRGBO(216, 206, 197, 0.32),
-                        thickness: defaultSize * 1.0,
+                        fontSize: defaultSize * 1.5,
+                        // fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -173,9 +189,6 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                   ? CircularProgressIndicator()
                   : _getTimeSelectListViewWidget(),
 
-              // SizedBox(
-              //   height: width * 0.045,
-              // ),
               //show employee if the slot is selected
               //NOTE: this kidnd of condition writing is only supported in dart 2.2.2 and above
               Padding(
@@ -283,6 +296,20 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
                           fontSize: defaultSizeOveride * 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: defaultSizeOveride * 1.25),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: defaultSizeOveride * 2.0, vertical: 0.0),
+                      child: Text(
+                        emmployeeList[position].type,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: defaultSizeOveride * 1.35,
                         ),
                       ),
                     ),
