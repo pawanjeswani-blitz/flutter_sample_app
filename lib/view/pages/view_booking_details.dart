@@ -46,7 +46,7 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
     });
     setState(() {
       time =
-          "- ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_appointmentResponse.endTime))} ";
+          "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_appointmentResponse.startTime))}- ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_appointmentResponse.endTime))} ";
     });
   }
 

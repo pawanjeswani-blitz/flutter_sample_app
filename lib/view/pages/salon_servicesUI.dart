@@ -82,8 +82,8 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
     defaultOverride = defaultSize;
     bool isSearching = searchController.text.isNotEmpty;
     isSearchingOver = isSearching;
-    return Scaffold(
-      body: Column(
+    return Stack(children: [
+      Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -121,84 +121,83 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
           _services == null
               ? Center(child: CircularProgressIndicator())
               : _getServiceWidget(),
-          _selectedServiceList != null && _selectedServiceList.length > 0
-              ? Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    height: defaultSize * 10.0,
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.all(defaultSize * 1.65),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: AppColor.PRIMARY_DARK,
-                              border: Border.all(
-                                color: Colors.transparent,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(defaultSize * 2.5))),
-                          child: Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: defaultSize * 2.5),
-                                    child: Text(
-                                        '${_selectedServiceList.length} Service Added',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: defaultSize * 1.6,
-                                            color: Colors.white)),
-                                  ),
-                                  SizedBox(
-                                    width: defaultSize * 1,
-                                  ),
-                                  SizedBox(
-                                    width: defaultSize * 1.25,
-                                    child: Text('|',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: defaultSize * 1.6,
-                                            color: Colors.white)),
-                                  ),
-                                  Container(
-                                      child: Text(sum.toString(),
-                                          style: GoogleFonts.poppins(
-                                              fontSize: defaultSize * 1.6,
-                                              color: Colors.white))),
-                                ],
-                              ),
-                              Spacer(),
-                              FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                // color: Colors.transparent,
-                                onPressed: () async {
-                                  final userProfile =
-                                      await AppSessionManager.getUserProfile();
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SalonSlotsUI(
-                                            selectedServiceList:
-                                                _selectedServiceList,
-                                            salonId: widget.salonId,
-                                            salonName: widget.salonName,
-                                            userProfile: widget.userprofile,
-                                          )));
-                                },
-                                child: Text(" Book Now",
-                                    style: GoogleFonts.poppins(
-                                        fontSize: defaultSize * 2.0,
-                                        color: AppColor.LOGIN_BACKGROUND)),
-                              ),
-                            ],
-                          )),
-                    ),
-                  ))
-              : Align(
-                  alignment: FractionalOffset.bottomCenter, child: Text(" ")),
         ],
       ),
-    );
+      _selectedServiceList != null && _selectedServiceList.length > 0
+          ? Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                height: defaultSize * 10.0,
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.all(defaultSize * 1.65),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: AppColor.PRIMARY_DARK,
+                          border: Border.all(
+                            color: Colors.transparent,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(defaultSize * 2.5))),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                margin:
+                                    EdgeInsets.only(left: defaultSize * 2.5),
+                                child: Text(
+                                    '${_selectedServiceList.length} Service Added',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: defaultSize * 1.6,
+                                        color: Colors.white)),
+                              ),
+                              SizedBox(
+                                width: defaultSize * 1,
+                              ),
+                              SizedBox(
+                                width: defaultSize * 1.25,
+                                child: Text('|',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: defaultSize * 1.6,
+                                        color: Colors.white)),
+                              ),
+                              Container(
+                                  child: Text(sum.toString(),
+                                      style: GoogleFonts.poppins(
+                                          fontSize: defaultSize * 1.6,
+                                          color: Colors.white))),
+                            ],
+                          ),
+                          Spacer(),
+                          FlatButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            // color: Colors.transparent,
+                            onPressed: () async {
+                              final userProfile =
+                                  await AppSessionManager.getUserProfile();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SalonSlotsUI(
+                                        selectedServiceList:
+                                            _selectedServiceList,
+                                        salonId: widget.salonId,
+                                        salonName: widget.salonName,
+                                        userProfile: widget.userprofile,
+                                      )));
+                            },
+                            child: Text(" Book Now",
+                                style: GoogleFonts.poppins(
+                                    fontSize: defaultSize * 2.0,
+                                    color: AppColor.LOGIN_BACKGROUND)),
+                          ),
+                        ],
+                      )),
+                ),
+              ))
+          : Align(alignment: FractionalOffset.bottomCenter, child: Text(" ")),
+    ]);
   }
 
   getSalonServicesGenderRate() async {

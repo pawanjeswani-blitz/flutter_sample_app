@@ -19,6 +19,7 @@ import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
@@ -30,6 +31,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PagingController<int, SalonData> _pagingController =
       PagingController(firstPageKey: 1);
+  DateTime currentBackPressTime;
   double defaultOverride;
   // List<bool> liked = [];
   Color _color;
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage> {
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async => onWillPop(),
       child: Scaffold(
         key: _scaffoldKey,
         // backgroundColor: Colors.white,
@@ -240,6 +242,22 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(
+        msg: "Press back Again to exit !",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+      return Future.value(false);
+    }
+    Fluttertoast.cancel();
+    return Future.value(true);
   }
 
   onResfe() => Future.sync(

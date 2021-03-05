@@ -437,8 +437,8 @@ class _BookingDetailsState extends State<BookingDetails> {
                     right: defaultSize * 2.0),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BottomNavBar()));
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "/home", (r) => false);
                   },
                   child: RoundedButtonDark(
                     buttontext: "DONE",

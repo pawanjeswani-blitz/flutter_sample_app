@@ -168,11 +168,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
         Navigator.pop(context);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.clear();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-        );
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
       },
     );
 

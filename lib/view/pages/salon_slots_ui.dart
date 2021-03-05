@@ -347,8 +347,9 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                       if (_selectedTimeSlot
                           .contains(_availableSlotsResponse.slots[position])) {
                         //Remove Time Slots From Lists
-                        if (_selectedTimeSlot.last.startTime ==
-                            _availableSlotsResponse.slots[position].endTime) {
+                        if (_selectedTimeSlot.length > 1 &&
+                            _availableSlotsResponse.slots[position].startTime >
+                                _selectedTimeSlot.last.startTime) {
                           showSnackBar("Cannot remove slot");
                         } else {
                           _selectedTimeSlot
@@ -358,10 +359,28 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                         //add time slots to list
                         //to do check sequencing
                         if (_selectedTimeSlot.isEmpty) {
-                          _selectedTimeSlot
-                              .add(_availableSlotsResponse.slots[position]);
+                          if (_availableSlotsResponse
+                                  .slots[position].startTime >
+                              DateTime.now().millisecondsSinceEpoch) {
+                            _selectedTimeSlot
+                                .add(_availableSlotsResponse.slots[position]);
+                          } else {
+                            showSnackBar("Time Slot Cannot be selected");
+                          }
                         } else {
-                          if (_selectedTimeSlot.last.endTime ==
+                          if ((_availableSlotsResponse
+                                          .slots[position].startTime >
+                                      _selectedTimeSlot.last.startTime ||
+                                  _availableSlotsResponse
+                                          .slots[position].endTime <
+                                      _selectedTimeSlot.first.endTime) &&
+                              _availableSlotsResponse
+                                      .slots[position].startTime !=
+                                  _selectedTimeSlot.last.endTime) {
+                            _selectedTimeSlot.clear();
+                            _selectedTimeSlot
+                                .add(_availableSlotsResponse.slots[position]);
+                          } else if (_selectedTimeSlot.last.endTime ==
                               _availableSlotsResponse
                                   .slots[position].startTime) {
                             _selectedTimeSlot
@@ -382,19 +401,26 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                         color: Color.fromRGBO(172, 125, 83, 1),
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: _selectedTimeSlot
-                              .contains(_availableSlotsResponse.slots[position])
-                          ? Color.fromRGBO(172, 125, 83, 1)
-                          : Colors.transparent,
+                      color: _availableSlotsResponse.slots[position].startTime <
+                              DateTime.now().millisecondsSinceEpoch
+                          ? Colors.grey[200]
+                          : _selectedTimeSlot.contains(
+                                  _availableSlotsResponse.slots[position])
+                              ? Color.fromRGBO(172, 125, 83, 1)
+                              : Colors.transparent,
                     ),
                     child: Center(
                       child: Text(
                         "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].endTime))}",
                         style: GoogleFonts.poppins(
-                            color: _selectedTimeSlot.contains(
-                                    _availableSlotsResponse.slots[position])
-                                ? Colors.white
-                                : Colors.grey[800],
+                            color: _availableSlotsResponse
+                                        .slots[position].startTime <
+                                    DateTime.now().millisecondsSinceEpoch
+                                ? Colors.grey[400]
+                                : _selectedTimeSlot.contains(
+                                        _availableSlotsResponse.slots[position])
+                                    ? Colors.white
+                                    : Colors.grey[800],
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -405,7 +431,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
       );
 
   void _loadAvaiableTimeSlotFromApi(DateTime dateTime) async {
-    final res = await FetchSlots.getTitleSlot(dateTime, 99);
+    final res = await FetchSlots.getTitleSlot(dateTime, widget.salonId);
     setState(() {
       _availableSlotsResponse = res.data;
     });

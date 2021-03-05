@@ -237,7 +237,10 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                       time: DateUtil.getDisplayFormatHour(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               item.startTime)),
-                                      cancel: () {},
+                                      cancel: () async {
+                                        await _onCancel(item.id);
+                                        _refreshPage();
+                                      },
                                       viewDetails: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(

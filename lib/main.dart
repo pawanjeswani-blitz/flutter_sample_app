@@ -30,6 +30,10 @@ class MyApp extends StatelessWidget {
         primaryColor: AppColor.PRIMARY_DARK,
       ),
       home: SplashPage(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => BottomNavBar(),
+      },
     );
   }
 }
