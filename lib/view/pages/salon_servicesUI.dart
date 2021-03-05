@@ -50,6 +50,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   bool isSearchingOver;
   TextEditingController searchController = new TextEditingController();
   String genderFromUserProfile;
+
   int sum = 0;
   filterList() {
     List<Services> _searchList = [];
@@ -58,6 +59,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
       _searchList.retainWhere((service) {
         String searchTerm = searchController.text.toLowerCase();
         String salonName = service.serviceName.toLowerCase();
+        // widget.hide();
         return salonName.contains(searchTerm);
       });
       setState(() {
@@ -83,45 +85,51 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
     bool isSearching = searchController.text.isNotEmpty;
     isSearchingOver = isSearching;
     return Stack(children: [
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            // height: defaultSize * 5,
-            margin: EdgeInsets.only(
-              left: defaultSize * 2.0,
-              right: defaultSize * 2.0,
-              top: defaultSize * 2.0,
-              bottom: defaultSize * 1.0,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(defaultSize * 3.2),
-              color: Colors.white,
-              boxShadow: kElevationToShadow[2],
-            ),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Search services',
-                hintStyle: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
-                border: InputBorder.none,
-                prefixIcon: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search,
-                      color: AppColor.PRIMARY_MEDIUM,
+      SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height - 100,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                // height: defaultSize * 5,
+                margin: EdgeInsets.only(
+                  left: defaultSize * 2.0,
+                  right: defaultSize * 2.0,
+                  top: defaultSize * 2.0,
+                  bottom: defaultSize * 1.0,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(defaultSize * 3.2),
+                  color: Colors.white,
+                  boxShadow: kElevationToShadow[2],
+                ),
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search services',
+                    hintStyle:
+                        GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
+                    border: InputBorder.none,
+                    prefixIcon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: AppColor.PRIMARY_MEDIUM,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              _services == null
+                  ? Center(child: CircularProgressIndicator())
+                  : _getServiceWidget(),
+            ],
           ),
-          _services == null
-              ? Center(child: CircularProgressIndicator())
-              : _getServiceWidget(),
-        ],
+        ),
       ),
       _selectedServiceList != null && _selectedServiceList.length > 0
           ? Align(

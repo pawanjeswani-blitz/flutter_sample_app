@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -63,82 +64,88 @@ class _UserProfileUIState extends State<UserProfileUI> {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
-    return Scaffold(
-      key: _scaffoldKey,
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: [
-              ProfileInfoUI(
-                title: 'Profile',
-                image: 'assets/images/profile.jpg',
-                name: _userProfileLogin == null
-                    ? ""
-                    : _userProfileLogin.firstName.toString(),
-                email: _userProfileLogin == null
-                    ? ""
-                    : _userProfileLogin.email.toString(),
-              ),
-              SizedBox(
-                height: defaultSize * 2.0,
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.person,
-                title: 'Edit Profile',
-                press: () async {
-                  final userProfile =
-                      await AppSessionManager.getUserProfileAfterLogin();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditProfile(
-                            userProfile: userProfile,
-                          )));
-                },
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.access_time,
-                title: 'Upcoming Appointments',
-                press: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => UpcomingAppointmentScreen()));
-                },
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.content_paste,
-                title: 'Past Appointments',
-                press: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => PastAppointments()));
-                },
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.privacy_tip,
-                title: 'Privacy Policy',
-                press: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SaloonWalaPrivacy()));
-                },
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.assignment_returned,
-                title: 'Terms & Conditions',
-                press: () {
-                  // _launchURL();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SaloonWalaTerms()));
-                },
-              ),
-              ProfileMenuItem(
-                iconSrc: Icons.logout,
-                title: 'Logout',
-                press: () async {
-                  _showLogout();
-                },
-                hasNavigation: false,
-              ),
-              SizedBox(
-                height: defaultSize * 2.5,
-              )
-            ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light
+          .copyWith(statusBarColor: AppColor.PRIMARY_LIGHT),
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Column(
+              children: [
+                ProfileInfoUI(
+                  title: 'Profile',
+                  image: _userProfileLogin.gender == "M"
+                      ? 'assets/images/avatar.png'
+                      : 'assets/images/favatar.png',
+                  name: _userProfileLogin == null
+                      ? ""
+                      : _userProfileLogin.firstName.toString(),
+                  email: _userProfileLogin == null
+                      ? ""
+                      : _userProfileLogin.email.toString(),
+                ),
+                SizedBox(
+                  height: defaultSize * 2.0,
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.person,
+                  title: 'Edit Profile',
+                  press: () async {
+                    final userProfile =
+                        await AppSessionManager.getUserProfileAfterLogin();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EditProfile(
+                              userProfile: userProfile,
+                            )));
+                  },
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.access_time,
+                  title: 'Upcoming Appointments',
+                  press: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => UpcomingAppointmentScreen()));
+                  },
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.content_paste,
+                  title: 'Past Appointments',
+                  press: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PastAppointments()));
+                  },
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.privacy_tip,
+                  title: 'Privacy Policy',
+                  press: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SaloonWalaPrivacy()));
+                  },
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.assignment_returned,
+                  title: 'Terms & Conditions',
+                  press: () {
+                    // _launchURL();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SaloonWalaTerms()));
+                  },
+                ),
+                ProfileMenuItem(
+                  iconSrc: Icons.logout,
+                  title: 'Logout',
+                  press: () async {
+                    _showLogout();
+                  },
+                  hasNavigation: false,
+                ),
+                SizedBox(
+                  height: defaultSize * 2.5,
+                )
+              ],
+            ),
           ),
         ),
       ),

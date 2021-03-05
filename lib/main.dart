@@ -27,8 +27,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Saloonwala Consumer',
       theme: ThemeData(
-        primaryColor: AppColor.PRIMARY_DARK,
-      ),
+          primaryColor: AppColor.PRIMARY_DARK,
+          accentColor: AppColor.VERY_DARK_ACCENT,
+          highlightColor: AppColor.LOGIN_BACKGROUND),
       home: SplashPage(),
       routes: {
         '/login': (context) => LoginPage(),

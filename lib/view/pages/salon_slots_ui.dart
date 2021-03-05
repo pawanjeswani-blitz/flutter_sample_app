@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/fetch_slots.dart';
+import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/available_slot_response.dart';
@@ -51,6 +52,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
   double defaultSizeOveride;
   List<int> service = [];
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -249,184 +251,208 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
 
     return Container(
       height: defaultSizeOveride * 15.0,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: emmployeeList.length,
-          itemBuilder: (BuildContext context, int position) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedEmployee = emmployeeList[position];
-                });
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: defaultSizeOveride * 5.25,
-                    width: defaultSizeOveride * 5.25,
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    decoration: BoxDecoration(
-                      border:
-                          Border.all(color: Color.fromRGBO(172, 125, 83, 1)),
-                      color: _selectedEmployee?.id == emmployeeList[position].id
-                          ? Color.fromRGBO(172, 125, 83, 1)
-                          : Colors.transparent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        emmployeeList[position].firstName[0],
-                        style: GoogleFonts.poppins(
-                          color: _selectedEmployee?.id ==
-                                  emmployeeList[position].id
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: defaultSizeOveride * 1.85,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: defaultSizeOveride * 1.5),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: defaultSizeOveride * 2.0, vertical: 0.0),
-                      child: Text(
-                        emmployeeList[position].firstName,
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: defaultSizeOveride * 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: defaultSizeOveride * 1.25),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: defaultSizeOveride * 2.0, vertical: 0.0),
-                      child: Text(
-                        emmployeeList[position].type,
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: defaultSizeOveride * 1.35,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-    );
-  }
-
-  Widget _getTimeSelectListViewWidget() => SizedBox(
-        height: defaultSizeOveride * 28.0,
-        child: Container(
-          margin: EdgeInsets.only(
-            left: defaultSizeOveride * 2.25,
-            right: defaultSizeOveride * 2.25,
-          ),
-          child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 7.5,
-                  mainAxisSpacing: 15.0,
-                  childAspectRatio: 3.5),
-              shrinkWrap: true,
-              // scrollDirection: Axis.horizontal,
-              // physics: const NeverScrollableScrollPhysics(),
-              itemCount: _availableSlotsResponse.slots.length,
+      child: emmployeeList.isNotEmpty
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: emmployeeList.length,
               itemBuilder: (BuildContext context, int position) {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      _selectedEmployee = null;
-                      if (_selectedTimeSlot
-                          .contains(_availableSlotsResponse.slots[position])) {
-                        //Remove Time Slots From Lists
-                        if (_selectedTimeSlot.length > 1 &&
-                            _availableSlotsResponse.slots[position].startTime >
-                                _selectedTimeSlot.last.startTime) {
-                          showSnackBar("Cannot remove slot");
-                        } else {
-                          _selectedTimeSlot
-                              .remove(_availableSlotsResponse.slots[position]);
-                        }
-                      } else {
-                        //add time slots to list
-                        //to do check sequencing
-                        if (_selectedTimeSlot.isEmpty) {
-                          if (_availableSlotsResponse
-                                  .slots[position].startTime >
-                              DateTime.now().millisecondsSinceEpoch) {
-                            _selectedTimeSlot
-                                .add(_availableSlotsResponse.slots[position]);
-                          } else {
-                            showSnackBar("Time Slot Cannot be selected");
-                          }
-                        } else {
-                          if ((_availableSlotsResponse
-                                          .slots[position].startTime >
-                                      _selectedTimeSlot.last.startTime ||
-                                  _availableSlotsResponse
-                                          .slots[position].endTime <
-                                      _selectedTimeSlot.first.endTime) &&
-                              _availableSlotsResponse
-                                      .slots[position].startTime !=
-                                  _selectedTimeSlot.last.endTime) {
-                            _selectedTimeSlot.clear();
-                            _selectedTimeSlot
-                                .add(_availableSlotsResponse.slots[position]);
-                          } else if (_selectedTimeSlot.last.endTime ==
-                              _availableSlotsResponse
-                                  .slots[position].startTime) {
-                            _selectedTimeSlot
-                                .add(_availableSlotsResponse.slots[position]);
-                          } else {
-                            showSnackBar(
-                                "Please Select slots in sequence manner");
-                          }
-                        }
-                      }
-                      // _selectedTimeSlot = _availableSlotsResponse.slots[position];
+                      _selectedEmployee = emmployeeList[position];
                     });
                   },
-                  child: Container(
-                    // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color.fromRGBO(172, 125, 83, 1),
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: _availableSlotsResponse.slots[position].startTime <
-                              DateTime.now().millisecondsSinceEpoch
-                          ? Colors.grey[200]
-                          : _selectedTimeSlot.contains(
-                                  _availableSlotsResponse.slots[position])
+                  child: Column(
+                    children: [
+                      Container(
+                        height: defaultSizeOveride * 5.25,
+                        width: defaultSizeOveride * 5.25,
+                        margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Color.fromRGBO(172, 125, 83, 1)),
+                          color: _selectedEmployee?.id ==
+                                  emmployeeList[position].id
                               ? Color.fromRGBO(172, 125, 83, 1)
                               : Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].endTime))}",
-                        style: GoogleFonts.poppins(
-                            color: _availableSlotsResponse
-                                        .slots[position].startTime <
-                                    DateTime.now().millisecondsSinceEpoch
-                                ? Colors.grey[400]
-                                : _selectedTimeSlot.contains(
-                                        _availableSlotsResponse.slots[position])
-                                    ? Colors.white
-                                    : Colors.grey[800],
-                            fontWeight: FontWeight.w500),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            emmployeeList[position].firstName[0],
+                            style: GoogleFonts.poppins(
+                              color: _selectedEmployee?.id ==
+                                      emmployeeList[position].id
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: defaultSizeOveride * 1.85,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(height: defaultSizeOveride * 1.5),
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: defaultSizeOveride * 2.0,
+                              vertical: 0.0),
+                          child: Text(
+                            emmployeeList[position].firstName,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              fontSize: defaultSizeOveride * 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: defaultSizeOveride * 1.25),
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: defaultSizeOveride * 2.0,
+                              vertical: 0.0),
+                          child: Text(
+                            emmployeeList[position].type,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: defaultSizeOveride * 1.35,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              }),
+              })
+          : Container(
+              margin: EdgeInsets.only(top: defaultSizeOveride * 1.0),
+              child: Text("No Specialist available currently",
+                  style: GoogleFonts.poppins(
+                      fontSize: defaultSizeOveride * 1.75,
+                      color: AppColor.PRIMARY_MEDIUM,
+                      fontWeight: FontWeight.w500)),
+            ),
+    );
+  }
+
+  Widget _getTimeSelectListViewWidget() => Scrollbar(
+        controller: _scrollController,
+        radius: Radius.circular(5.0),
+        thickness: defaultSizeOveride * 0.85,
+        isAlwaysShown: true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: SizedBox(
+            height: defaultSizeOveride * 28.0,
+            child: Container(
+              margin: EdgeInsets.only(
+                left: defaultSizeOveride * 2.25,
+                right: defaultSizeOveride * 2.25,
+              ),
+              child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 7.5,
+                      mainAxisSpacing: 15.0,
+                      childAspectRatio: 3.5),
+                  shrinkWrap: true,
+                  // scrollDirection: Axis.horizontal,
+                  // physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _availableSlotsResponse.slots.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedEmployee = null;
+                          if (_selectedTimeSlot.contains(
+                              _availableSlotsResponse.slots[position])) {
+                            //Remove Time Slots From Lists
+                            if (_selectedTimeSlot.length > 1 &&
+                                _availableSlotsResponse
+                                        .slots[position].startTime >
+                                    _selectedTimeSlot.last.startTime) {
+                              showSnackBar("Cannot remove slot");
+                            } else {
+                              _selectedTimeSlot.remove(
+                                  _availableSlotsResponse.slots[position]);
+                            }
+                          } else {
+                            //add time slots to list
+                            //to do check sequencing
+                            if (_selectedTimeSlot.isEmpty) {
+                              if (_availableSlotsResponse
+                                      .slots[position].startTime >
+                                  DateTime.now().millisecondsSinceEpoch) {
+                                _selectedTimeSlot.add(
+                                    _availableSlotsResponse.slots[position]);
+                              } else {
+                                showSnackBar("Time Slot Cannot be selected");
+                              }
+                            } else {
+                              if ((_availableSlotsResponse
+                                              .slots[position].startTime >
+                                          _selectedTimeSlot.last.startTime ||
+                                      _availableSlotsResponse
+                                              .slots[position].endTime <
+                                          _selectedTimeSlot.first.endTime) &&
+                                  _availableSlotsResponse
+                                          .slots[position].startTime !=
+                                      _selectedTimeSlot.last.endTime) {
+                                _selectedTimeSlot.clear();
+                                _selectedTimeSlot.add(
+                                    _availableSlotsResponse.slots[position]);
+                              } else if (_selectedTimeSlot.last.endTime ==
+                                  _availableSlotsResponse
+                                      .slots[position].startTime) {
+                                _selectedTimeSlot.add(
+                                    _availableSlotsResponse.slots[position]);
+                              } else {
+                                showSnackBar(
+                                    "Please Select slots in sequence manner");
+                              }
+                            }
+                          }
+                          // _selectedTimeSlot = _availableSlotsResponse.slots[position];
+                        });
+                      },
+                      child: Container(
+                        // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color.fromRGBO(172, 125, 83, 1),
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                          color: _availableSlotsResponse
+                                      .slots[position].startTime <
+                                  DateTime.now().millisecondsSinceEpoch
+                              ? Colors.grey[200]
+                              : _selectedTimeSlot.contains(
+                                      _availableSlotsResponse.slots[position])
+                                  ? Color.fromRGBO(172, 125, 83, 1)
+                                  : Colors.transparent,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].endTime))}",
+                            style: GoogleFonts.poppins(
+                                color: _availableSlotsResponse
+                                            .slots[position].startTime <
+                                        DateTime.now().millisecondsSinceEpoch
+                                    ? Colors.grey[400]
+                                    : _selectedTimeSlot.contains(
+                                            _availableSlotsResponse
+                                                .slots[position])
+                                        ? Colors.white
+                                        : Colors.grey[800],
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+          ),
         ),
       );
 

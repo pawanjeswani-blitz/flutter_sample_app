@@ -32,6 +32,7 @@ class SalonServicesTabView extends StatefulWidget {
 class _SalonServicesTabViewState extends State<SalonServicesTabView>
     with SingleTickerProviderStateMixin {
   TabController controller;
+
   var bannerImagesList = List<String>();
   void initState() {
     super.initState();
@@ -41,6 +42,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
   @override
   void dispose() {
     controller.dispose();
+
     super.dispose();
   }
 
@@ -68,7 +70,8 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
     double defaultSize = SizeConfig.defaultSize;
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: SystemUiOverlayStyle.light
+            .copyWith(statusBarColor: Theme.of(context).primaryColor),
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -76,11 +79,8 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                   leading: InkWell(
                     onTap: () => Navigator.of(context).pop(true),
                     child: Container(
-                      // height: 5.0,
-                      // width: 5.0,
                       margin: EdgeInsets.only(
                           left: defaultSize * 1.5, top: defaultSize * 2.5),
-                      // padding: EdgeInsets.all(defaultSize * 1.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColor.LOGIN_BACKGROUND,
@@ -88,50 +88,43 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                       child: Icon(
                         Icons.chevron_left,
                         color: Colors.white,
-                        // size: defaultSize * 2.0,
                       ),
                     ),
                   ),
                   backgroundColor: AppColor.PRIMARY_MEDIUM,
-                  // pinned: true,
                   floating: true,
                   automaticallyImplyLeading: false,
                   expandedHeight: defaultSize * 20.0,
-                  // title:
                   elevation: 2.0,
                   flexibleSpace: Stack(
                     children: [
-                      Container(
-                        width: double.infinity,
-                        height: defaultSize * 30.0,
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            autoPlay: true,
-                            // autoPlayInterval: Duration(seconds: 2),
-                            // aspectRatio: 3 / 4,
-                            viewportFraction: 1.0,
-                            // aspectRatio: 16 / 9,
-                            // height: defaultSize * 100.0,
-                            autoPlayCurve: Curves.easeInOut,
-                            enlargeCenterPage: true,
+                      SafeArea(
+                        child: Container(
+                          width: double.infinity,
+                          height: defaultSize * 30.0,
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              autoPlay: true,
+                              viewportFraction: 1.0,
+                              autoPlayCurve: Curves.easeInOut,
+                              enlargeCenterPage: true,
+                            ),
+                            items: _getImages()
+                                .map((item) => Container(
+                                      width: double.infinity,
+                                      // height: defaultSize * 39.0,
+                                      child: CachedNetworkImage(
+                                        imageUrl: item,
+                                        fit: BoxFit.fill,
+                                        height: 1000,
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                      ),
+                                    ))
+                                .toList(),
                           ),
-                          items: _getImages()
-                              .map((item) => Container(
-                                    margin: EdgeInsets.only(
-                                        top: defaultSize * 3.0, bottom: 0.0),
-                                    width: double.infinity,
-                                    // height: defaultSize * 39.0,
-                                    child: CachedNetworkImage(
-                                      imageUrl: item,
-                                      fit: BoxFit.fill,
-                                      height: 1000,
-                                      placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
-                                    ),
-                                  ))
-                              .toList(),
                         ),
                       ),
                     ],
@@ -141,7 +134,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
           body: Column(
             children: [
               Container(
-                height: defaultSize * 15.0,
+                height: defaultSize * 13.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -158,7 +151,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                          top: defaultSize * 2.5, bottom: defaultSize * 2.5),
+                          top: defaultSize * 1.75, bottom: defaultSize * 1.0),
                       child: Text(widget.salonName.toUpperCase(),
                           style: GoogleFonts.poppins(
                               fontSize: defaultSize * 2.5,
@@ -166,7 +159,6 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
                               fontWeight: FontWeight.w600)),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: defaultSize * 2.0),
                       width: defaultSize * 35.0,
                       height: defaultSize * 3.4,
                       child: TabBar(

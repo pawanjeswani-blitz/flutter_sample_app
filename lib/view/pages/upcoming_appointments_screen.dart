@@ -68,6 +68,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
+    defaultOverride = defaultSize;
     return Scaffold(
       key: _scaffoldKey,
       body: DefaultTabController(
@@ -183,9 +184,8 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                       time: DateUtil.getDisplayFormatHour(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               item.startTime)),
-                                      cancel: () async {
-                                        await _onCancel(item.id);
-                                        _refreshPage();
+                                      cancel: () {
+                                        _showLogout(item.id);
                                       },
                                       viewDetails: () {
                                         Navigator.of(context).push(
@@ -237,9 +237,8 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                                       time: DateUtil.getDisplayFormatHour(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               item.startTime)),
-                                      cancel: () async {
-                                        await _onCancel(item.id);
-                                        _refreshPage();
+                                      cancel: () {
+                                        _showLogout(item.id);
                                       },
                                       viewDetails: () {
                                         Navigator.of(context).push(
@@ -261,6 +260,55 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _showLogout(int id) {
+    Widget cancelButton = FlatButton(
+      child: Text(
+        "No",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text(
+        "Yes",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () async {
+        Navigator.pop(context);
+        await _onCancel(id);
+        _refreshPage();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Are you sure you want to Cancel your Appointment",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.5,
+          color: Colors.grey[500],
+        ),
+      ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
