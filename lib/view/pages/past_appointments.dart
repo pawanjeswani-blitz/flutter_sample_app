@@ -158,158 +158,172 @@ class _PastAppointmentsState extends State<PastAppointments> {
             body: new TabBarView(
               children: [
                 Container(
-                  child: PagedListView<int, AppointmentResponse>(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0.0),
-                    pagingController: _pagingController,
-                    builderDelegate:
-                        PagedChildBuilderDelegate<AppointmentResponse>(
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            noMoreItemsIndicatorBuilder: (context) {
-                              return Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: defaultSize * 2.0,
-                                    bottom: defaultSize * 2.0,
-                                  ),
-                                  child: Text(
-                                    "You've reached the end",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[500],
-                                      fontSize: defaultSize * 2.0,
-                                    ),
-                                  ),
+                  child: RefreshIndicator(
+                    onRefresh: () => Future.sync(
+                      () => _pagingController.refresh(),
+                    ),
+                    child: PagedListView<int, AppointmentResponse>(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0.0),
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<
+                              AppointmentResponse>(
+                          firstPageProgressIndicatorBuilder: (context) =>
+                              _getLoaderView(),
+                          noMoreItemsIndicatorBuilder: (context) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  top: defaultSize * 2.0,
+                                  bottom: defaultSize * 2.0,
                                 ),
-                              );
-                            },
-                            itemBuilder: (context, item, index) =>
-                                item.status == "DONE"
-                                    ? PastAppointmentCard(
-                                        salonTitle: item.salonDetails.name
-                                            .toUpperCase(),
-                                        date: DateUtil.getDisplayFormatDay(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        time: DateUtil.getDisplayFormatHour(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        viewDetails: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ViewBookingDetails(
-                                                bookingId: item.id,
-                                                cardcolor: Colors.white,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        review: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SalonRatingScreen(
-                                                bookingId: item.id,
-                                                salonData: item.salonDetails,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : SizedBox()),
-                  ),
-                ),
-                Container(
-                  child: PagedListView<int, AppointmentResponse>(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0.0),
-                    pagingController: _pagingController,
-                    builderDelegate:
-                        PagedChildBuilderDelegate<AppointmentResponse>(
-                            noItemsFoundIndicatorBuilder: (context) {
-                              return Center(
                                 child: Text(
-                                  "No cancelled bookings found",
+                                  "You've reached the end",
                                   style: GoogleFonts.poppins(
                                     color: Colors.grey[500],
                                     fontSize: defaultSize * 2.0,
                                   ),
                                 ),
-                              );
-                            },
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            itemBuilder: (context, item, index) =>
-                                item.status == "OWNER_CANCELLED"
-                                    ? CancelledAppointmentCard(
-                                        salonTitle: item.salonDetails.name
-                                            .toUpperCase(),
-                                        date: DateUtil.getDisplayFormatDay(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        time: DateUtil.getDisplayFormatHour(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        viewDetails: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ViewBookingDetails(
-                                                bookingId: item.id,
-                                                cardcolor: Colors.grey[200],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : SizedBox()),
+                              ),
+                            );
+                          },
+                          itemBuilder: (context, item, index) => item.status ==
+                                  "DONE"
+                              ? PastAppointmentCard(
+                                  salonTitle:
+                                      item.salonDetails.name.toUpperCase(),
+                                  date: DateUtil.getDisplayFormatDay(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.startTime)),
+                                  time: DateUtil.getDisplayFormatHour(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.startTime)),
+                                  viewDetails: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ViewBookingDetails(
+                                          bookingId: item.id,
+                                          cardcolor: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  review: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SalonRatingScreen(
+                                          bookingId: item.id,
+                                          salonData: item.salonDetails,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : SizedBox()),
+                    ),
                   ),
                 ),
                 Container(
-                  child: PagedListView<int, AppointmentResponse>(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0.0),
-                    pagingController: _pagingController,
-                    builderDelegate:
-                        PagedChildBuilderDelegate<AppointmentResponse>(
-                            noItemsFoundIndicatorBuilder: (context) {
-                              return Center(
-                                child: Text(
-                                  "No cancelled bookings found",
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.grey[200],
-                                    fontSize: defaultSize * 2.0,
-                                  ),
+                  child: RefreshIndicator(
+                    onRefresh: () => Future.sync(
+                      () => _pagingController.refresh(),
+                    ),
+                    child: PagedListView<int, AppointmentResponse>(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0.0),
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<
+                              AppointmentResponse>(
+                          noItemsFoundIndicatorBuilder: (context) {
+                            return Center(
+                              child: Text(
+                                "No cancelled bookings found",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey[500],
+                                  fontSize: defaultSize * 2.0,
                                 ),
-                              );
-                            },
-                            firstPageProgressIndicatorBuilder: (context) =>
-                                _getLoaderView(),
-                            itemBuilder: (context, item, index) =>
-                                item.status == "CUST_CANCELLED"
-                                    ? CancelledAppointmentCard(
-                                        salonTitle: item.salonDetails.name
-                                            .toUpperCase(),
-                                        date: DateUtil.getDisplayFormatDay(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        time: DateUtil.getDisplayFormatHour(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                item.startTime)),
-                                        viewDetails: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ViewBookingDetails(
-                                                bookingId: item.id,
-                                                cardcolor: Colors.grey[200],
-                                              ),
+                              ),
+                            );
+                          },
+                          firstPageProgressIndicatorBuilder: (context) =>
+                              _getLoaderView(),
+                          itemBuilder: (context, item, index) =>
+                              item.status == "OWNER_CANCELLED"
+                                  ? CancelledAppointmentCard(
+                                      salonTitle:
+                                          item.salonDetails.name.toUpperCase(),
+                                      date: DateUtil.getDisplayFormatDay(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              item.startTime)),
+                                      time: DateUtil.getDisplayFormatHour(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              item.startTime)),
+                                      viewDetails: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ViewBookingDetails(
+                                              bookingId: item.id,
+                                              cardcolor: Colors.grey[200],
                                             ),
-                                          );
-                                        },
-                                      )
-                                    : SizedBox()),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : SizedBox()),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: RefreshIndicator(
+                    onRefresh: () => Future.sync(
+                      () => _pagingController.refresh(),
+                    ),
+                    child: PagedListView<int, AppointmentResponse>(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0.0),
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<
+                              AppointmentResponse>(
+                          noItemsFoundIndicatorBuilder: (context) {
+                            return Center(
+                              child: Text(
+                                "No cancelled bookings found",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey[200],
+                                  fontSize: defaultSize * 2.0,
+                                ),
+                              ),
+                            );
+                          },
+                          firstPageProgressIndicatorBuilder: (context) =>
+                              _getLoaderView(),
+                          itemBuilder: (context, item, index) =>
+                              item.status == "CUST_CANCELLED"
+                                  ? CancelledAppointmentCard(
+                                      salonTitle:
+                                          item.salonDetails.name.toUpperCase(),
+                                      date: DateUtil.getDisplayFormatDay(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              item.startTime)),
+                                      time: DateUtil.getDisplayFormatHour(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              item.startTime)),
+                                      viewDetails: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ViewBookingDetails(
+                                              bookingId: item.id,
+                                              cardcolor: Colors.grey[200],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : SizedBox()),
+                    ),
                   ),
                 ),
               ],
@@ -320,6 +334,9 @@ class _PastAppointmentsState extends State<PastAppointments> {
     );
   }
 
+  _refreshPage() => Future.sync(
+        () => _pagingController.refresh(),
+      );
   Widget _getLoaderView() {
     return Center(
       child: CircularProgressIndicator(),

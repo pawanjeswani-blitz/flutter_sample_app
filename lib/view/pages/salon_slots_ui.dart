@@ -114,6 +114,7 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                       if (_selectedDateTime != null) {
                         _availableSlotsResponse = null;
                         _selectedEmployee = null;
+                        _selectedTimeSlot.clear();
                         _loadAvaiableTimeSlotFromApi(_selectedDateTime);
                         setState(() {});
                       }

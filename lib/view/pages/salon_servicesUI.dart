@@ -30,31 +30,48 @@ class SalonServicesUI extends StatefulWidget {
 
 class _SalonServicesUIState extends State<SalonServicesUI> {
   int index;
-  TabController controller;
+
+  UserProfileLogin _userProfileLogin;
 
   @override
   void initState() {
     super.initState();
     // controller = TabController(length: 2, vsync: this);
     _loadServices();
+    searchController.addListener(() {
+      filterList();
+    });
   }
 
   SaloonServices _services;
   List<Services> _selectedServiceList = [];
+  List<Services> filteredSearch = [];
   double defaultOverride;
+  bool isSearchingOver;
+  TextEditingController searchController = new TextEditingController();
   String genderFromUserProfile;
   int sum = 0;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadServices();
-  // }
+  filterList() {
+    List<Services> _searchList = [];
+    _searchList.addAll(_services.services);
+    if (searchController.text.isNotEmpty) {
+      _searchList.retainWhere((service) {
+        String searchTerm = searchController.text.toLowerCase();
+        String salonName = service.serviceName.toLowerCase();
+        return salonName.contains(searchTerm);
+      });
+      setState(() {
+        filteredSearch = _searchList;
+      });
+    }
+  }
 
   void _loadServices() async {
     final res = await LoadSalons.getService(widget.salonId);
+    final userProfile = await AppSessionManager.getUserProfileAfterLogin();
     setState(() {
       _services = res.data;
+      _userProfileLogin = userProfile;
     });
   }
 
@@ -63,9 +80,44 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
+    bool isSearching = searchController.text.isNotEmpty;
+    isSearchingOver = isSearching;
     return Scaffold(
       body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            // height: defaultSize * 5,
+            margin: EdgeInsets.only(
+              left: defaultSize * 2.0,
+              right: defaultSize * 2.0,
+              top: defaultSize * 2.0,
+              bottom: defaultSize * 1.0,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(defaultSize * 3.2),
+              color: Colors.white,
+              boxShadow: kElevationToShadow[2],
+            ),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search services',
+                hintStyle: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
+                border: InputBorder.none,
+                prefixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search,
+                      color: AppColor.PRIMARY_MEDIUM,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           _services == null
               ? Center(child: CircularProgressIndicator())
               : _getServiceWidget(),
@@ -166,15 +218,20 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
 
   Widget _getServiceWidget() => Expanded(
         child: ListView.builder(
-          itemCount: _services.services.length,
+          shrinkWrap: true,
+          itemCount: isSearchingOver == true
+              ? filteredSearch.length
+              : _services.services.length,
           itemBuilder: (BuildContext context, int index) {
-            index = index;
+            Services services = isSearchingOver == true
+                ? filteredSearch[index]
+                : _services.services[index];
             int _getDiscountPercentage() {
-              if (_services.services[index].globalDiscount != null &&
-                  _services.services[index].globalDiscount > 0)
-                return _services.services[index].globalDiscount;
+              if (services.globalDiscount != null &&
+                  services.globalDiscount > 0)
+                return services.globalDiscount;
               else
-                return _services.services[index].serviceDiscount ?? 0;
+                return services.serviceDiscount ?? 0;
             }
 
             int _getDiscountedPrice(int amount) {
@@ -190,8 +247,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                   decoration: BoxDecoration(
                       color: AppColor.PRIMARY_DARK,
                       borderRadius: BorderRadius.circular(16.0)),
-                  child: Text(
-                      "${_services.services[index].id}. ${_services.services[index].serviceName}",
+                  child: Text("${services.id}. ${services.serviceName}",
                       style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -206,32 +262,29 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _getTitleBar(),
-                  if (_services.services[index].maleRate != null &&
-                      _services.services[index].maleRate > 0)
+                  if (services.maleRate != null && services.maleRate > 0)
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 12, top: 16, right: 12),
                       child: Row(
                         children: [
                           Text(
-                              "Male Rate: ₹${_getDiscountedPrice(_services.services[index].maleRate)}",
+                              "Male Rate: ₹${_getDiscountedPrice(services.maleRate)}",
                               style: GoogleFonts.poppins(
                                   color: AppColor.PRIMARY_DARK,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 15)),
                           SizedBox(width: 8),
-                          if (_getDiscountedPrice(
-                                  _services.services[index].maleRate) !=
-                              _services.services[index].maleRate)
-                            Text("₹${_services.services[index].maleRate}",
+                          if (_getDiscountedPrice(services.maleRate) !=
+                              services.maleRate)
+                            Text("₹${services.maleRate}",
                                 style: GoogleFonts.poppins(
                                     decoration: TextDecoration.lineThrough,
                                     color: AppColor.PRIMARY_DARK,
                                     fontSize: 15)),
                           SizedBox(width: 24),
-                          if (_getDiscountedPrice(
-                                  _services.services[index].maleRate) !=
-                              _services.services[index].maleRate)
+                          if (_getDiscountedPrice(services.maleRate) !=
+                              services.maleRate)
                             Text("${_getDiscountPercentage()}% Off",
                                 style: GoogleFonts.poppins(
                                     color: AppColor.PRIMARY_DARK,
@@ -239,32 +292,29 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                         ],
                       ),
                     ),
-                  if (_services.services[index].femaleRate != null &&
-                      _services.services[index].femaleRate > 0)
+                  if (services.femaleRate != null && services.femaleRate > 0)
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 12, top: 2, right: 12, bottom: 8),
                       child: Row(
                         children: [
                           Text(
-                              "Female Rate: ₹${_getDiscountedPrice(_services.services[index].femaleRate)}",
+                              "Female Rate: ₹${_getDiscountedPrice(services.femaleRate)}",
                               style: GoogleFonts.poppins(
                                   color: AppColor.PRIMARY_DARK,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 15)),
                           SizedBox(width: 8),
-                          if (_getDiscountedPrice(
-                                  _services.services[index].femaleRate) !=
-                              _services.services[index].femaleRate)
-                            Text("₹${_services.services[index].femaleRate}",
+                          if (_getDiscountedPrice(services.femaleRate) !=
+                              services.femaleRate)
+                            Text("₹${services.femaleRate}",
                                 style: GoogleFonts.poppins(
                                     decoration: TextDecoration.lineThrough,
                                     color: AppColor.PRIMARY_DARK,
                                     fontSize: 15)),
                           SizedBox(width: 24),
-                          if (_getDiscountedPrice(
-                                  _services.services[index].femaleRate) !=
-                              _services.services[index].femaleRate)
+                          if (_getDiscountedPrice(services.femaleRate) !=
+                              services.femaleRate)
                             Text("${_getDiscountPercentage()}% Off",
                                 style: GoogleFonts.poppins(
                                     color: AppColor.PRIMARY_DARK,
@@ -277,7 +327,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                     children: [
                       Container(),
                       Spacer(),
-                      _selectedServiceList.contains(_services.services[index])
+                      _selectedServiceList.contains(services)
                           ? Container(
                               margin: EdgeInsets.only(right: 20.0),
                               child: InkWell(
@@ -285,11 +335,9 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                   setState(() {
                                     // sa = "BB";
 
-                                    _selectedServiceList
-                                        .remove(_services.services[index]);
-                                    sum -= widget.userprofile.gender == "M"
-                                        ? _getDiscountedPrice(
-                                            _services.services[index].maleRate)
+                                    _selectedServiceList.remove(services);
+                                    sum -= _userProfileLogin.gender == "M"
+                                        ? _getDiscountedPrice(services.maleRate)
                                         : _getDiscountedPrice(_services
                                             .services[index].femaleRate);
 
@@ -318,11 +366,9 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                 onTap: () {
                                   setState(() {
                                     // sa = "aa";
-                                    _selectedServiceList
-                                        .add(_services.services[index]);
-                                    sum += widget.userprofile.gender == "M"
-                                        ? _getDiscountedPrice(
-                                            _services.services[index].maleRate)
+                                    _selectedServiceList.add(services);
+                                    sum += _userProfileLogin.gender == "M"
+                                        ? _getDiscountedPrice(services.maleRate)
                                         : _getDiscountedPrice(_services
                                             .services[index].femaleRate);
                                   });

@@ -322,55 +322,38 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
                           fontWeight: FontWeight.w600),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      right: defaultSize * 2.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: AppColor.PRIMARY_DARK,
-                          size: defaultSize * 1.75,
-                        ),
-                        SizedBox(width: defaultSize * 0.5),
-                        Text(
-                          "4.0",
-                          style: GoogleFonts.poppins(
-                              fontSize: defaultSize * 1.75,
-                              color: AppColor.PRIMARY_MEDIUM,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
               SizedBox(
                 height: defaultSize * 0.5,
               ),
-              // Container(
-              //   margin: EdgeInsets.only(
-              //     left: defaultSize * 1.25,
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       Icon(
-              //         Icons.location_on,
-              //         color: AppColor.PRIMARY_DARK,
-              //         size: defaultSize * 1.5,
-              //       ),
-              //       SizedBox(width: defaultSize * 0.5),
-              //       Text(
-              //         widget.distance,
-              //         style: GoogleFonts.poppins(
-              //             fontSize: defaultSize * 1.5,
-              //             color: AppColor.PRIMARY_MEDIUM,
-              //             fontWeight: FontWeight.w400),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: defaultSize * 1.0,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_pin,
+                      color: AppColor.PRIMARY_MEDIUM,
+                      size: defaultSize * 2.0,
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.distance,
+                        maxLines: 8,
+                        // overflow: TextOverflow.ellipsis,
+                        // textDirection: TextDirection.rtl,
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.poppins(
+                          fontSize: defaultSize * 1.75,
+                          color: AppColor.PRIMARY_MEDIUM,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Divider(),
               Container(
                 height: defaultSize * 2.5,
@@ -402,15 +385,23 @@ class _FavoriteSalonCardState extends State<FavoriteSalonCard> {
 class SearchSalonCard extends StatefulWidget {
   final String title;
   final dynamic distance;
-  final Function customfunction, customFunctionLike;
+  final Function customfunction, customFunctionLike, customFnc;
+  final Color color;
+  final String thumb;
+  final bool liked;
 
-  const SearchSalonCard(
-      {Key key,
-      this.title,
-      this.distance,
-      this.customfunction,
-      this.customFunctionLike})
-      : super(key: key);
+  const SearchSalonCard({
+    Key key,
+    this.title,
+    this.distance,
+    this.customfunction,
+    this.customFunctionLike,
+    this.customFnc,
+    this.color,
+    this.thumb,
+    this.liked,
+  }) : super(key: key);
+
   @override
   _SearchSalonCardState createState() => _SearchSalonCardState();
 }
@@ -432,7 +423,7 @@ class _SearchSalonCardState extends State<SearchSalonCard> {
             top: defaultSize * 0.5,
             bottom: defaultSize * 1.2),
         child: Card(
-          elevation: 1,
+          elevation: 1.85,
           color: Colors.white,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
@@ -440,9 +431,20 @@ class _SearchSalonCardState extends State<SearchSalonCard> {
           ),
           child: Row(
             children: [
-              sample != null && sample.isNotEmpty
+              widget.thumb != null && widget.thumb.isNotEmpty
                   ? Container(
-                      height: defaultSize * 8.5,
+                      height: defaultSize * 10.5,
+                      width: defaultSize * 15,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.thumb),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: defaultSize * 10.5,
                       width: defaultSize * 15,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey,
@@ -452,19 +454,9 @@ class _SearchSalonCardState extends State<SearchSalonCard> {
                               "https://upload.wikimedia.org/wikipedia/commons/b/b2/Hair_Salon_Stations.jpg"),
                         ),
                       ),
-                    )
-                  : Container(
-                      height: defaultSize * 10,
-                      width: defaultSize * 15,
-                      color: Colors.blueGrey,
-                      child: Icon(
-                        Icons.home,
-                        size: defaultSize * 3.0,
-                        color: Colors.white,
-                      ),
                     ),
               ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: defaultSize * 20.0),
+                constraints: BoxConstraints(maxWidth: defaultSize * 17.0),
                 child: Container(
                   margin: EdgeInsets.only(left: defaultSize * 1.35),
                   child: Column(
@@ -478,6 +470,14 @@ class _SearchSalonCardState extends State<SearchSalonCard> {
                             color: AppColor.PRIMARY_MEDIUM,
                             fontWeight: FontWeight.bold),
                       ),
+                      SizedBox(
+                        height: defaultSize * 1.0,
+                      ),
+                      Text(widget.distance,
+                          style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 1.25,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.PRIMARY_MEDIUM)),
                     ],
                   ),
                 ),

@@ -112,88 +112,93 @@ class _SearchSalonsState extends State<SearchSalons> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: FloatingSearchAppBar(
-          alwaysOpened: true,
-          iconColor: Colors.grey[500],
-          controller: controller,
-          colorOnScroll: Colors.white,
-          hintStyle: GoogleFonts.poppins(),
-          transitionCurve: Curves.easeInOut,
-          // progress: 70.0,
-          // clearQueryOnClose: true,
-          // alwaysOpened:true,
-          body: selectedTerm == null
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: defaultSize * 40.0,
-                        child: Image.asset('assets/images/search.png'),
-                      ),
-                      Text('Search Salons',
-                          style: GoogleFonts.poppins(
-                            fontSize: defaultSize * 3.0,
-                            color: Colors.grey[600],
-                          ))
-                    ],
+        child: SingleChildScrollView(
+          child: FloatingSearchAppBar(
+            alwaysOpened: true,
+            iconColor: Colors.grey[500],
+            controller: controller,
+            colorOnScroll: Colors.white,
+            hintStyle: GoogleFonts.poppins(),
+            transitionCurve: Curves.easeInOut,
+            // progress: 70.0,
+            // clearQueryOnClose: true,
+            // alwaysOpened:true,
+            body: selectedTerm == null
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: defaultSize * 40.0,
+                          child: Image.asset('assets/images/search.png'),
+                        ),
+                        Text('Search Salons',
+                            style: GoogleFonts.poppins(
+                              fontSize: defaultSize * 3.0,
+                              color: Colors.grey[600],
+                            ))
+                      ],
+                    ),
+                  )
+                : Container(
+                    child: PagedListView<int, SalonData>(
+                      shrinkWrap: true,
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<SalonData>(
+                          firstPageProgressIndicatorBuilder: (context) =>
+                              Center(child: CircularProgressIndicator()),
+                          itemBuilder: (context, item, index) =>
+                              SearchSalonCard(
+                                title: item.name.toString(),
+                                distance: item.address,
+                                thumb: item.thumbnail1,
+                                customfunction: () async {
+                                  final userProfile = await AppSessionManager
+                                      .getUserProfileAfterLogin();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          SalonServicesTabView(
+                                            salonId: item.id,
+                                            salonName: item.name,
+                                            userprofile: userProfile,
+                                            salonInfo: item,
+                                          )));
+                                },
+                                customFunctionLike: () {
+                                  // _onAddFavorite(item.id);
+                                },
+                              )),
+                    ),
                   ),
-                )
-              : Container(
-                  child: PagedListView<int, SalonData>(
-                    shrinkWrap: true,
-                    pagingController: _pagingController,
-                    builderDelegate: PagedChildBuilderDelegate<SalonData>(
-                        firstPageProgressIndicatorBuilder: (context) =>
-                            Center(child: CircularProgressIndicator()),
-                        itemBuilder: (context, item, index) => SearchSalonCard(
-                              title: item.name.toString(),
-                              distance: item.distance.toStringAsFixed(1),
-                              customfunction: () async {
-                                final userProfile = await AppSessionManager
-                                    .getUserProfileAfterLogin();
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => SalonServicesTabView(
-                                          salonId: item.id,
-                                          salonName: item.name,
-                                          userprofile: userProfile,
-                                          salonInfo: item,
-                                        )));
-                              },
-                              customFunctionLike: () {
-                                // _onAddFavorite(item.id);
-                              },
-                            )),
-                  ),
-                ),
-          // transition: CircularFloatingSearchBarTransition(),
-          // physics: BouncingScrollPhysics(),
-          title: Text(
-            selectedTerm ?? 'Start Typing...',
-            style: GoogleFonts.poppins(
-              fontSize: defaultSize * 1.5,
-              // letterSpacing: 1.0,
-              color: Colors.grey[500],
+            // transition: CircularFloatingSearchBarTransition(),
+            // physics: BouncingScrollPhysics(),
+            title: Text(
+              selectedTerm ?? 'Start Typing...',
+              style: GoogleFonts.poppins(
+                fontSize: defaultSize * 1.5,
+                // letterSpacing: 1.0,
+                color: Colors.grey[500],
+              ),
             ),
-          ),
-          hint: 'Search and find out...',
-          actions: [
-            FloatingSearchBarAction.searchToClear(),
-          ],
-          onQueryChanged: (query) {
-            setState(() {
-              filteredSearchHistory = filterSearchTerms(filter: query);
-            });
-          },
-          onSubmitted: (query) {
-            setState(() {
-              addSearchTerm(query);
-              selectedTerm = query;
-            });
+            hint: 'Search and find out...',
+            actions: [
+              FloatingSearchBarAction.searchToClear(),
+            ],
+            onQueryChanged: (query) {
+              setState(() {
+                filteredSearchHistory = filterSearchTerms(filter: query);
+              });
+            },
+            onSubmitted: (query) {
+              setState(() {
+                addSearchTerm(query);
+                selectedTerm = query;
+              });
 
-            controller.close();
-            _fetchPage(1);
-          },
+              controller.close();
+              _fetchPage(1);
+            },
+          ),
         ),
       ),
     );
