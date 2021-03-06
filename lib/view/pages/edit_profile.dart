@@ -40,10 +40,12 @@ class _EditProfileState extends State<EditProfile> {
       fname,
       address;
   String fsname = "aa";
+  double defaultOverride;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
+    defaultOverride = defaultSize;
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
@@ -55,7 +57,9 @@ class _EditProfileState extends State<EditProfile> {
               children: [
                 ProfileInfoUI(
                   title: 'Edit Profile',
-                  image: 'assets/images/profile.jpg',
+                  image: widget.userProfile.gender == "M"
+                      ? 'assets/images/avatar.png'
+                      : 'assets/images/favatar.png',
                   name: widget.userProfile.firstName,
                   email: ' ',
                   showBackButton: true,
@@ -244,8 +248,13 @@ class _EditProfileState extends State<EditProfile> {
                           readOnly = true;
                         });
                       },
-                      child: RoundedButtonOutlineBorder(
-                        buttontext: 'Cancel',
+                      child: GestureDetector(
+                        onTap: () {
+                          _showCancel();
+                        },
+                        child: RoundedButtonOutlineBorder(
+                          buttontext: 'Cancel',
+                        ),
                       ),
                     ),
                     GestureDetector(
@@ -272,6 +281,55 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _showCancel() {
+    Widget cancelButton = FlatButton(
+      child: Text(
+        "No",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text(
+        "Yes",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.39,
+        ),
+      ),
+      onPressed: () async {
+        Navigator.pop(context);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => BottomNavBar()));
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Are you sure you want to Cancel",
+        style: GoogleFonts.poppins(
+          fontSize: defaultOverride * 1.49,
+          color: Colors.grey[500],
+        ),
+      ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

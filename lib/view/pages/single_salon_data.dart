@@ -202,15 +202,11 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                   ),
                                   child: CircleAvatar(
                                     backgroundColor: AppColor.PRIMARY_MEDIUM,
-                                    child: Center(
-                                      child: Text(
-                                        "${item.userDetails.firstName[0]}${item.userDetails.lastName[0] == null ? "" : item.userDetails.lastName[0]}",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: defaultSize * 2.0,
-                                            color: Colors.white,
-                                            letterSpacing: 2.0),
-                                      ),
-                                    ),
+                                    child: item.userDetails.gender == "M"
+                                        ? Image.asset(
+                                            'assets/images/avatar.png')
+                                        : Image.asset(
+                                            'assets/images/favatar.png'),
                                     radius: defaultSize * 2.75,
                                   ),
                                 ),
@@ -220,6 +216,18 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    SizedBox(
+                                      height: defaultSize * 1.25,
+                                    ),
+                                    Text(
+                                      item.userDetails.firstName == null
+                                          ? ""
+                                          : item.userDetails.firstName,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: defaultSize * 1.5,
+                                          color: AppColor.PRIMARY_MEDIUM,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                     SizedBox(
                                       height: defaultSize * 1.25,
                                     ),

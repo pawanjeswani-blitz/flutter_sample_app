@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -5,6 +8,8 @@ import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/view/pages/favorite_salons.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
+
+final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -19,6 +24,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
     UserProfileUI()
   ];
   double defaultOverride;
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        //when app is on and receive the message ignore it
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        //handle the redirect when user click on notification
+        print(jsonEncode(message));
+      },
+      onResume: (Map<String, dynamic> message) async {
+        //handle the redirect when user click on notification
+        print("onResume: $message");
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
