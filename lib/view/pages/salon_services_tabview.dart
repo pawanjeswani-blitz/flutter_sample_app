@@ -135,6 +135,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
             children: [
               Container(
                 height: defaultSize * 13.0,
+                padding: EdgeInsets.only(top: defaultSize * 2.0),
                 width: double.infinity,
                 decoration: BoxDecoration(
                     gradient: LinearGradient(

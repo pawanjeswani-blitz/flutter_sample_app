@@ -17,6 +17,7 @@ class Employee {
   String userName;
   String password;
   String gender;
+  String description;
 
   Employee(
       {this.id,
@@ -36,7 +37,8 @@ class Employee {
       this.salary,
       this.userName,
       this.password,
-      this.gender});
+      this.gender,
+      this.description});
 
   Employee.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -57,6 +59,7 @@ class Employee {
     userName = json['userName'];
     password = json['password'];
     gender = json['gender'];
+    description = json['description'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,6 +82,7 @@ class Employee {
     data['userName'] = this.userName;
     data['password'] = this.password;
     data['gender'] = this.gender;
+    data['description'] = this.description;
     return data;
   }
 }

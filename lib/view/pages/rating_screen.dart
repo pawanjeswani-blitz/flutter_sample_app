@@ -99,16 +99,20 @@ class _SalonRatingScreenState extends State<SalonRatingScreen> {
               ),
               child: Row(
                 children: [
-                  Text(
-                    "Rate ${widget.salonData.name.toUpperCase()}",
-                    style: GoogleFonts.poppins(
-                      fontSize: defaultSize * 2.0,
-                      color: AppColor.PRIMARY_DARK,
-                      fontWeight: FontWeight.w600,
+                  Container(
+                    width: defaultSize * 18.0,
+                    child: Text(
+                      "Rate ${widget.salonData.name.toUpperCase()}",
+                      maxLines: 2,
+                      style: GoogleFonts.poppins(
+                        fontSize: defaultSize * 1.8,
+                        color: AppColor.PRIMARY_DARK,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   SizedBox(
-                    width: defaultSize * 1.5,
+                    width: defaultSize * 1.25,
                   ),
                   SmoothStarRating(
                     rating: rating,
@@ -142,7 +146,7 @@ class _SalonRatingScreenState extends State<SalonRatingScreen> {
               child: Text(
                 "Comment",
                 style: GoogleFonts.poppins(
-                  fontSize: defaultSize * 2.0,
+                  fontSize: defaultSize * 1.8,
                   color: AppColor.PRIMARY_DARK,
                   fontWeight: FontWeight.w600,
                 ),

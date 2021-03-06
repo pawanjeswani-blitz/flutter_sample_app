@@ -1,4 +1,4 @@
-package com.example.saloonwala_consumer
+package `in`.saloonwala.SwConsumer
 
 import io.flutter.embedding.android.FlutterActivity
 

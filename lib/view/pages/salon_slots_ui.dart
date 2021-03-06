@@ -123,7 +123,8 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                     },
                     todayButtonColor: Colors.transparent,
                     // customGridViewPhysics: NeverScrollableScrollPhysics(),
-                    pageScrollPhysics: NeverScrollableScrollPhysics(),
+                    pageScrollPhysics: BouncingScrollPhysics(),
+                    customGridViewPhysics: BouncingScrollPhysics(),
                     weekendTextStyle: GoogleFonts.poppins(
                       color: Colors.white,
                     ),
@@ -306,14 +307,16 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                           ),
                         ),
                       ),
-                      SizedBox(height: defaultSizeOveride * 1.25),
+                      SizedBox(height: defaultSizeOveride * 0.8),
                       Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: defaultSizeOveride * 2.0,
                               vertical: 0.0),
                           child: Text(
-                            emmployeeList[position].type,
+                            emmployeeList[position].description == null
+                                ? ""
+                                : emmployeeList[position].description,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w500,
                               fontSize: defaultSizeOveride * 1.35,
@@ -336,124 +339,105 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
     );
   }
 
-  Widget _getTimeSelectListViewWidget() => Scrollbar(
-        controller: _scrollController,
-        radius: Radius.circular(5.0),
-        thickness: defaultSizeOveride * 0.85,
-        isAlwaysShown: true,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: SizedBox(
-            height: defaultSizeOveride * 28.0,
-            child: Container(
-              margin: EdgeInsets.only(
-                left: defaultSizeOveride * 2.25,
-                right: defaultSizeOveride * 2.25,
-              ),
-              child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 7.5,
-                      mainAxisSpacing: 15.0,
-                      childAspectRatio: 3.5),
-                  shrinkWrap: true,
-                  // scrollDirection: Axis.horizontal,
-                  // physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _availableSlotsResponse.slots.length,
-                  itemBuilder: (BuildContext context, int position) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedEmployee = null;
-                          if (_selectedTimeSlot.contains(
-                              _availableSlotsResponse.slots[position])) {
-                            //Remove Time Slots From Lists
-                            if (_selectedTimeSlot.length > 1 &&
+  Widget _getTimeSelectListViewWidget() => Container(
+        margin: EdgeInsets.only(
+          left: defaultSizeOveride * 2.25,
+          right: defaultSizeOveride * 2.25,
+        ),
+        child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 4.5,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: defaultSizeOveride * 0.27),
+            shrinkWrap: true,
+            // scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _availableSlotsResponse.slots.length,
+            itemBuilder: (BuildContext context, int position) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedEmployee = null;
+                    if (_selectedTimeSlot
+                        .contains(_availableSlotsResponse.slots[position])) {
+                      //Remove Time Slots From Lists
+                      if (_selectedTimeSlot.length > 1 &&
+                          _availableSlotsResponse.slots[position].startTime >
+                              _selectedTimeSlot.last.startTime) {
+                        showSnackBar("Cannot remove slot");
+                      } else {
+                        _selectedTimeSlot
+                            .remove(_availableSlotsResponse.slots[position]);
+                      }
+                    } else {
+                      //add time slots to list
+                      //to do check sequencing
+                      if (_selectedTimeSlot.isEmpty) {
+                        if (_availableSlotsResponse.slots[position].startTime >
+                            DateTime.now().millisecondsSinceEpoch) {
+                          _selectedTimeSlot
+                              .add(_availableSlotsResponse.slots[position]);
+                        } else {
+                          showSnackBar("Time Slot Cannot be selected");
+                        }
+                      } else {
+                        if ((_availableSlotsResponse.slots[position].startTime >
+                                    _selectedTimeSlot.last.startTime ||
                                 _availableSlotsResponse
-                                        .slots[position].startTime >
-                                    _selectedTimeSlot.last.startTime) {
-                              showSnackBar("Cannot remove slot");
-                            } else {
-                              _selectedTimeSlot.remove(
-                                  _availableSlotsResponse.slots[position]);
-                            }
-                          } else {
-                            //add time slots to list
-                            //to do check sequencing
-                            if (_selectedTimeSlot.isEmpty) {
-                              if (_availableSlotsResponse
-                                      .slots[position].startTime >
-                                  DateTime.now().millisecondsSinceEpoch) {
-                                _selectedTimeSlot.add(
-                                    _availableSlotsResponse.slots[position]);
-                              } else {
-                                showSnackBar("Time Slot Cannot be selected");
-                              }
-                            } else {
-                              if ((_availableSlotsResponse
-                                              .slots[position].startTime >
-                                          _selectedTimeSlot.last.startTime ||
-                                      _availableSlotsResponse
-                                              .slots[position].endTime <
-                                          _selectedTimeSlot.first.endTime) &&
-                                  _availableSlotsResponse
-                                          .slots[position].startTime !=
-                                      _selectedTimeSlot.last.endTime) {
-                                _selectedTimeSlot.clear();
-                                _selectedTimeSlot.add(
-                                    _availableSlotsResponse.slots[position]);
-                              } else if (_selectedTimeSlot.last.endTime ==
-                                  _availableSlotsResponse
-                                      .slots[position].startTime) {
-                                _selectedTimeSlot.add(
-                                    _availableSlotsResponse.slots[position]);
-                              } else {
-                                showSnackBar(
-                                    "Please Select slots in sequence manner");
-                              }
-                            }
-                          }
-                          // _selectedTimeSlot = _availableSlotsResponse.slots[position];
-                        });
-                      },
-                      child: Container(
-                        // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color.fromRGBO(172, 125, 83, 1),
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                        .slots[position].endTime <
+                                    _selectedTimeSlot.first.endTime) &&
+                            _availableSlotsResponse.slots[position].startTime !=
+                                _selectedTimeSlot.last.endTime) {
+                          _selectedTimeSlot.clear();
+                          _selectedTimeSlot
+                              .add(_availableSlotsResponse.slots[position]);
+                        } else if (_selectedTimeSlot.last.endTime ==
+                            _availableSlotsResponse.slots[position].startTime) {
+                          _selectedTimeSlot
+                              .add(_availableSlotsResponse.slots[position]);
+                        } else {
+                          showSnackBar(
+                              "Please Select slots in sequence manner");
+                        }
+                      }
+                    }
+                    // _selectedTimeSlot = _availableSlotsResponse.slots[position];
+                  });
+                },
+                child: Container(
+                  // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Color.fromRGBO(172, 125, 83, 1),
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    color: _availableSlotsResponse.slots[position].startTime <
+                            DateTime.now().millisecondsSinceEpoch
+                        ? Colors.grey[200]
+                        : _selectedTimeSlot.contains(
+                                _availableSlotsResponse.slots[position])
+                            ? Color.fromRGBO(172, 125, 83, 1)
+                            : Colors.transparent,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))}",
+                      style: GoogleFonts.poppins(
                           color: _availableSlotsResponse
                                       .slots[position].startTime <
                                   DateTime.now().millisecondsSinceEpoch
-                              ? Colors.grey[200]
+                              ? Colors.grey[400]
                               : _selectedTimeSlot.contains(
                                       _availableSlotsResponse.slots[position])
-                                  ? Color.fromRGBO(172, 125, 83, 1)
-                                  : Colors.transparent,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].startTime))} - ${DateUtil.getDisplayFormatHour(DateTime.fromMillisecondsSinceEpoch(_availableSlotsResponse.slots[position].endTime))}",
-                            style: GoogleFonts.poppins(
-                                color: _availableSlotsResponse
-                                            .slots[position].startTime <
-                                        DateTime.now().millisecondsSinceEpoch
-                                    ? Colors.grey[400]
-                                    : _selectedTimeSlot.contains(
-                                            _availableSlotsResponse
-                                                .slots[position])
-                                        ? Colors.white
-                                        : Colors.grey[800],
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-            ),
-          ),
-        ),
+                                  ? Colors.white
+                                  : Colors.grey[800],
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
+              );
+            }),
       );
 
   void _loadAvaiableTimeSlotFromApi(DateTime dateTime) async {

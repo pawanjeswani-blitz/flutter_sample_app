@@ -226,6 +226,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   Widget _getServiceWidget() => Expanded(
         child: ListView.builder(
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: isSearchingOver == true
               ? filteredSearch.length
               : _services.services.length,

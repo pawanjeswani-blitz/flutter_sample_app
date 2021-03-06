@@ -75,9 +75,11 @@ class _UserProfileUIState extends State<UserProfileUI> {
               children: [
                 ProfileInfoUI(
                   title: 'Profile',
-                  image: _userProfileLogin.gender == "M"
-                      ? 'assets/images/avatar.png'
-                      : 'assets/images/favatar.png',
+                  image: _userProfileLogin.gender == null
+                      ? Container()
+                      : _userProfileLogin.gender == "M"
+                          ? 'assets/images/avatar.png'
+                          : 'assets/images/favatar.png',
                   name: _userProfileLogin == null
                       ? ""
                       : _userProfileLogin.firstName.toString(),
