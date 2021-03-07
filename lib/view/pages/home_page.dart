@@ -18,10 +18,7 @@ import 'package:saloonwala_consumer/view/pages/search_salons.dart';
 import 'package:saloonwala_consumer/view/widget/custom_card.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 class HomePage extends StatefulWidget {
   @override
