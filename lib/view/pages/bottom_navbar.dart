@@ -8,6 +8,7 @@ import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/view/pages/favorite_salons.dart';
 import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
+import 'package:saloonwala_consumer/view/pages/view_booking_details.dart';
 
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
@@ -32,15 +33,31 @@ class _BottomNavBarState extends State<BottomNavBar> {
       onMessage: (Map<String, dynamic> message) async {
         //when app is on and receive the message ignore it
       },
-      onLaunch: (Map<String, dynamic> message) async {
-        //handle the redirect when user click on notification
-        print(jsonEncode(message));
-      },
+      // onLaunch: (Map<String, dynamic> message) async {
+      //   //handle the redirect when user click on notification
+      //   print("onLaunch: $message");
+      //   // _handleNotificationRedirect(message);
+      // },
       onResume: (Map<String, dynamic> message) async {
         //handle the redirect when user click on notification
         print("onResume: $message");
+        _handleNotificationRedirect(message);
       },
     );
+  }
+
+  void _handleNotificationRedirect(Map<String, dynamic> message) {
+    if (message['data']['page'] == 'singleAppointmentScreen') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => ViewBookingDetails(
+                  bookingId: int.parse(message['data']['bookingId']))));
+      print("Booking Id : ${int.parse(message['data']['bookingId'])}");
+    } else if (message['data']['page'] == 'appointmentBookingScreen') {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => BottomNavBar()));
+    }
   }
 
   @override
