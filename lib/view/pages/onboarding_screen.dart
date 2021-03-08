@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
                     Container(
-                      height: defaultSize * 60.0,
+                      height: defaultSize * 50.0,
                       child: PageView(
                         // Creates a scrollable list that works page by page from an explicit [List] of widgets.
                         physics:
@@ -91,12 +91,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       //Creates an object that fetches an image from an asset bundle FOR LOCAL IMAGES
                                       'assets/images/onboarding-1.png',
                                     ),
-                                    height: defaultSize * 30.0,
+                                    height: defaultSize * 28.0,
                                     width: defaultSize * 50.0,
                                   ),
                                 ),
                                 SizedBox(
-                                  height: defaultSize * 3.0,
+                                  height: defaultSize * 2.8,
                                 ), // Creates a fixed size box
                                 Text(
                                   'Book Appointments from a \nWIDE RANGE of Salons!',
@@ -120,12 +120,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     image: AssetImage(
                                       'assets/images/onboarding-2.png',
                                     ),
-                                    height: defaultSize * 30.0,
+                                    height: defaultSize * 28.0,
                                     width: defaultSize * 50.0,
                                   ),
                                 ),
                                 SizedBox(
-                                  height: defaultSize * 3.0,
+                                  height: defaultSize * 2.8,
                                 ),
                                 Text(
                                   'Book Appointment as \nINDIVIDUAL or PACKAGE service!',
@@ -149,12 +149,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     image: AssetImage(
                                       'assets/images/onboarding-3.png',
                                     ),
-                                    height: defaultSize * 30.0,
+                                    height: defaultSize * 28.0,
                                     width: defaultSize * 50.0,
                                   ),
                                 ),
                                 SizedBox(
-                                  height: defaultSize * 3.0,
+                                  height: defaultSize * 2.8,
                                 ),
                                 Text(
                                   'Book Appointments \nthe EASY WAY now!',
@@ -180,12 +180,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     image: AssetImage(
                                       'assets/images/loc-pin.png',
                                     ),
-                                    height: defaultSize * 30.0,
+                                    height: defaultSize * 28.0,
                                     width: defaultSize * 50.0,
                                   ),
                                 ),
                                 SizedBox(
-                                  height: defaultSize * 3.0,
+                                  height: defaultSize * 2.8,
                                 ),
                                 Center(
                                   child: Text(
@@ -280,7 +280,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Navigator.pushNamedAndRemoveUntil(
                         context, "/login", (r) => false);
                   } else {
-                    await Geolocator.requestPermission();
+                    // await Geolocator.requestPermission();
                     await Geolocator.openAppSettings();
                   }
                 },

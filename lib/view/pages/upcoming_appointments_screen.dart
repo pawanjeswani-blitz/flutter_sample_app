@@ -157,14 +157,14 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
                               AppointmentResponse>(
                           firstPageProgressIndicatorBuilder: (context) =>
                               _getLoaderView(),
-                          noMoreItemsIndicatorBuilder: (context) {
+                          noItemsFoundIndicatorBuilder: (context) {
                             return Center(
                               child: Padding(
                                 padding: EdgeInsets.only(
                                   bottom: defaultSize * 2.0,
                                 ),
                                 child: Text(
-                                  "You've reached the end",
+                                  "No Appointments Found",
                                   style: GoogleFonts.poppins(
                                     color: Colors.grey[500],
                                     fontSize: defaultSize * 2.0,
