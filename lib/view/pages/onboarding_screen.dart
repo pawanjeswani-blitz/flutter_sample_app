@@ -268,18 +268,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: AppColor.PRIMARY_DARK,
               child: GestureDetector(
                 onTap: () async {
-                  // LocationPermission permission =
-                  //     await Geolocator.requestPermission();
+                  LocationPermission permission =
+                      await Geolocator.requestPermission();
                   // await Geolocator.openLocationSettings();
                   // await Geolocator.openAppSettings();
                   // LocationPermission permission =
                   //     await Geolocator.checkPermission();
-                  // print(permission);
-                  // if(permission == LocationPermission.whileInUse){
-
-                  // }
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, "/login", (r) => false);
+                  print(permission);
+                  if (permission == LocationPermission.whileInUse ||
+                      permission == LocationPermission.always) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "/login", (r) => false);
+                  } else {
+                    await Geolocator.requestPermission();
+                    await Geolocator.openAppSettings();
+                  }
                 },
                 child: Center(
                   child: Padding(

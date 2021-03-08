@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
@@ -87,7 +88,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
     return Stack(children: [
       SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height - 100,
+          height: MediaQuery.of(context).size.height + 150,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -226,7 +227,9 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   Widget _getServiceWidget() => Expanded(
         child: ListView.builder(
           shrinkWrap: true,
+          padding: EdgeInsets.only(bottom: defaultOverride * 11.0),
           physics: const NeverScrollableScrollPhysics(),
+          // dragStartBehavior: DragStartBehavior.down,
           itemCount: isSearchingOver == true
               ? filteredSearch.length
               : _services.services.length,
