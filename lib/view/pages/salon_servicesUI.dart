@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/load_salons.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -51,6 +52,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   bool isSearchingOver;
   TextEditingController searchController = new TextEditingController();
   String genderFromUserProfile;
+  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int sum = 0;
   filterList() {
@@ -377,11 +379,31 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                                 onTap: () {
                                   setState(() {
                                     // sa = "aa";
-                                    _selectedServiceList.add(services);
-                                    sum += _userProfileLogin.gender == "M"
-                                        ? _getDiscountedPrice(services.maleRate)
-                                        : _getDiscountedPrice(_services
-                                            .services[index].femaleRate);
+                                    if (_userProfileLogin.gender == "M" &&
+                                        services.maleRate != null &&
+                                        services.maleRate != 0) {
+                                      _selectedServiceList.add(services);
+                                      sum += _getDiscountedPrice(
+                                          services.maleRate);
+                                      print(
+                                          _selectedServiceList.first.maleRate);
+                                    } else if (_userProfileLogin.gender ==
+                                            "F" &&
+                                        services.femaleRate != null &&
+                                        services.femaleRate != 0) {
+                                      _selectedServiceList.add(services);
+                                      sum += _getDiscountedPrice(
+                                          services.femaleRate);
+                                      print(_selectedServiceList
+                                          .first.femaleRate);
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            "Service not available for ${_userProfileLogin.gender == "M" ? "Males" : "Females"}",
+                                        toastLength: Toast.LENGTH_LONG,
+                                        timeInSecForIosWeb: 2,
+                                      );
+                                    }
                                   });
                                 },
                                 child: Container(

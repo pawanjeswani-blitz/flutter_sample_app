@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
+import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/app/size_config.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
+import 'package:saloonwala_consumer/model/user_profile.dart';
+import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:saloonwala_consumer/utils/date_util.dart';
 import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
@@ -27,6 +30,25 @@ class _PersonalInfoState extends State<PersonalInfo> {
   double defaultSizeOveride;
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  UserProfile _userProfile;
+  UserProfileLogin _userProfileLogin;
+
+  void initState() {
+    super.initState();
+
+    // Get User object from Preferences
+    AppSessionManager.getUserProfile().then((value) {
+      setState(() {
+        _userProfile = value;
+      });
+    });
+    AppSessionManager.getUserProfileAfterLogin().then((value) {
+      setState(() {
+        _userProfileLogin = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -180,6 +202,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                             ),
                           ),
+                          validator: _validateEmail,
                         ),
                       ),
                       SizedBox(
@@ -219,12 +242,12 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                             ),
                           ),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "City Name cannot be empty";
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value.isEmpty) {
+                          //     return "City Name cannot be empty";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ),
                       SizedBox(
@@ -265,12 +288,12 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               ),
                             ),
                           ),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "State Name cannot be empty";
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value.isEmpty) {
+                          //     return "State Name cannot be empty";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ),
                       SizedBox(
@@ -290,12 +313,12 @@ class _PersonalInfoState extends State<PersonalInfo> {
                           decoration: _getTextFormFieldInputDecoration.copyWith(
                             hintText: 'Address',
                           ),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "Address cannot be empty";
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value.isEmpty) {
+                          //     return "Address cannot be empty";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ),
                       SizedBox(
@@ -304,11 +327,19 @@ class _PersonalInfoState extends State<PersonalInfo> {
                       GestureDetector(
                         onTap: () async {
                           if (_formKey.currentState.validate()) {
-                            await _onUpdateClick();
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BottomNavBar()));
+                            if (_userProfile.firstName == null &&
+                                _userProfile.gender == null &&
+                                _userProfile.dob == null &&
+                                widget.gender == null) {
+                              showSnackBar(
+                                  "Please fill all the required fields");
+                            } else {
+                              await _onUpdateClick();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => BottomNavBar()));
+                            }
                           } else {
-                            showSnackBar("try agian");
+                            showSnackBar("Please fill the required details");
                           }
                           // print(firstName);
                         },
@@ -328,6 +359,17 @@ class _PersonalInfoState extends State<PersonalInfo> {
         ],
       ),
     );
+  }
+
+  String _validateEmail(String value) {
+    String pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value.isNotEmpty && !regExp.hasMatch(value)) {
+      return 'Please enter valid Email address';
+    } else {
+      return null;
+    }
   }
 
   var _getTextFormFieldInputDecoration = InputDecoration(

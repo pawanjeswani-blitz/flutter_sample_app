@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
@@ -14,7 +15,10 @@ class _SaloonWalaTermsState extends State<SaloonWalaTerms> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saloonwala Terms&Conditions'),
+        title: Text(
+          'Saloonwala Terms & Conditions',
+          style: GoogleFonts.poppins(fontSize: 18.0),
+        ),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.chevron_left_rounded),

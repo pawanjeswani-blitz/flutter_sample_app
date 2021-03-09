@@ -143,6 +143,7 @@ class _SearchSalonsState extends State<SearchSalons> {
                 : Container(
                     child: PagedListView<int, SalonData>(
                       shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
                       pagingController: _pagingController,
                       builderDelegate: PagedChildBuilderDelegate<SalonData>(
                           firstPageProgressIndicatorBuilder: (context) =>
@@ -171,7 +172,7 @@ class _SearchSalonsState extends State<SearchSalons> {
                     ),
                   ),
             // transition: CircularFloatingSearchBarTransition(),
-            // physics: BouncingScrollPhysics(),
+
             title: Text(
               selectedTerm ?? 'Start Typing...',
               style: GoogleFonts.poppins(

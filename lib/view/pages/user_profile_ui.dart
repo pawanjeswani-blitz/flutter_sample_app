@@ -69,7 +69,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
           .copyWith(statusBarColor: AppColor.PRIMARY_LIGHT),
       child: Scaffold(
         key: _scaffoldKey,
-        body: SingleChildScrollView(
+        body: _userProfileLogin !=null? SingleChildScrollView(
           child: SafeArea(
             child: Column(
               children: [
@@ -83,7 +83,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
                   name: _userProfileLogin == null
                       ? ""
                       : _userProfileLogin.firstName.toString(),
-                  email: _userProfileLogin == null
+                  email: _userProfileLogin.email == null
                       ? ""
                       : _userProfileLogin.email.toString(),
                 ),
@@ -149,7 +149,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
               ],
             ),
           ),
-        ),
+        ):Center(child: CircularProgressIndicator(),),
       ),
     );
   }

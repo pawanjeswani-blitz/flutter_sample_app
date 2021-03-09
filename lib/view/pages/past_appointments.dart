@@ -291,7 +291,7 @@ class _PastAppointmentsState extends State<PastAppointments> {
                               child: Text(
                                 "No cancelled bookings found",
                                 style: GoogleFonts.poppins(
-                                  color: Colors.grey[200],
+                                  color: Colors.grey[500],
                                   fontSize: defaultSize * 2.0,
                                 ),
                               ),

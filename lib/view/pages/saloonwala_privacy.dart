@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
@@ -14,7 +15,10 @@ class _SaloonWalaPrivacyState extends State<SaloonWalaPrivacy> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saloonwala Terms&Conditions'),
+        title: Text(
+          'Saloonwala Privacy Policy',
+          style: GoogleFonts.poppins(),
+        ),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.chevron_left_rounded),
