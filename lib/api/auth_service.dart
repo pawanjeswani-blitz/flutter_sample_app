@@ -47,16 +47,16 @@ class AuthService {
       infoBean = InfoBean(
           androidId: null,
           androidVersion: null,
-          appName: 'Saloonwala Partner',
-          appSignature: "-1475535803", //this will figure it out latter,
+          appName: 'Saloonwala Consumer',
+          appSignature: "-1475535803",
           appVersion: packageInfo.version,
           deviceModel: iosInfo.utsname.machine,
-          fcmId: "fcmToken",
+          fcmId: fcmToken,
           manufacturer: 'Apple',
           userAgent: 'iOS',
           platform: 'APP');
 
-      body['androidUniqueId'] = '${iosInfo.identifierForVendor}_${uuid.v4()}';
+      body['androidUniqueId'] = uuid.v4();
       body['infoBean'] = infoBean;
     }
     debugPrint("${Constants.BaseUrl}${Constants.NonLoginAuth}");
