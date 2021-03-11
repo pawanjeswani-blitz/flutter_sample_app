@@ -19,10 +19,10 @@ class FetchSlots {
       "date": DateUtil.getDisplayFormatDate(dateTime),
       "salonId": salonId
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.GetSalonSlots}");
+    debugPrint("${Constants.BaseUrl}${Constants.GetSalonSlots}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.GetSalonSlots}",
+        .post("${Constants.BaseUrl}${Constants.GetSalonSlots}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -57,10 +57,10 @@ class FetchSlots {
       "startTime": startTime,
       "status": "REQUESTED"
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.SlotsBooking}");
+    debugPrint("${Constants.BaseUrl}${Constants.SlotsBooking}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.SlotsBooking}",
+        .post("${Constants.BaseUrl}${Constants.SlotsBooking}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

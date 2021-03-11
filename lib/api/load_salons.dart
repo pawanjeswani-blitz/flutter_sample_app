@@ -36,11 +36,11 @@ class LoadSalons {
       "longUser": longitude
     };
     debugPrint(
-        "${Constants.SecondryUrl}${Constants.GetSalonFeedList}${pageNo.toString()}");
+        "${Constants.BaseUrl}${Constants.GetSalonFeedList}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
         .post(
-            "${Constants.SecondryUrl}${Constants.GetSalonFeedList}${pageNo.toString()}",
+            "${Constants.BaseUrl}${Constants.GetSalonFeedList}${pageNo.toString()}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -86,11 +86,11 @@ class LoadSalons {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken, "name": name};
     debugPrint(
-        "${Constants.SecondryUrl}${Constants.GetSearchList}${pageNo.toString()}");
+        "${Constants.BaseUrl}${Constants.GetSearchList}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
         .post(
-            "${Constants.SecondryUrl}${Constants.GetSearchList}${pageNo.toString()}",
+            "${Constants.BaseUrl}${Constants.GetSearchList}${pageNo.toString()}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -143,10 +143,10 @@ class LoadSalons {
   static Future<SuperResponse<SalonData>> getSingleStore(int salonId) async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken, "id": salonId};
-    debugPrint("${Constants.SecondryUrl}${Constants.GetSingleStore}");
+    debugPrint("${Constants.BaseUrl}${Constants.GetSingleStore}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.GetSingleStore}",
+        .post("${Constants.BaseUrl}${Constants.GetSingleStore}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

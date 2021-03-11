@@ -12,6 +12,7 @@ import 'package:saloonwala_consumer/model/non_login_response.dart';
 import 'package:saloonwala_consumer/model/otp_response.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:package_info/package_info.dart';
+import 'package:saloonwala_consumer/model/update_profile.dart';
 import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
 
 import 'package:uuid/uuid.dart';
@@ -183,6 +184,29 @@ class AuthService {
         return output;
       } else
         return SuperResponse.fromJson(map, null);
+    });
+  }
+
+  static Future<SuperResponse<UpdateProfile>> logoutUser() async {
+    final refreshToken = await AppSessionManager.getRefreshToken();
+
+    final body = {"refreshToken": refreshToken};
+    debugPrint("${Constants.BaseUrl}${Constants.LogoutUser}");
+    debugPrint(jsonEncode(body));
+    return http
+        .post("${Constants.BaseUrl}${Constants.LogoutUser}",
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: json.encode(body))
+        .then((http.Response response) {
+      if (response.statusCode < 200 ||
+          response.statusCode > 400 ||
+          json == null) {
+        throw new Exception("Error while fetching data");
+      }
+
+      debugPrint(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      return SuperResponse.fromJson(map, null);
     });
   }
 }

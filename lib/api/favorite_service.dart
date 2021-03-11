@@ -18,10 +18,10 @@ class FavoriteService {
       "like": true,
       "saloonList": [salonId]
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.FavoriteUpdateHeart}");
+    debugPrint("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.FavoriteUpdateHeart}",
+        .post("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -41,10 +41,10 @@ class FavoriteService {
       getSalonFeedForFavorite() async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken};
-    debugPrint("${Constants.SecondryUrl}${Constants.GetLikedSalon}");
+    debugPrint("${Constants.BaseUrl}${Constants.GetLikedSalon}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.GetLikedSalon}",
+        .post("${Constants.BaseUrl}${Constants.GetLikedSalon}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -71,10 +71,10 @@ class FavoriteService {
       "like": false,
       "saloonList": [salonId]
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.FavoriteUpdateHeart}");
+    debugPrint("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.FavoriteUpdateHeart}",
+        .post("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

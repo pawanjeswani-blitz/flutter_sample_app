@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloonwala_consumer/api/auth_service.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
@@ -31,10 +32,18 @@ class _UserProfileUIState extends State<UserProfileUI> {
   UserProfileLogin _userProfileLogin;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   double defaultOverride;
+  bool refresh = false;
   @override
   void initState() {
     super.initState();
+    _refresh();
     _getUserNameData();
+  }
+
+  void _refresh() {
+    if (refresh) {
+      setState(() {});
+    }
   }
 
   Future<SuperResponse<UserProfileLogin>> _getUserNameData() async {
@@ -86,33 +95,13 @@ class _UserProfileUIState extends State<UserProfileUI> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        InkWell(
-                                          onTap: () =>
-                                              Navigator.of(context).pop(),
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                              top: defaultSize * 3.5,
-                                            ),
-                                            child: Icon(
-                                              Icons.chevron_left,
-                                              size: defaultSize * 4.5,
-                                              color: AppColor.LOGIN_BACKGROUND,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           margin: EdgeInsets.only(
                                             top: defaultSize * 3.5,
                                           ),
-                                          child: Text("Edit Profile",
+                                          child: Text("Profile",
                                               style: GoogleFonts.poppins(
                                                 color:
                                                     AppColor.LOGIN_BACKGROUND,
@@ -154,7 +143,9 @@ class _UserProfileUIState extends State<UserProfileUI> {
                                 ),
                                 SizedBox(height: defaultSize / 2),
                                 Text(
-                                  ' ',
+                                  _userProfileLogin.email == null
+                                      ? ""
+                                      : _userProfileLogin.email.toString(),
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w400,
                                     color: AppColor.PRIMARY_LIGHT,
@@ -199,6 +190,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => EditProfile(
                                     userProfile: userProfile,
+                                    refresh: refresh,
                                   )));
                         },
                       ),
@@ -258,6 +250,30 @@ class _UserProfileUIState extends State<UserProfileUI> {
     );
   }
 
+  Future<SuperResponse<bool>> _onLogout() async {
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      try {
+        final response = await AuthService.logoutUser();
+        print(response.data);
+        //close the progress dialog
+        Navigator.of(context).pop();
+        if (response.error == null) {
+          if (response.data == null) {
+            print(response.data);
+          } else
+            showSnackBar("Something went wrong");
+        } else
+          showSnackBar(response.error);
+      } catch (ex) {
+        Navigator.of(context).pop();
+        showSnackBar("Something went wrong.");
+      }
+    } else
+      showSnackBar("No internet connected");
+  }
+
   Widget _showLogout() {
     Widget cancelButton = FlatButton(
       child: Text(
@@ -279,6 +295,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
       ),
       onPressed: () async {
         Navigator.pop(context);
+        await _onLogout();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.clear();
         Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
@@ -315,6 +332,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => EditProfile(
                   userProfile: userProfile,
+                  refresh: refresh,
                 )));
       },
       child: Stack(

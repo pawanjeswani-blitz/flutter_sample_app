@@ -293,13 +293,23 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
 
                               return Row(
                                 children: [
-                                  Text(
-                                    "${_appointmentResponse.serviceInfo[index].serviceName}",
-                                    overflow: TextOverflow.fade,
-                                    style: GoogleFonts.poppins(
-                                        color: AppColor.DARK_ACCENT,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: defaultSize * 1.5),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 0.0),
+                                    child: Container(
+                                      width: defaultSize * 10.0,
+                                      child: Text(
+                                        "${_appointmentResponse.serviceInfo[index].serviceName}",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        // textDirection: TextDirection.rtl,
+                                        textAlign: TextAlign.start,
+                                        style: GoogleFonts.poppins(
+                                            color: AppColor.DARK_ACCENT,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: defaultSize * 1.5),
+                                      ),
+                                    ),
                                   ),
                                   Spacer(),
                                   Text(
@@ -311,23 +321,32 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                                         fontWeight: FontWeight.w500,
                                         fontSize: defaultSize * 1.5),
                                   ),
-
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: defaultSize * 1.0,
+                                  //In this condition, the original rate is compared to the discounted rate.
+                                  // If the two rates are diffrenet, the original rate will be displayed with lineThrough.
+                                  if (_getDiscountedPrice(_appointmentResponse
+                                              .serviceInfo[index].femaleRate) !=
+                                          _appointmentResponse
+                                              .serviceInfo[index].femaleRate &&
+                                      _getDiscountedPrice(_appointmentResponse
+                                              .serviceInfo[index].maleRate) !=
+                                          _appointmentResponse
+                                              .serviceInfo[index].maleRate)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: defaultSize * 1.0,
+                                      ),
+                                      child: Text(
+                                          _userProfileLogin.gender == "M"
+                                              ? "₹ ${_appointmentResponse.serviceInfo[index].maleRate}"
+                                              : "₹ ${_appointmentResponse.serviceInfo[index].femaleRate}",
+                                          style: GoogleFonts.poppins(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              decorationThickness: 2.2,
+                                              color: AppColor.DARK_ACCENT,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: defaultSize * 1.5)),
                                     ),
-                                    child: Text(
-                                        _userProfileLogin.gender == "M"
-                                            ? "₹ ${_appointmentResponse.serviceInfo[index].maleRate}"
-                                            : "₹ ${_appointmentResponse.serviceInfo[index].femaleRate}",
-                                        style: GoogleFonts.poppins(
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                            decorationThickness: 2.2,
-                                            color: AppColor.DARK_ACCENT,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: defaultSize * 1.5)),
-                                  ),
                                   // Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(
@@ -413,8 +432,8 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                     right: defaultSize * 2.0),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BottomNavBar()));
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "/home", (r) => false);
                   },
                   child: RoundedButtonDark(
                     buttontext: "DONE",

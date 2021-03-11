@@ -22,8 +22,9 @@ import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
 
 class EditProfile extends StatefulWidget {
   final UserProfileLogin userProfile;
-
-  const EditProfile({Key key, this.userProfile}) : super(key: key);
+  final bool refresh;
+  const EditProfile({Key key, this.userProfile, this.refresh})
+      : super(key: key);
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -74,7 +75,7 @@ class _EditProfileState extends State<EditProfile> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   InkWell(
-                                    onTap: () => Navigator.of(context).pop(),
+                                    onTap: () => Navigator.pop(context),
                                     child: Container(
                                       margin: EdgeInsets.only(
                                         top: defaultSize * 3.5,
@@ -554,34 +555,44 @@ class _EditProfileState extends State<EditProfile> {
             "Choose Profile photo",
             style: GoogleFonts.poppins(fontSize: defaultOverride * 2.2),
           ),
-          Container(
-            margin: EdgeInsets.only(
-                right: defaultOverride * 4.0,
-                top: defaultOverride * 1.0,
-                left: defaultOverride * 4.0),
-            child: Row(
-              children: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(Icons.camera, color: AppColor.PRIMARY_MEDIUM),
-                  onPressed: takePhotoByCamera,
-                  label: Text(
-                    "Camera",
-                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
-                  ),
+          SizedBox(
+            height: defaultOverride * 2.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton.icon(
+                icon: Icon(
+                  Icons.camera,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  size: defaultOverride * 3.0,
                 ),
-                Container(
-                  margin: EdgeInsets.only(right: defaultOverride * 2.0),
+                onPressed: takePhotoByCamera,
+                label: Text(
+                  "Camera",
+                  style: GoogleFonts.poppins(
+                      color: AppColor.PRIMARY_MEDIUM,
+                      fontSize: defaultOverride * 2.0),
                 ),
-                FlatButton.icon(
-                  icon: Icon(Icons.image, color: AppColor.PRIMARY_MEDIUM),
-                  onPressed: takePhotoByGallery,
-                  label: Text(
-                    "Gallery",
-                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
-                  ),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: defaultOverride * 2.0),
+              ),
+              FlatButton.icon(
+                icon: Icon(
+                  Icons.image,
+                  color: AppColor.PRIMARY_MEDIUM,
+                  size: defaultOverride * 3.0,
                 ),
-              ],
-            ),
+                onPressed: takePhotoByGallery,
+                label: Text(
+                  "Gallery",
+                  style: GoogleFonts.poppins(
+                      color: AppColor.PRIMARY_MEDIUM,
+                      fontSize: defaultOverride * 2.0),
+                ),
+              ),
+            ],
           ),
           Container(
             margin: EdgeInsets.only(

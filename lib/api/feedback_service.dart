@@ -13,12 +13,10 @@ class FeedBackService {
       int pageNo, int salonId) async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken, "salonId": salonId};
-    debugPrint(
-        "${Constants.SecondryUrl}${Constants.FeedBack}${pageNo.toString()}");
+    debugPrint("${Constants.BaseUrl}${Constants.FeedBack}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
-        .post(
-            "${Constants.SecondryUrl}${Constants.FeedBack}${pageNo.toString()}",
+        .post("${Constants.BaseUrl}${Constants.FeedBack}${pageNo.toString()}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -46,10 +44,10 @@ class FeedBackService {
       "ratingStore": rating,
       "salonId": salonId
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.PostStoreRating}");
+    debugPrint("${Constants.BaseUrl}${Constants.PostStoreRating}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.PostStoreRating}",
+        .post("${Constants.BaseUrl}${Constants.PostStoreRating}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -76,10 +74,10 @@ class FeedBackService {
       "ratingStore": 0,
       "salonId": salonId
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.PostStoreComment}");
+    debugPrint("${Constants.BaseUrl}${Constants.PostStoreComment}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.PostStoreComment}",
+        .post("${Constants.BaseUrl}${Constants.PostStoreComment}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

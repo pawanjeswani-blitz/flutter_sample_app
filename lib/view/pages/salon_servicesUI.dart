@@ -223,7 +223,7 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
         child: ListView.builder(
           shrinkWrap: true,
           padding: EdgeInsets.only(bottom: defaultOverride * 11.0),
-          physics: const NeverScrollableScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           // dragStartBehavior: DragStartBehavior.down,
           itemCount: isSearchingOver == true
               ? filteredSearch.length

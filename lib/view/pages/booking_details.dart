@@ -232,45 +232,6 @@ class _BookingDetailsState extends State<BookingDetails> {
                           ],
                         ),
                       ),
-                      // Padding(
-                      //   padding: EdgeInsets.only(
-                      //     left: defaultSize * 3.0,
-                      //     right: defaultSize * 3.0,
-                      //     bottom: 0.0,
-                      //   ),
-                      //   child: Row(
-                      //     children: [
-                      //       Text(
-                      //         "Service Name",
-                      //         style: GoogleFonts.poppins(
-                      //             color: AppColor.DARK_ACCENT,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: defaultSize * 1.5),
-                      //       ),
-                      //       Spacer(),
-                      //       Text(
-                      //         "Amount",
-                      //         style: GoogleFonts.poppins(
-                      //             color: AppColor.DARK_ACCENT,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: defaultSize * 1.5),
-                      //       ),
-                      //       // Spacer(),
-                      //       Padding(
-                      //         padding: EdgeInsets.only(
-                      //           left: defaultSize * 2.0,
-                      //         ),
-                      //         child: Text(
-                      //           "Discount",
-                      //           style: GoogleFonts.poppins(
-                      //               color: AppColor.DARK_ACCENT,
-                      //               fontWeight: FontWeight.w500,
-                      //               fontSize: defaultSize * 1.5),
-                      //         ),
-                      //       )
-                      //     ],
-                      //   ),
-                      // ),
                       Padding(
                         padding: EdgeInsets.only(
                             top: 0,
@@ -307,12 +268,24 @@ class _BookingDetailsState extends State<BookingDetails> {
 
                               return Row(
                                 children: [
-                                  Text(
-                                    "${widget.selectedServiceList[index].serviceName}",
-                                    style: GoogleFonts.poppins(
-                                        color: AppColor.DARK_ACCENT,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: defaultSize * 1.5),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: defaultSize * 0.85,
+                                        horizontal: 0.0),
+                                    child: Container(
+                                      width: defaultSize * 10.0,
+                                      child: Text(
+                                        "${widget.selectedServiceList[index].serviceName}",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        // textDirection: TextDirection.rtl,
+                                        textAlign: TextAlign.start,
+                                        style: GoogleFonts.poppins(
+                                            color: AppColor.DARK_ACCENT,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: defaultSize * 1.5),
+                                      ),
+                                    ),
                                   ),
                                   Spacer(),
                                   Text(

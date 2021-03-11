@@ -15,11 +15,11 @@ class GetAppointmentService {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken};
     debugPrint(
-        "${Constants.SecondryUrl}${Constants.GetAppointmentData}${pageNo.toString()}");
+        "${Constants.BaseUrl}${Constants.GetAppointmentData}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
         .post(
-            "${Constants.SecondryUrl}${Constants.GetAppointmentData}${pageNo.toString()}",
+            "${Constants.BaseUrl}${Constants.GetAppointmentData}${pageNo.toString()}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -45,10 +45,10 @@ class GetAppointmentService {
       "bookingId": bookingId,
       "status": "CUST_CANCELLED"
     };
-    debugPrint("${Constants.SecondryUrl}${Constants.EditAppointMent}");
+    debugPrint("${Constants.BaseUrl}${Constants.EditAppointMent}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.EditAppointMent}",
+        .post("${Constants.BaseUrl}${Constants.EditAppointMent}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -68,10 +68,10 @@ class GetAppointmentService {
       int bookingId) async {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken, "bookingId": bookingId};
-    debugPrint("${Constants.SecondryUrl}${Constants.GetSingleAppointment}");
+    debugPrint("${Constants.BaseUrl}${Constants.GetSingleAppointment}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.SecondryUrl}${Constants.GetSingleAppointment}",
+        .post("${Constants.BaseUrl}${Constants.GetSingleAppointment}",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

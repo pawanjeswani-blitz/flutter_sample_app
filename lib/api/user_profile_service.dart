@@ -160,14 +160,6 @@ class UserProfileService {
     var formData = FormData.fromMap(map);
 
     print('--------------------');
-
-    // var response = await Dio().post(
-    //     "${Constants.BaseUrl}${Constants.UploadProfilePic}",
-    //     data: formData);
-    // print(response.data['data']['profilepicUrl']);
-
-    // debugPrint('Debug Url ${response.data['data']['profilepicUrl']}');
-    // Map<String, dynamic> map2 = json.decode(response.data);
     try {
       final response = await Dio().post(
         "${Constants.BaseUrl}${Constants.UploadProfilePic}",
@@ -181,6 +173,5 @@ class UserProfileService {
     } on DioError catch (e) {
       return SuperResponse(error: "Error While Uploading ${e.toString()}");
     }
-    // return SuperResponse.fromJson(map, UploadProfilePic.fromJson(map2['data']));
   }
 }
