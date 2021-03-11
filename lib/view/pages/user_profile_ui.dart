@@ -36,14 +36,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
   @override
   void initState() {
     super.initState();
-    _refresh();
     _getUserNameData();
-  }
-
-  void _refresh() {
-    if (refresh) {
-      setState(() {});
-    }
   }
 
   Future<SuperResponse<UserProfileLogin>> _getUserNameData() async {
@@ -187,15 +180,12 @@ class _UserProfileUIState extends State<UserProfileUI> {
                         press: () async {
                           final userProfile = await AppSessionManager
                               .getUserProfileAfterLogin();
-                          bool result = await Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => EditProfile(
-                                        userProfile: userProfile,
-                                        refresh: refresh,
-                                      )));
-                          if (result) {
-                            setState(() {});
-                          }
+                          await Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => EditProfile(
+                                    userProfile: userProfile,
+                                    refresh: refresh,
+                                  )));
+                          _getUserNameData();
                         },
                       ),
                       ProfileMenuItem(
@@ -333,14 +323,12 @@ class _UserProfileUIState extends State<UserProfileUI> {
     return GestureDetector(
       onTap: () async {
         final userProfile = await AppSessionManager.getUserProfileAfterLogin();
-        bool result = await Navigator.of(context).push(MaterialPageRoute(
+        await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => EditProfile(
                   userProfile: userProfile,
                   refresh: refresh,
                 )));
-        if (result) {
-          setState(() {});
-        }
+        _getUserNameData();
       },
       child: Stack(
         children: [

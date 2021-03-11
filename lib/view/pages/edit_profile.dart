@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
@@ -31,6 +32,7 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   bool readOnly = true;
+  bool _inProcess = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _fullNameFormKey = GlobalKey<FormState>();
   // final GlobalKey<FormState> _phoneNumberFormKey = GlobalKey<FormState>();
@@ -52,336 +54,358 @@ class _EditProfileState extends State<EditProfile> {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
-    File file;
+
     return WillPopScope(
       onWillPop: () => _onwillPop(),
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Form(
-              key: _fullNameFormKey,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: defaultSize * 34,
-                    child: Stack(
-                      children: [
-                        ClipPath(
-                          clipper: CustomClipperShape(),
-                          child: Container(
-                            child: Stack(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: SafeArea(
+                child: Form(
+                  key: _fullNameFormKey,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: defaultSize * 34,
+                        child: Stack(
+                          children: [
+                            ClipPath(
+                              clipper: CustomClipperShape(),
+                              child: Container(
+                                child: Stack(
                                   children: [
-                                    InkWell(
-                                      onTap: () =>
-                                          Navigator.of(context).pop(true),
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                          top: defaultSize * 3.5,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        InkWell(
+                                          onTap: () =>
+                                              Navigator.of(context).pop(),
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                              top: defaultSize * 3.5,
+                                            ),
+                                            child: Icon(
+                                              Icons.chevron_left,
+                                              size: defaultSize * 4.5,
+                                              color: AppColor.LOGIN_BACKGROUND,
+                                            ),
+                                          ),
                                         ),
-                                        child: Icon(
-                                          Icons.chevron_left,
-                                          size: defaultSize * 4.5,
-                                          color: AppColor.LOGIN_BACKGROUND,
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                            top: defaultSize * 3.5,
+                                          ),
+                                          child: Text("Edit Profile",
+                                              style: GoogleFonts.poppins(
+                                                color:
+                                                    AppColor.LOGIN_BACKGROUND,
+                                                letterSpacing: 0.5,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: defaultSize * 3.5,
+                                              )),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        top: defaultSize * 3.5,
-                                      ),
-                                      child: Text("Edit Profile",
-                                          style: GoogleFonts.poppins(
-                                            color: AppColor.LOGIN_BACKGROUND,
-                                            letterSpacing: 0.5,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: defaultSize * 3.5,
-                                          )),
-                                    ),
-                                  ],
+                                height: defaultSize * 25,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        AppColor.PRIMARY_LIGHT,
+                                        AppColor.PRIMARY_MEDIUM
+                                      ]),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Center(
+                                  child: _getImageDisplayWidget(),
+                                ),
+                                Text(
+                                  widget.userProfile.firstName,
+                                  style: GoogleFonts.poppins(
+                                      fontSize: defaultSize * 2.2,
+                                      color: AppColor.PRIMARY_DARK),
+                                ),
+                                SizedBox(height: defaultSize / 2),
+                                Text(
+                                  ' ',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColor.PRIMARY_LIGHT,
+                                  ),
                                 ),
                               ],
                             ),
-                            height: defaultSize * 25,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    AppColor.PRIMARY_LIGHT,
-                                    AppColor.PRIMARY_MEDIUM
-                                  ]),
-                            ),
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Center(
-                              child: _getImageDisplayWidget(),
-                            ),
-                            Text(
-                              widget.userProfile.firstName,
-                              style: GoogleFonts.poppins(
-                                  fontSize: defaultSize * 2.2,
-                                  color: AppColor.PRIMARY_DARK),
-                            ),
-                            SizedBox(height: defaultSize / 2),
-                            Text(
-                              ' ',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.PRIMARY_LIGHT,
-                              ),
-                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  // ProfileInfoUI(
-                  //   title: 'Edit Profile',
-                  //   image: widget.userProfile.gender == "M"
-                  //       ? 'assets/images/avatar.png'
-                  //       : 'assets/images/favatar.png',
-                  //   name: widget.userProfile.firstName,
-                  //   email: ' ',
-                  //   showBackButton: true,
-                  //   customFunction: () async {
-                  //     final file = await ImagePicker.pickImage(
-                  //         source: ImageSource.gallery);
-                  //     _selectedImage = file;
-                  //     debugPrint('File is file ${file.path}');
-                  //     setState(() {});
-                  //   },
-                  // ),
-                  SizedBox(
-                    height: defaultSize * 3.0,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ).copyWith(
-                      bottom: defaultSize * 2.0,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ),
-                    child: TextFormField(
-                      readOnly: readOnly,
-                      // validator: _validatePhoneNumber,
-                      cursorColor: AppColor.PRIMARY_DARK,
-                      style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                      maxLines: 1,
-                      onChanged: (value) {
-                        List<String> split = value.split(' ');
-                        Map<int, String> values = {
-                          for (int i = 0; i < split.length; i++) i: split[i]
-                        };
-                        final value1 = values[0];
-                        final value2 = values[1];
-                        firstName = value1;
-                        lastName = value2;
-                      },
-                      decoration: _getTextFormFieldInputDecoration.copyWith(
-                        hintText: widget.userProfile.firstName +
-                            " " +
-                            widget.userProfile.lastName,
-                        hintStyle:
-                            GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                        suffixIcon: FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onPressed: () async {
-                              setState(() {
-                                readOnly = false;
-                              });
-                            },
-                            child: Text(
-                              'Edit Name',
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontSize: defaultSize * 1.75,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 1.0),
-                            )),
                       ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ).copyWith(
-                      bottom: defaultSize * 2.0,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ),
-                    child: TextFormField(
-                      readOnly: readOnly,
-                      // validator: _validatePhoneNumber,
-                      cursorColor: AppColor.PRIMARY_DARK,
-                      style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                      maxLines: 1,
-                      onChanged: (value) => email = value,
-                      decoration: _getTextFormFieldInputDecoration.copyWith(
-                        hintText: widget.userProfile.email,
-                        hintStyle:
-                            GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                        suffixIcon: FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onPressed: () async {
-                              setState(() {
-                                readOnly = false;
-                              });
-                            },
-                            child: Text(
-                              'Edit Email',
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontSize: defaultSize * 1.75,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 1.0),
-                            )),
+                      // ProfileInfoUI(
+                      //   title: 'Edit Profile',
+                      //   image: widget.userProfile.gender == "M"
+                      //       ? 'assets/images/avatar.png'
+                      //       : 'assets/images/favatar.png',
+                      //   name: widget.userProfile.firstName,
+                      //   email: ' ',
+                      //   showBackButton: true,
+                      //   customFunction: () async {
+                      //     final file = await ImagePicker.pickImage(
+                      //         source: ImageSource.gallery);
+                      //     _selectedImage = file;
+                      //     debugPrint('File is file ${file.path}');
+                      //     setState(() {});
+                      //   },
+                      // ),
+                      SizedBox(
+                        height: defaultSize * 3.0,
                       ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ).copyWith(
-                      bottom: defaultSize * 2.0,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ),
-                    child: TextFormField(
-                      readOnly: true,
-                      // validator: _validatePhoneNumber,
-                      cursorColor: AppColor.PRIMARY_DARK,
-
-                      style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                      maxLines: 1,
-                      // onChanged: (value) => gender = value,
-                      decoration: _getTextFormFieldInputDecoration.copyWith(
-                        hintText: widget.userProfile.gender == "M"
-                            ? 'Male'
-                            : 'Female',
-                        suffixIcon: FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onPressed: () async {
-                              // _requestOTP();
-                              // setState(() {
-                              //   // readOnly = false;
-                              // });
-                              _onEditGender();
-                            },
-                            child: Text(
-                              'Edit Gender',
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontSize: defaultSize * 1.75,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 1.0),
-                            )),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ).copyWith(
-                      bottom: defaultSize * 2.0,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultSize * 1.0,
-                    ),
-                    child: TextFormField(
-                      readOnly: readOnly,
-                      // validator: _validatePhoneNumber,
-                      cursorColor: AppColor.PRIMARY_DARK,
-                      style: GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                      maxLines: 4,
-                      onChanged: (value) => address = value,
-                      decoration: _getTextFormFieldInputDecoration.copyWith(
-                        hintText: widget.userProfile.address,
-                        hintStyle:
-                            GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
-                        suffixIcon: FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onPressed: () async {
-                              setState(() {
-                                readOnly = false;
-                              });
-                            },
-                            child: Text(
-                              'Edit Address',
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontSize: defaultSize * 1.75,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 1.0),
-                            )),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: defaultSize * 2.5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            readOnly = true;
-                          });
-                        },
-                        child: GestureDetector(
-                          onTap: () {
-                            _showCancel();
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ).copyWith(
+                          bottom: defaultSize * 2.0,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ),
+                        child: TextFormField(
+                          readOnly: readOnly,
+                          // validator: _validatePhoneNumber,
+                          cursorColor: AppColor.PRIMARY_DARK,
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 1,
+                          onChanged: (value) {
+                            List<String> split = value.split(' ');
+                            Map<int, String> values = {
+                              for (int i = 0; i < split.length; i++) i: split[i]
+                            };
+                            final value1 = values[0];
+                            final value2 = values[1];
+                            firstName = value1;
+                            lastName = value2;
                           },
-                          child: RoundedButtonOutlineBorder(
-                            buttontext: 'Cancel',
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: widget.userProfile.firstName +
+                                " " +
+                                widget.userProfile.lastName,
+                            hintStyle: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK),
+                            suffixIcon: FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onPressed: () async {
+                                  setState(() {
+                                    readOnly = false;
+                                  });
+                                },
+                                child: Text(
+                                  'Edit Name',
+                                  style: GoogleFonts.poppins(
+                                      color: AppColor.PRIMARY_DARK,
+                                      fontSize: defaultSize * 1.75,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.0),
+                                )),
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (_fullNameFormKey.currentState.validate()) {
-                            await _onEditProfileClick();
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BottomNavBar()));
-                          } else {
-                            showSnackBar("try agian");
-                          }
-                        },
-                        child: RoundedButtonDarkSave(
-                          buttontext: 'save',
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ).copyWith(
+                          bottom: defaultSize * 2.0,
                         ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ),
+                        child: TextFormField(
+                          readOnly: readOnly,
+                          // validator: _validatePhoneNumber,
+                          cursorColor: AppColor.PRIMARY_DARK,
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 1,
+                          onChanged: (value) => email = value,
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: widget.userProfile.email,
+                            hintStyle: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK),
+                            suffixIcon: FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onPressed: () async {
+                                  setState(() {
+                                    readOnly = false;
+                                  });
+                                },
+                                child: Text(
+                                  'Edit Email',
+                                  style: GoogleFonts.poppins(
+                                      color: AppColor.PRIMARY_DARK,
+                                      fontSize: defaultSize * 1.75,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.0),
+                                )),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ).copyWith(
+                          bottom: defaultSize * 2.0,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ),
+                        child: TextFormField(
+                          readOnly: true,
+                          // validator: _validatePhoneNumber,
+                          cursorColor: AppColor.PRIMARY_DARK,
+
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 1,
+                          // onChanged: (value) => gender = value,
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: widget.userProfile.gender == "M"
+                                ? 'Male'
+                                : 'Female',
+                            suffixIcon: FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onPressed: () async {
+                                  // _requestOTP();
+                                  // setState(() {
+                                  //   // readOnly = false;
+                                  // });
+                                  _onEditGender();
+                                },
+                                child: Text(
+                                  'Edit Gender',
+                                  style: GoogleFonts.poppins(
+                                      color: AppColor.PRIMARY_DARK,
+                                      fontSize: defaultSize * 1.75,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.0),
+                                )),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ).copyWith(
+                          bottom: defaultSize * 2.0,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: defaultSize * 1.0,
+                        ),
+                        child: TextFormField(
+                          readOnly: readOnly,
+                          // validator: _validatePhoneNumber,
+                          cursorColor: AppColor.PRIMARY_DARK,
+                          style:
+                              GoogleFonts.poppins(color: AppColor.PRIMARY_DARK),
+                          maxLines: 4,
+                          onChanged: (value) => address = value,
+                          decoration: _getTextFormFieldInputDecoration.copyWith(
+                            hintText: widget.userProfile.address,
+                            hintStyle: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK),
+                            suffixIcon: FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onPressed: () async {
+                                  setState(() {
+                                    readOnly = false;
+                                  });
+                                },
+                                child: Text(
+                                  'Edit Address',
+                                  style: GoogleFonts.poppins(
+                                      color: AppColor.PRIMARY_DARK,
+                                      fontSize: defaultSize * 1.75,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.0),
+                                )),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: defaultSize * 2.5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                readOnly = true;
+                              });
+                            },
+                            child: GestureDetector(
+                              onTap: () {
+                                _showCancel();
+                              },
+                              child: RoundedButtonOutlineBorder(
+                                buttontext: 'Cancel',
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              if (_fullNameFormKey.currentState.validate()) {
+                                await _onEditProfileClick();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => BottomNavBar()));
+                              } else {
+                                showSnackBar("try agian");
+                              }
+                            },
+                            child: RoundedButtonDarkSave(
+                              buttontext: 'save',
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: defaultSize * 2.5,
                       )
                     ],
                   ),
-                  SizedBox(
-                    height: defaultSize * 2.5,
-                  )
-                ],
+                ),
               ),
             ),
-          ),
+            (_inProcess)
+                ? Container(
+                    color: Colors.white,
+                    height: MediaQuery.of(context).size.height * 0.95,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        semanticsLabel: 'Selecting Image',
+                      ),
+                    ),
+                  )
+                : Center()
+          ],
         ),
       ),
     );
@@ -525,28 +549,65 @@ class _EditProfileState extends State<EditProfile> {
     // hintText: hint,
   );
   Widget _bottomSheet() {
+    _cropImage(File picked) async {
+      File cropped = await ImageCropper.cropImage(
+        sourcePath: picked.path,
+        compressFormat: ImageCompressFormat.jpg,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 70,
+        maxWidth: 700,
+        maxHeight: 700,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: AppColor.PRIMARY_MEDIUM,
+          toolbarTitle: "Crop Profile Picture",
+          statusBarColor: AppColor.PRIMARY_MEDIUM,
+          toolbarWidgetColor: Colors.white,
+          backgroundColor: Colors.white,
+        ),
+      );
+      if (cropped != null) {
+        setState(() {
+          selectedImage = cropped;
+        });
+      }
+    }
+
     void takePhotoByCamera() async {
+      this.setState(() {
+        _inProcess = true;
+      });
       File image = await ImagePicker.pickImage(source: ImageSource.camera);
 
-      setState(() {
-        selectedImage = image;
-      });
+      if (image != null) {
+        _cropImage(image);
+        this.setState(() {
+          _inProcess = false;
+        });
+      } else {
+        Navigator.pop(context);
+        this.setState(() {
+          _inProcess = false;
+        });
+      }
     }
 
     void takePhotoByGallery() async {
-      File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-      setState(() {
-        selectedImage = image;
+      this.setState(() {
+        _inProcess = true;
       });
+      File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        _cropImage(image);
+        this.setState(() {
+          _inProcess = false;
+        });
+      } else {
+        Navigator.pop(context);
+        this.setState(() {
+          _inProcess = false;
+        });
+      }
     }
-
-    // void removePhoto() {
-    //   setState(() {
-    //     selectedImage = widget.userProfile.gender == "M"
-    //         ? File('assets/images/avatar.png')
-    //         : File('assets/images/favatar.png');
-    //   });
-    // }
 
     return Container(
       height: defaultOverride * 25.0,
@@ -764,6 +825,6 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _onwillPop() {
-    Navigator.of(context).pop(true);
+    Navigator.of(context).pop();
   }
 }

@@ -278,19 +278,47 @@ class _SalonSlotsUIState extends State<SalonSlotsUI> {
                               : Colors.transparent,
                           shape: BoxShape.circle,
                         ),
-                        child: Center(
-                          child: Text(
-                            emmployeeList[position].firstName[0],
-                            style: GoogleFonts.poppins(
-                              color: _selectedEmployee?.id ==
-                                      emmployeeList[position].id
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: defaultSizeOveride * 1.85,
-                            ),
+                        child: ClipOval(
+                          child: Stack(
+                            children: [
+                              if (emmployeeList[position].profileUrl != null)
+                                Image.network(
+                                  emmployeeList[position].profileUrl,
+                                  width: defaultSizeOveride * 10,
+                                  height: defaultSizeOveride * 10,
+                                  fit: BoxFit.cover,
+                                ),
+                              if (emmployeeList[position].profileUrl == null ||
+                                  emmployeeList[position].profileUrl == " ")
+                                emmployeeList[position].gender == "M"
+                                    ? Image.asset(
+                                        'assets/images/avatar.png',
+                                        width: defaultSizeOveride * 10,
+                                        height: defaultSizeOveride * 10,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset(
+                                        'assets/images/favatar.png',
+                                        width: defaultSizeOveride * 10,
+                                        height: defaultSizeOveride * 10,
+                                        fit: BoxFit.cover,
+                                      ),
+                            ],
                           ),
                         ),
+                        // child: Center(
+                        //   child: Text(
+                        //     emmployeeList[position].firstName[0],
+                        //     style: GoogleFonts.poppins(
+                        //       color: _selectedEmployee?.id ==
+                        //               emmployeeList[position].id
+                        //           ? Colors.white
+                        //           : Colors.black,
+                        //       fontWeight: FontWeight.bold,
+                        //       fontSize: defaultSizeOveride * 1.85,
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                       SizedBox(height: defaultSizeOveride * 1.5),
                       Center(

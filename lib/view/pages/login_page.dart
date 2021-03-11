@@ -46,11 +46,6 @@ class _LoginPageState extends State<LoginPage> {
     _checkAndSetInfoBean();
   }
 
-  _getData() async {
-    // await _checkAndSetInfoBean();
-    // _getOTP();
-  }
-
   _checkAndSetInfoBean() async {
     final nonLoginAuthToken = await AppSessionManager.getNonLoginAuthToken();
     final isInternetConnected = await InternetUtil.isInternetConnected();

@@ -185,19 +185,20 @@ class _SearchSalonsState extends State<SearchSalons> {
             actions: [
               FloatingSearchBarAction.searchToClear(),
             ],
-            onQueryChanged: (query) {
-              setState(() {
-                filteredSearchHistory = filterSearchTerms(filter: query);
-              });
-            },
+            // onQueryChanged: (query) {
+            //   setState(() {
+            //     filteredSearchHistory = filterSearchTerms(filter: query);
+            //   });
+            // },
             onSubmitted: (query) {
               setState(() {
-                addSearchTerm(query);
+                // addSearchTerm(query);
                 selectedTerm = query;
               });
 
               controller.close();
-              _fetchPage(1);
+              _pagingController.refresh();
+              // _fetchPage(1); //second time
             },
           ),
         ),

@@ -29,8 +29,8 @@ class AuthService {
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       infoBean = InfoBean(
-          androidId: androidInfo.version.release,
-          androidVersion: androidInfo.version.sdkInt.toString(),
+          androidId: androidInfo.androidId,
+          androidVersion: androidInfo.version.release,
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
@@ -40,14 +40,13 @@ class AuthService {
           userAgent: 'Android',
           platform: 'APP');
 
-      body['androidUniqueId'] =
-          '${androidInfo.androidId}_${DateTime.now().millisecondsSinceEpoch}';
+      body['androidUniqueId'] = '${androidInfo.androidId}_${uuid.v4()}';
       body['infoBean'] = infoBean;
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       infoBean = InfoBean(
-          androidId: '1',
-          androidVersion: '1',
+          androidId: iosInfo.identifierForVendor,
+          androidVersion: iosInfo.systemVersion,
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
@@ -57,7 +56,7 @@ class AuthService {
           userAgent: 'iOS',
           platform: 'APP');
 
-      body['androidUniqueId'] = uuid.v4();
+      body['androidUniqueId'] = '${iosInfo.identifierForVendor}_${uuid.v4()}';
       body['infoBean'] = infoBean;
     }
 

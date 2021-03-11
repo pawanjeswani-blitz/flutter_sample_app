@@ -7,6 +7,10 @@ class Constants {
   static const LoginUsingOTP = 'consumeroot/api/rs/v1/service/login/otp';
   static const LoginPhoneVerfication =
       'consumeroot/api/rs/v1/service/login/phone';
+  static const GetUserProfilePath =
+      'consumeroot/api/rs/v1/service/get/userprofile';
+  static const UpdateUserProfile =
+      'consumeroot/api/rs/v1/service/update/profile';
   static const UploadProfilePic =
       'consumeroot/api/rs/v1/service/update/profilepic';
   static const LogoutUser = 'api/rs/v1/service/logout';
@@ -14,10 +18,7 @@ class Constants {
   //     'http://staging.saloonwala.in/consumercloudspa/api/rs/';
   static const GetSalonFeedList =
       'consumercloudspa/api/rs/v1/service/get/salon/feed/';
-  static const GetUserProfilePath =
-      'consumeroot/api/rs/v1/service/get/userprofile';
-  static const UpdateUserProfile =
-      'consumercloudspa/api/rs/v1/service/update/profile';
+
   static const GetSalonSlots =
       'consumercloudspa/api/rs/v1/service/get/store/slots';
   static const SlotsBooking =
