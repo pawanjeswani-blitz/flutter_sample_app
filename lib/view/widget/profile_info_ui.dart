@@ -7,6 +7,7 @@ import 'package:saloonwala_consumer/view/widget/custom_clipper.dart';
 class ProfileInfoUI extends StatelessWidget {
   final String name, email, title, image;
   final bool showBackButton;
+  final Function customFunction;
 
   const ProfileInfoUI(
       {Key key,
@@ -14,7 +15,8 @@ class ProfileInfoUI extends StatelessWidget {
       this.email,
       this.title,
       this.image,
-      this.showBackButton = false})
+      this.showBackButton = false,
+      this.customFunction})
       : super(key: key);
 
   @override
@@ -81,19 +83,47 @@ class ProfileInfoUI extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Center(
-                child: Container(
-                  margin: EdgeInsets.only(bottom: defaultSize), //10
-                  height: defaultSize * 14, //140
-                  width: defaultSize * 14,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: defaultSize * 0.8, //8
-                    ),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(image),
+                child: GestureDetector(
+                  onTap: () => customFunction(),
+                  child: Container(
+                    height: defaultSize * 14,
+                    width: defaultSize * 14,
+                    margin: EdgeInsets.only(top: defaultSize * 3),
+                    child: Stack(
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: defaultSize * 14,
+                          backgroundImage: NetworkImage(image),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            height: defaultSize * 3.0,
+                            width: defaultSize * 3.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                  offset: Offset(
+                                      0, 0), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              heightFactor: defaultSize * 2.5,
+                              widthFactor: defaultSize * 2.5,
+                              child: Icon(Icons.edit,
+                                  color: AppColor.PRIMARY_MEDIUM,
+                                  size: defaultSize * 2.2),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

@@ -22,7 +22,6 @@ class AuthService {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final fcmToken = await firebaseMessaging.getToken();
     var uuid = Uuid();
-    // final fcmToken = await firebaseMessaging.getToken();
     final body = {};
 
     InfoBean infoBean;
@@ -45,8 +44,8 @@ class AuthService {
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       infoBean = InfoBean(
-          androidId: null,
-          androidVersion: null,
+          androidId: iosInfo.identifierForVendor,
+          androidVersion: iosInfo.systemVersion,
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",
           appVersion: packageInfo.version,

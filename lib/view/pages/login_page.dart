@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.of(context).pop();
         } catch (ex) {
           Navigator.of(context).pop();
-          showSnackBar("ex");
+          showSnackBar(ex);
         }
       } else
         _onShow();

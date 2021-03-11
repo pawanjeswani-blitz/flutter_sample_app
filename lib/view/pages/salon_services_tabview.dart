@@ -68,11 +68,14 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
+
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light
             .copyWith(statusBarColor: Theme.of(context).primaryColor),
         child: NestedScrollView(
+          physics: NeverScrollableScrollPhysics(),
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(

@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:saloonwala_consumer/app/constants.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
 import 'package:saloonwala_consumer/model/super_response.dart';
 import 'package:saloonwala_consumer/model/update_profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:saloonwala_consumer/model/upload_profile_pic.dart';
 import 'package:saloonwala_consumer/model/user_profile.dart';
 import 'package:saloonwala_consumer/model/user_profile_after_login.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http_parser/http_parser.dart';
 
 class UserProfileService {
   static Future<SuperResponse<UpdateProfile>> updateUserProfile(
@@ -40,7 +43,6 @@ class UserProfileService {
       "lastName": lastName,
       "latitude": latitude,
       "longitude": longitude,
-      "profileUrl": " ",
       "stateName": state,
       "email": email,
       "address": address
@@ -117,7 +119,6 @@ class UserProfileService {
       "firstName": firstName,
       "gender": gender,
       "lastName": lastName,
-      "profileUrl": " ",
       "stateName": state,
       "email": email,
       "address": address
@@ -139,5 +140,47 @@ class UserProfileService {
       Map<String, dynamic> map = json.decode(response.body);
       return SuperResponse.fromJson(map, null);
     });
+  }
+
+  static Future<SuperResponse<UploadProfilePic>> uploadProfileImage(
+    String filePath1,
+  ) async {
+    var authToken = await AppSessionManager.getLoginAuthToken();
+
+    final map = Map<String, dynamic>();
+    map['authToken '] = authToken;
+
+    if (filePath1 != null && filePath1.isNotEmpty) {
+      print('adding 1 key');
+      map['profilePic'] = await MultipartFile.fromFile(filePath1,
+          filename: "profilePic.png", contentType: MediaType('image', 'jpeg'));
+    } else
+      map['profilePic'] = null;
+
+    var formData = FormData.fromMap(map);
+
+    print('--------------------');
+
+    // var response = await Dio().post(
+    //     "${Constants.BaseUrl}${Constants.UploadProfilePic}",
+    //     data: formData);
+    // print(response.data['data']['profilepicUrl']);
+
+    // debugPrint('Debug Url ${response.data['data']['profilepicUrl']}');
+    // Map<String, dynamic> map2 = json.decode(response.data);
+    try {
+      final response = await Dio().post(
+        "${Constants.BaseUrl}${Constants.UploadProfilePic}",
+        data: formData,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      return SuperResponse.fromJson(
+          map, UploadProfilePic.fromJson(response.data['data']));
+      // return BannerImages(thumbnail1: response.data['thumbnail1']);
+    } on DioError catch (e) {
+      return SuperResponse(error: "Error While Uploading ${e.toString()}");
+    }
+    // return SuperResponse.fromJson(map, UploadProfilePic.fromJson(map2['data']));
   }
 }

@@ -20,6 +20,7 @@ import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/profile_menu_item.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:saloonwala_consumer/view/widget/custom_clipper.dart';
 
 class UserProfileUI extends StatefulWidget {
   @override
@@ -69,87 +70,190 @@ class _UserProfileUIState extends State<UserProfileUI> {
           .copyWith(statusBarColor: AppColor.PRIMARY_LIGHT),
       child: Scaffold(
         key: _scaffoldKey,
-        body: _userProfileLogin !=null? SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              children: [
-                ProfileInfoUI(
-                  title: 'Profile',
-                  image: _userProfileLogin.gender == null
-                      ? Container()
-                      : _userProfileLogin.gender == "M"
-                          ? 'assets/images/avatar.png'
-                          : 'assets/images/favatar.png',
-                  name: _userProfileLogin == null
-                      ? ""
-                      : _userProfileLogin.firstName.toString(),
-                  email: _userProfileLogin.email == null
-                      ? ""
-                      : _userProfileLogin.email.toString(),
+        body: _userProfileLogin != null
+            ? SingleChildScrollView(
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: defaultSize * 34,
+                        child: Stack(
+                          children: [
+                            ClipPath(
+                              clipper: CustomClipperShape(),
+                              child: Container(
+                                child: Stack(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        InkWell(
+                                          onTap: () =>
+                                              Navigator.of(context).pop(),
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                              top: defaultSize * 3.5,
+                                            ),
+                                            child: Icon(
+                                              Icons.chevron_left,
+                                              size: defaultSize * 4.5,
+                                              color: AppColor.LOGIN_BACKGROUND,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                            top: defaultSize * 3.5,
+                                          ),
+                                          child: Text("Edit Profile",
+                                              style: GoogleFonts.poppins(
+                                                color:
+                                                    AppColor.LOGIN_BACKGROUND,
+                                                letterSpacing: 0.5,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: defaultSize * 3.5,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                height: defaultSize * 25,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        AppColor.PRIMARY_LIGHT,
+                                        AppColor.PRIMARY_MEDIUM
+                                      ]),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Center(
+                                  child: _getImageDisplayWidget(),
+                                ),
+                                Text(
+                                  _userProfileLogin == null
+                                      ? ""
+                                      : _userProfileLogin.firstName.toString(),
+                                  style: GoogleFonts.poppins(
+                                      fontSize: defaultSize * 2.2,
+                                      color: AppColor.PRIMARY_DARK),
+                                ),
+                                SizedBox(height: defaultSize / 2),
+                                Text(
+                                  ' ',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColor.PRIMARY_LIGHT,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      // ProfileInfoUI(
+                      //   title: 'Profile',
+                      //   image: _userProfileLogin.gender == null
+                      //       ? Container()
+                      //       : _userProfileLogin.gender == "M"
+                      //           ? 'assets/images/avatar.png'
+                      //           : 'assets/images/favatar.png',
+                      //   name: _userProfileLogin == null
+                      //       ? ""
+                      //       : _userProfileLogin.firstName.toString(),
+                      //   email: _userProfileLogin.email == null
+                      //       ? ""
+                      //       : _userProfileLogin.email.toString(),
+                      //   customFunction: () async {
+                      //     final userProfile = await AppSessionManager
+                      //         .getUserProfileAfterLogin();
+                      //     Navigator.of(context).push(MaterialPageRoute(
+                      //         builder: (context) => EditProfile(
+                      //               userProfile: userProfile,
+                      //             )));
+                      //   },
+                      // ),
+                      SizedBox(
+                        height: defaultSize * 2.0,
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.person,
+                        title: 'Edit Profile',
+                        press: () async {
+                          final userProfile = await AppSessionManager
+                              .getUserProfileAfterLogin();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => EditProfile(
+                                    userProfile: userProfile,
+                                  )));
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.access_time,
+                        title: 'Upcoming Appointments',
+                        press: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  UpcomingAppointmentScreen()));
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.content_paste,
+                        title: 'Past Appointments',
+                        press: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => PastAppointments()));
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.privacy_tip,
+                        title: 'Privacy Policy',
+                        press: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SaloonWalaPrivacy()));
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.assignment_returned,
+                        title: 'Terms & Conditions',
+                        press: () {
+                          // _launchURL();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SaloonWalaTerms()));
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconSrc: Icons.logout,
+                        title: 'Logout',
+                        press: () async {
+                          _showLogout();
+                        },
+                        hasNavigation: false,
+                      ),
+                      SizedBox(
+                        height: defaultSize * 2.5,
+                      )
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: defaultSize * 2.0,
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.person,
-                  title: 'Edit Profile',
-                  press: () async {
-                    final userProfile =
-                        await AppSessionManager.getUserProfileAfterLogin();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditProfile(
-                              userProfile: userProfile,
-                            )));
-                  },
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.access_time,
-                  title: 'Upcoming Appointments',
-                  press: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => UpcomingAppointmentScreen()));
-                  },
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.content_paste,
-                  title: 'Past Appointments',
-                  press: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PastAppointments()));
-                  },
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.privacy_tip,
-                  title: 'Privacy Policy',
-                  press: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => SaloonWalaPrivacy()));
-                  },
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.assignment_returned,
-                  title: 'Terms & Conditions',
-                  press: () {
-                    // _launchURL();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => SaloonWalaTerms()));
-                  },
-                ),
-                ProfileMenuItem(
-                  iconSrc: Icons.logout,
-                  title: 'Logout',
-                  press: () async {
-                    _showLogout();
-                  },
-                  hasNavigation: false,
-                ),
-                SizedBox(
-                  height: defaultSize * 2.5,
-                )
-              ],
-            ),
-          ),
-        ):Center(child: CircularProgressIndicator(),),
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
@@ -204,14 +308,85 @@ class _UserProfileUIState extends State<UserProfileUI> {
     );
   }
 
-  // _launchURL() async {
-  //   const url = 'http://saloonwala.in/';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+  Widget _getImageDisplayWidget() {
+    return GestureDetector(
+      onTap: () async {
+        final userProfile = await AppSessionManager.getUserProfileAfterLogin();
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => EditProfile(
+                  userProfile: userProfile,
+                )));
+      },
+      child: Stack(
+        children: [
+          if (_userProfileLogin.profileUrl != null)
+            Container(
+              margin: EdgeInsets.only(bottom: defaultOverride), //10
+              height: defaultOverride * 14, //140
+              width: defaultOverride * 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: defaultOverride * 0.8, //8
+                ),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(_userProfileLogin.profileUrl),
+                ),
+              ),
+            ),
+          if (_userProfileLogin.profileUrl == null)
+            Container(
+              margin: EdgeInsets.only(bottom: defaultOverride), //10
+              height: defaultOverride * 14, //140
+              width: defaultOverride * 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: defaultOverride * 0.8, //8
+                ),
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: _userProfileLogin.gender == "M"
+                        ? AssetImage('assets/images/avatar.png')
+                        : AssetImage(
+                            'assets/images/favatar.png',
+                          )),
+              ),
+            ),
+          Positioned(
+            bottom: defaultOverride * 1.5,
+            right: defaultOverride * 1.5,
+            child: Container(
+              height: defaultOverride * 3.2,
+              width: defaultOverride * 3.2,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: Offset(0, 0), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Center(
+                heightFactor: defaultOverride * 2.5,
+                widthFactor: defaultOverride * 2.5,
+                child: Icon(Icons.edit,
+                    color: AppColor.PRIMARY_MEDIUM,
+                    size: defaultOverride * 2.2),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));

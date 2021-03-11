@@ -30,6 +30,8 @@ dependencies:
   uuid: ^2.2.2
   cached_network_image: ^2.5.0
   like_button: ^1.0.4
+  dio: ^3.0.10
+  image_picker: ^0.6.2
   fluttertoast: ^7.1.8
   webview_flutter: 
 dev_dependencies:

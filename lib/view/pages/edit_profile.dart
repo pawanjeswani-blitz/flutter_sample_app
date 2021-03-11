@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:saloonwala_consumer/api/user_profile_service.dart';
 import 'package:saloonwala_consumer/app/app_color.dart';
 import 'package:saloonwala_consumer/app/session_manager.dart';
@@ -12,6 +15,7 @@ import 'package:saloonwala_consumer/utils/internet_util.dart';
 import 'package:saloonwala_consumer/view/pages/bottom_navbar.dart';
 import 'package:saloonwala_consumer/view/pages/dialog/select_gender_dialog.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
+import 'package:saloonwala_consumer/view/widget/custom_clipper.dart';
 import 'package:saloonwala_consumer/view/widget/profile_info_ui.dart';
 import 'package:saloonwala_consumer/view/widget/progress_dialog.dart';
 import 'package:saloonwala_consumer/view/widget/rounded_button.dart';
@@ -41,11 +45,13 @@ class _EditProfileState extends State<EditProfile> {
       address;
   String fsname = "aa";
   double defaultOverride;
+  File selectedImage;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
+    File file;
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
@@ -55,15 +61,106 @@ class _EditProfileState extends State<EditProfile> {
             key: _fullNameFormKey,
             child: Column(
               children: [
-                ProfileInfoUI(
-                  title: 'Edit Profile',
-                  image: widget.userProfile.gender == "M"
-                      ? 'assets/images/avatar.png'
-                      : 'assets/images/favatar.png',
-                  name: widget.userProfile.firstName,
-                  email: ' ',
-                  showBackButton: true,
+                SizedBox(
+                  height: defaultSize * 34,
+                  child: Stack(
+                    children: [
+                      ClipPath(
+                        clipper: CustomClipperShape(),
+                        child: Container(
+                          child: Stack(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                        top: defaultSize * 3.5,
+                                      ),
+                                      child: Icon(
+                                        Icons.chevron_left,
+                                        size: defaultSize * 4.5,
+                                        color: AppColor.LOGIN_BACKGROUND,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      top: defaultSize * 3.5,
+                                    ),
+                                    child: Text("Edit Profile",
+                                        style: GoogleFonts.poppins(
+                                          color: AppColor.LOGIN_BACKGROUND,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: defaultSize * 3.5,
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          height: defaultSize * 25,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppColor.PRIMARY_LIGHT,
+                                  AppColor.PRIMARY_MEDIUM
+                                ]),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Center(
+                            child: _getImageDisplayWidget(),
+                          ),
+                          Text(
+                            widget.userProfile.firstName,
+                            style: GoogleFonts.poppins(
+                                fontSize: defaultSize * 2.2,
+                                color: AppColor.PRIMARY_DARK),
+                          ),
+                          SizedBox(height: defaultSize / 2),
+                          Text(
+                            ' ',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.PRIMARY_LIGHT,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                // ProfileInfoUI(
+                //   title: 'Edit Profile',
+                //   image: widget.userProfile.gender == "M"
+                //       ? 'assets/images/avatar.png'
+                //       : 'assets/images/favatar.png',
+                //   name: widget.userProfile.firstName,
+                //   email: ' ',
+                //   showBackButton: true,
+                //   customFunction: () async {
+                //     final file = await ImagePicker.pickImage(
+                //         source: ImageSource.gallery);
+                //     _selectedImage = file;
+                //     debugPrint('File is file ${file.path}');
+                //     setState(() {});
+                //   },
+                // ),
                 SizedBox(
                   height: defaultSize * 3.0,
                 ),
@@ -421,4 +518,232 @@ class _EditProfileState extends State<EditProfile> {
     contentPadding: EdgeInsets.only(left: 15, bottom: 14, top: 14, right: 15),
     // hintText: hint,
   );
+  Widget _bottomSheet() {
+    void takePhotoByCamera() async {
+      File image = await ImagePicker.pickImage(source: ImageSource.camera);
+
+      setState(() {
+        selectedImage = image;
+      });
+    }
+
+    void takePhotoByGallery() async {
+      File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        selectedImage = image;
+      });
+    }
+
+    // void removePhoto() {
+    //   setState(() {
+    //     selectedImage = widget.userProfile.gender == "M"
+    //         ? File('assets/images/avatar.png')
+    //         : File('assets/images/favatar.png');
+    //   });
+    // }
+
+    return Container(
+      height: defaultOverride * 25.0,
+      width: double.infinity,
+      margin: EdgeInsets.only(top: defaultOverride * 2.5),
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Choose Profile photo",
+            style: GoogleFonts.poppins(fontSize: defaultOverride * 2.2),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+                right: defaultOverride * 4.0,
+                top: defaultOverride * 1.0,
+                left: defaultOverride * 4.0),
+            child: Row(
+              children: <Widget>[
+                FlatButton.icon(
+                  icon: Icon(Icons.camera, color: AppColor.PRIMARY_MEDIUM),
+                  onPressed: takePhotoByCamera,
+                  label: Text(
+                    "Camera",
+                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: defaultOverride * 2.0),
+                ),
+                FlatButton.icon(
+                  icon: Icon(Icons.image, color: AppColor.PRIMARY_MEDIUM),
+                  onPressed: takePhotoByGallery,
+                  label: Text(
+                    "Gallery",
+                    style: GoogleFonts.poppins(color: AppColor.PRIMARY_MEDIUM),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+                top: defaultOverride * 4.0,
+                left: defaultOverride * 2.8,
+                right: defaultOverride * 2.8),
+            child: GestureDetector(
+                onTap: () {
+                  uploadProfile();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      EdgeInsets.symmetric(vertical: defaultOverride * 1.35),
+                  margin:
+                      EdgeInsets.symmetric(horizontal: defaultOverride * 1.4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.upload_rounded,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: defaultOverride * 1.0,
+                      ),
+                      Text("Upload Profile Pic",
+                          style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: defaultOverride * 1.55,
+                              letterSpacing: 1.0,
+                              fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: AppColor.PRIMARY_DARK),
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void uploadProfile() async {
+    var docPath1 = "";
+
+    if (selectedImage != null) {
+      docPath1 = selectedImage.path;
+    }
+
+    final isInternetConnected = await InternetUtil.isInternetConnected();
+    if (isInternetConnected) {
+      ProgressDialog.showProgressDialog(context);
+      final response = await UserProfileService.uploadProfileImage(docPath1);
+      //close the progress dialog
+      Navigator.of(context).pop();
+      if (response.data != null) {
+        print(response.data);
+        showSnackBar("Profile pic uploaded Successfully");
+      } else
+        showSnackBar("Please try again");
+    } else
+      showSnackBar("No internet connected");
+  }
+
+  Widget _getImageDisplayWidget() {
+    return Stack(
+      children: [
+        if (selectedImage == null && widget.userProfile.profileUrl != null)
+          Container(
+            margin: EdgeInsets.only(bottom: defaultOverride), //10
+            height: defaultOverride * 14, //140
+            width: defaultOverride * 14,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: defaultOverride * 0.8, //8
+              ),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(widget.userProfile.profileUrl),
+              ),
+            ),
+          ),
+
+        if (selectedImage != null)
+          Container(
+            margin: EdgeInsets.only(bottom: defaultOverride), //10
+            height: defaultOverride * 14, //140
+            width: defaultOverride * 14,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: defaultOverride * 0.8, //8
+              ),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: FileImage(File(selectedImage.path)),
+              ),
+            ),
+          ),
+
+        //file and url is null
+        if (selectedImage == null && widget.userProfile.profileUrl == null)
+          Container(
+            margin: EdgeInsets.only(bottom: defaultOverride), //10
+            height: defaultOverride * 14, //140
+            width: defaultOverride * 14,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: defaultOverride * 0.8, //8
+              ),
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: widget.userProfile.gender == "M"
+                      ? AssetImage('assets/images/avatar.png')
+                      : AssetImage(
+                          'assets/images/favatar.png',
+                        )),
+            ),
+          ),
+
+        Positioned(
+          bottom: defaultOverride * 1.5,
+          right: defaultOverride * 1.5,
+          child: InkWell(
+            child: Container(
+              height: defaultOverride * 3.2,
+              width: defaultOverride * 3.2,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: Offset(0, 0), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Center(
+                heightFactor: defaultOverride * 2.5,
+                widthFactor: defaultOverride * 2.5,
+                child: Icon(Icons.edit,
+                    color: AppColor.PRIMARY_MEDIUM,
+                    size: defaultOverride * 2.2),
+              ),
+            ),
+            onTap: () {
+              showModalBottomSheet(
+                  context: context, builder: ((builder) => _bottomSheet()));
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }

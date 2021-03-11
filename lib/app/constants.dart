@@ -4,6 +4,8 @@ class Constants {
   static const RefreshSession = 'v1/service/newrefreshsession/app';
   static const LoginUsingOTP = 'v1/service/login/otp';
   static const LoginPhoneVerfication = 'v1/service/login/phone';
+  static const UploadProfilePic = 'v1/service/update/profilepic';
+  static const LogoutUser = 'v1/service/logout';
   static const SecondryUrl =
       'http://staging.saloonwala.in/consumercloudspa/api/rs/';
   static const GetSalonFeedList = 'v1/service/get/salon/feed/';
