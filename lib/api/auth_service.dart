@@ -45,8 +45,8 @@ class AuthService {
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       infoBean = InfoBean(
-          androidId: iosInfo.identifierForVendor,
-          androidVersion: iosInfo.systemVersion,
+          androidId: '1',
+          androidVersion: '1',
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
@@ -55,6 +55,9 @@ class AuthService {
           manufacturer: 'Apple',
           userAgent: 'iOS',
           platform: 'APP');
+
+      body['androidUniqueId'] = uuid.v4();
+      body['infoBean'] = infoBean;
 
       body['androidUniqueId'] = uuid.v4();
       body['infoBean'] = infoBean;
