@@ -22,15 +22,15 @@ class AuthService {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final fcmToken = await firebaseMessaging.getToken();
-    var uuid = Uuid();
+    final uuid = Uuid();
     final body = {};
 
     InfoBean infoBean;
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       infoBean = InfoBean(
-          androidId: androidInfo.version.sdkInt.toString(),
-          androidVersion: androidInfo.version.release,
+          androidId: androidInfo.version.release,
+          androidVersion: androidInfo.version.sdkInt.toString(),
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
@@ -40,7 +40,8 @@ class AuthService {
           userAgent: 'Android',
           platform: 'APP');
 
-      body['androidUniqueId'] = '${androidInfo.androidId}_${uuid.v4()}';
+      body['androidUniqueId'] =
+          '${androidInfo.androidId}_${DateTime.now().millisecondsSinceEpoch}';
       body['infoBean'] = infoBean;
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -58,10 +59,8 @@ class AuthService {
 
       body['androidUniqueId'] = uuid.v4();
       body['infoBean'] = infoBean;
-
-      body['androidUniqueId'] = uuid.v4();
-      body['infoBean'] = infoBean;
     }
+
     debugPrint("${Constants.BaseUrl}${Constants.NonLoginAuth}");
     debugPrint(jsonEncode(body));
     return http
@@ -81,6 +80,7 @@ class AuthService {
         final output =
             SuperResponse.fromJson(map, NonLoginResponse.fromJson(map['data']));
         AppSessionManager.setNonLoginAuthToken(output.data.authToken);
+        AppSessionManager.setRefreshToken(output.data.refreshToken);
         AppSessionManager.saveInfoBean(infoBean);
         return output;
       } else
