@@ -202,11 +202,19 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                   ),
                                   child: CircleAvatar(
                                     backgroundColor: AppColor.PRIMARY_MEDIUM,
-                                    child: item.userDetails.gender == "M"
-                                        ? Image.asset(
-                                            'assets/images/avatar.png')
-                                        : Image.asset(
-                                            'assets/images/favatar.png'),
+                                    child: Stack(
+                                      children: [
+                                        if (item.userDetails.profileUrl != null)
+                                          Image.network(
+                                              item.userDetails.profileUrl),
+                                        if (item.userDetails.profileUrl == null)
+                                          item.userDetails.gender == "M"
+                                              ? Image.asset(
+                                                  'assets/images/avatar.png')
+                                              : Image.asset(
+                                                  'assets/images/favatar.png'),
+                                      ],
+                                    ),
                                     radius: defaultSize * 2.75,
                                   ),
                                 ),
@@ -247,58 +255,6 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                     SizedBox(
                                       height: defaultSize * 1.0,
                                     ),
-                                    // Text(
-                                    //   item.comment,
-                                    //   textAlign: TextAlign.center,
-                                    //   overflow: TextOverflow.clip,
-                                    // style: GoogleFonts.poppins(
-                                    //     fontSize: defaultSize * 1.5,
-                                    //     color: AppColor.PRIMARY_MEDIUM,
-                                    //     fontWeight: FontWeight.w500),
-                                    // ),
-                                    // Expanded(
-                                    //   child: Text(
-                                    //     item.comment == null ? "" : item.comment,
-                                    //     maxLines: 8,
-                                    //     // overflow: TextOverflow.ellipsis,
-                                    //     // textDirection: TextDirection.rtl,
-                                    //     textAlign: TextAlign.start,
-                                    //     style: GoogleFonts.poppins(
-                                    //       fontSize: defaultSize * 1.5,
-                                    //       color: AppColor.PRIMARY_MEDIUM,
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   width:
-                                    //       MediaQuery.of(context).size.width - 100,
-                                    //   child: Text(
-                                    //     item.comment == null ? "" : item.comment,
-                                    //     maxLines: 4,
-                                    //     textAlign: TextAlign.justify,
-                                    //     overflow: TextOverflow.ellipsis,
-                                    //     softWrap: true,
-                                    //     style: GoogleFonts.poppins(
-                                    //         fontSize: defaultSize * 1.5,
-                                    //         color: AppColor.PRIMARY_MEDIUM,
-                                    //         fontWeight: FontWeight.w500),
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   width:
-                                    //       MediaQuery.of(context).size.width - 150,
-                                    //   child: Text(
-                                    //     item.comment == null ? "" : item.comment,
-                                    //     maxLines: 4,
-                                    //     textAlign: TextAlign.justify,
-                                    //     overflow: TextOverflow.ellipsis,
-                                    //     softWrap: true,
-                                    //   style: GoogleFonts.poppins(
-                                    //       fontSize: defaultSize * 1.5,
-                                    //       color: AppColor.PRIMARY_MEDIUM,
-                                    //       fontWeight: FontWeight.w500),
-                                    // ),
-                                    // ),
                                     Row(
                                       //Widgets which help to display a list of children widgets are the 'culprit', they make your text widget not know what the maximum width is. In OP's example it is the ButtonBar widget.
                                       children: [
@@ -323,19 +279,6 @@ class _SingleStoreDataState extends State<SingleStoreData> {
                                         ),
                                       ],
                                     ),
-                                    // Expanded(
-                                    //   child: Text(
-                                    //     item.comment == null ? "" : item.comment,
-                                    //     maxLines: 8,
-                                    //     // overflow: TextOverflow.ellipsis,
-                                    //     // textDirection: TextDirection.rtl,
-                                    //     textAlign: TextAlign.start,
-                                    //     style: GoogleFonts.poppins(
-                                    //       fontSize: defaultSize * 1.75,
-                                    //       color: AppColor.PRIMARY_MEDIUM,
-                                    //     ),
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
                               ],

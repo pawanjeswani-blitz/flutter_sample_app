@@ -187,11 +187,15 @@ class _UserProfileUIState extends State<UserProfileUI> {
                         press: () async {
                           final userProfile = await AppSessionManager
                               .getUserProfileAfterLogin();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EditProfile(
-                                    userProfile: userProfile,
-                                    refresh: refresh,
-                                  )));
+                          bool result = await Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) => EditProfile(
+                                        userProfile: userProfile,
+                                        refresh: refresh,
+                                      )));
+                          if (result) {
+                            setState(() {});
+                          }
                         },
                       ),
                       ProfileMenuItem(
@@ -329,11 +333,14 @@ class _UserProfileUIState extends State<UserProfileUI> {
     return GestureDetector(
       onTap: () async {
         final userProfile = await AppSessionManager.getUserProfileAfterLogin();
-        Navigator.of(context).push(MaterialPageRoute(
+        bool result = await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => EditProfile(
                   userProfile: userProfile,
                   refresh: refresh,
                 )));
+        if (result) {
+          setState(() {});
+        }
       },
       child: Stack(
         children: [
