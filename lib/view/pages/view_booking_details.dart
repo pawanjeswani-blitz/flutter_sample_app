@@ -174,7 +174,9 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 0.0, vertical: defaultSize * 2.0),
                         child: Text(
-                          " APPOINTMENT",
+                          _appointmentResponse.salonDetails.name != null
+                              ? "${_appointmentResponse.salonDetails.name.toUpperCase()} APPOINTMENT"
+                              : "APPOINTMENT",
                           style: GoogleFonts.poppins(
                               color: AppColor.DARK_ACCENT,
                               fontWeight: FontWeight.w600,
