@@ -45,7 +45,7 @@ class AuthService {
     } else {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       infoBean = InfoBean(
-          androidId: iosInfo.identifierForVendor,
+          androidId: '1',
           androidVersion: iosInfo.systemVersion,
           appName: 'Saloonwala Consumer',
           appSignature: "-1475535803",

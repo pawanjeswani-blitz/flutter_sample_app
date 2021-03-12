@@ -173,8 +173,7 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 0.0, vertical: defaultSize * 2.0),
-                        child: Text(
-                          " APPOINTMENT",
+                        child: Text(_appointmentResponse.salonDetails !=null ? _appointmentResponse.salonDetails.name : "NA",
                           style: GoogleFonts.poppins(
                               color: AppColor.DARK_ACCENT,
                               fontWeight: FontWeight.w600,

@@ -328,6 +328,28 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                         ],
                       ),
                     ),
+                  if (services.description != null )
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12, top: 2, right: 12, bottom: 8),
+                      child: Row(
+                        children: [
+                          Text(
+                              "Description:",
+                              style: GoogleFonts.poppins(
+                                  color: AppColor.PRIMARY_DARK,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15)),
+                          SizedBox(width: 24),
+                          if (_getDiscountedPrice(services.femaleRate) !=
+                              services.femaleRate)
+                            Text(services.description,
+                                style: GoogleFonts.poppins(
+                                    color: AppColor.PRIMARY_MEDIUM,
+                                    fontSize: 13))
+                        ],
+                      ),
+                    ),
                   SizedBox(height: 8),
                   Row(
                     children: [
