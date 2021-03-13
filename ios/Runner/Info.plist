@@ -19,6 +19,10 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
+	<key>NSCameraUsageDescription</key>
+    	<string>This App will use your camera to take profile image.</string>
+    	<key>NSPhotoLibraryUsageDescription</key>
+    	<string>This App will use your photo library to select profile image.</string>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

@@ -1,5 +1,6 @@
 class Constants {
-  static const BaseUrl = 'http://staging.saloonwala.in/';
+  // static const BaseUrl = 'http://staging.saloonwala.in/';
+  static const BaseUrl = 'https://api.saloonwala.in/';
   static const NonLoginAuth =
       'consumeroot/api/rs/v1/service/generate/consumer/nonLogin';
   static const RefreshSession =

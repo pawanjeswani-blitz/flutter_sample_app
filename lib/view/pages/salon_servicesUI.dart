@@ -129,77 +129,77 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
       ),
       _selectedServiceList != null && _selectedServiceList.length > 0
           ? Align(
-              alignment: FractionalOffset.bottomCenter,
+          alignment: FractionalOffset.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            height: defaultSize * 10.0,
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.all(defaultSize * 1.65),
               child: Container(
-                width: double.infinity,
-                height: defaultSize * 10.0,
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.all(defaultSize * 1.65),
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: AppColor.PRIMARY_DARK,
-                          border: Border.all(
-                            color: Colors.transparent,
-                          ),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(defaultSize * 2.5))),
-                      child: Row(
+                  decoration: BoxDecoration(
+                      color: AppColor.PRIMARY_DARK,
+                      border: Border.all(
+                        color: Colors.transparent,
+                      ),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(defaultSize * 2.5))),
+                  child: Row(
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin:
-                                    EdgeInsets.only(left: defaultSize * 2.5),
-                                child: Text(
-                                    '${_selectedServiceList.length} Service Added',
-                                    style: GoogleFonts.poppins(
-                                        fontSize: defaultSize * 1.6,
-                                        color: Colors.white)),
-                              ),
-                              SizedBox(
-                                width: defaultSize * 1,
-                              ),
-                              SizedBox(
-                                width: defaultSize * 1.25,
-                                child: Text('|',
-                                    style: GoogleFonts.poppins(
-                                        fontSize: defaultSize * 1.6,
-                                        color: Colors.white)),
-                              ),
-                              Container(
-                                  child: Text(sum.toString(),
-                                      style: GoogleFonts.poppins(
-                                          fontSize: defaultSize * 1.6,
-                                          color: Colors.white))),
-                            ],
-                          ),
-                          Spacer(),
-                          FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            // color: Colors.transparent,
-                            onPressed: () async {
-                              final userProfile =
-                                  await AppSessionManager.getUserProfile();
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SalonSlotsUI(
-                                        selectedServiceList:
-                                            _selectedServiceList,
-                                        salonId: widget.salonId,
-                                        salonName: widget.salonName,
-                                        userProfile: widget.userprofile,
-                                      )));
-                            },
-                            child: Text(" Book Now",
+                          Container(
+                            margin:
+                            EdgeInsets.only(left: defaultSize * 2.5),
+                            child: Text(
+                                '${_selectedServiceList.length} Service Added',
                                 style: GoogleFonts.poppins(
-                                    fontSize: defaultSize * 2.0,
-                                    color: AppColor.LOGIN_BACKGROUND)),
+                                    fontSize: defaultSize * 1.6,
+                                    color: Colors.white)),
                           ),
+                          SizedBox(
+                            width: defaultSize * 1,
+                          ),
+                          SizedBox(
+                            width: defaultSize * 1.25,
+                            child: Text('|',
+                                style: GoogleFonts.poppins(
+                                    fontSize: defaultSize * 1.6,
+                                    color: Colors.white)),
+                          ),
+                          Container(
+                              child: Text(sum.toString(),
+                                  style: GoogleFonts.poppins(
+                                      fontSize: defaultSize * 1.6,
+                                      color: Colors.white))),
                         ],
-                      )),
-                ),
-              ))
+                      ),
+                      Spacer(),
+                      FlatButton(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        // color: Colors.transparent,
+                        onPressed: () async {
+                          final userProfile =
+                          await AppSessionManager.getUserProfile();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SalonSlotsUI(
+                                selectedServiceList:
+                                _selectedServiceList,
+                                salonId: widget.salonId,
+                                salonName: widget.salonName,
+                                userProfile: widget.userprofile,
+                              )));
+                        },
+                        child: Text(" Book Now",
+                            style: GoogleFonts.poppins(
+                                fontSize: defaultSize * 2.0,
+                                color: AppColor.LOGIN_BACKGROUND)),
+                      ),
+                    ],
+                  )),
+            ),
+          ))
           : Align(alignment: FractionalOffset.bottomCenter, child: Text(" ")),
     ]);
   }
@@ -213,237 +213,257 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
   }
 
   Widget _imageTitle() => Image(
-        image: new AssetImage("assets/images/logo_with_circle.png"),
-        height: defaultOverride * 10.0,
-        width: double.infinity,
-        alignment: FractionalOffset.center,
-      );
+    image: new AssetImage("assets/images/logo_with_circle.png"),
+    height: defaultOverride * 10.0,
+    width: double.infinity,
+    alignment: FractionalOffset.center,
+  );
 
   Widget _getServiceWidget() => Expanded(
-        child: ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(bottom: defaultOverride * 11.0),
-          physics: BouncingScrollPhysics(),
-          // dragStartBehavior: DragStartBehavior.down,
-          itemCount: isSearchingOver == true
-              ? filteredSearch.length
-              : _services.services.length,
-          itemBuilder: (BuildContext context, int index) {
-            Services services = isSearchingOver == true
-                ? filteredSearch[index]
-                : _services.services[index];
-            int _getDiscountPercentage() {
-              if (services.globalDiscount != null &&
-                  services.globalDiscount > 0)
-                return services.globalDiscount;
-              else
-                return services.serviceDiscount ?? 0;
-            }
+    child: ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.only(bottom: defaultOverride * 11.0),
+      physics: BouncingScrollPhysics(),
+      // dragStartBehavior: DragStartBehavior.down,
+      itemCount: isSearchingOver == true
+          ? filteredSearch.length
+          : _services.services.length,
+      itemBuilder: (BuildContext context, int index) {
+        Services services = isSearchingOver == true
+            ? filteredSearch[index]
+            : _services.services[index];
+        int _getDiscountPercentage() {
+          if (services.globalDiscount != null &&
+              services.globalDiscount > 0)
+            return services.globalDiscount;
+          else
+            return services.serviceDiscount ?? 0;
+        }
 
-            int _getDiscountedPrice(int amount) {
-              int percentageDiscount = _getDiscountPercentage();
-              double discount = amount * percentageDiscount / 100;
-              return (amount - discount).toInt();
-            }
+        int _getDiscountedPrice(int amount) {
+          int percentageDiscount = _getDiscountPercentage();
+          double discount = amount * percentageDiscount / 100;
+          return (amount - discount).toInt();
+        }
 
-            Widget _getTitleBar() => Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                      color: AppColor.PRIMARY_DARK,
-                      borderRadius: BorderRadius.circular(16.0)),
-                  child: Text("${services.id}. ${services.serviceName}",
-                      style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16)),
-                );
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.0),
-                  color: AppColor.VERY_LIGHT_GREEN),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _getTitleBar(),
-                  if (services.maleRate != null && services.maleRate > 0)
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 12, top: 16, right: 12),
-                      child: Row(
-                        children: [
-                          Text(
-                              "Male Rate: ₹${_getDiscountedPrice(services.maleRate)}",
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15)),
-                          SizedBox(width: 8),
-                          if (_getDiscountedPrice(services.maleRate) !=
-                              services.maleRate)
-                            Text("₹${services.maleRate}",
-                                style: GoogleFonts.poppins(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: AppColor.PRIMARY_DARK,
-                                    fontSize: 15)),
-                          SizedBox(width: 24),
-                          if (_getDiscountedPrice(services.maleRate) !=
-                              services.maleRate)
-                            Text("${_getDiscountPercentage()}% Off",
-                                style: GoogleFonts.poppins(
-                                    color: AppColor.PRIMARY_DARK,
-                                    fontSize: 15)),
-                        ],
-                      ),
-                    ),
-                  if (services.femaleRate != null && services.femaleRate > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, top: 2, right: 12, bottom: 8),
-                      child: Row(
-                        children: [
-                          Text(
-                              "Female Rate: ₹${_getDiscountedPrice(services.femaleRate)}",
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15)),
-                          SizedBox(width: 8),
-                          if (_getDiscountedPrice(services.femaleRate) !=
-                              services.femaleRate)
-                            Text("₹${services.femaleRate}",
-                                style: GoogleFonts.poppins(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: AppColor.PRIMARY_DARK,
-                                    fontSize: 15)),
-                          SizedBox(width: 24),
-                          if (_getDiscountedPrice(services.femaleRate) !=
-                              services.femaleRate)
-                            Text("${_getDiscountPercentage()}% Off",
-                                style: GoogleFonts.poppins(
-                                    color: AppColor.PRIMARY_DARK,
-                                    fontSize: 15)),
-                        ],
-                      ),
-                    ),
-                  if (services.description != null )
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, top: 2, right: 12, bottom: 8),
-                      child: Row(
-                        children: [
-                          Text(
-                              "Description:",
-                              style: GoogleFonts.poppins(
-                                  color: AppColor.PRIMARY_DARK,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15)),
-                          SizedBox(width: 24),
-                          if (_getDiscountedPrice(services.femaleRate) !=
-                              services.femaleRate)
-                            Text(services.description,
-                                style: GoogleFonts.poppins(
-                                    color: AppColor.PRIMARY_MEDIUM,
-                                    fontSize: 13))
-                        ],
-                      ),
-                    ),
-                  SizedBox(height: 8),
-                  Row(
+        Widget _getTitleBar() => Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+              horizontal: defaultOverride * 1.25,
+              vertical: defaultOverride * 1.0),
+          decoration: BoxDecoration(
+              color: AppColor.PRIMARY_DARK,
+              borderRadius:
+              BorderRadius.circular(defaultOverride * 1.65)),
+          child: Text("${services.id}. ${services.serviceName}",
+              style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: defaultOverride * 1.65)),
+        );
+        return Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: defaultOverride * 1.25,
+              vertical: defaultOverride * 0.8),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(defaultOverride * 1.65),
+              color: AppColor.VERY_LIGHT_GREEN),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _getTitleBar(),
+              if (services.maleRate != null && services.maleRate > 0)
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: defaultOverride * 1.25,
+                      top: defaultOverride * 1.65,
+                      right: defaultOverride * 1.25),
+                  child: Row(
                     children: [
-                      Container(),
-                      Spacer(),
-                      _selectedServiceList.contains(services)
-                          ? Container(
-                              margin: EdgeInsets.only(right: 20.0),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    // sa = "BB";
-
-                                    _selectedServiceList.remove(services);
-                                    sum -= _userProfileLogin.gender == "M"
-                                        ? _getDiscountedPrice(services.maleRate)
-                                        : _getDiscountedPrice(_services
-                                            .services[index].femaleRate);
-
-                                    print(_selectedServiceList.length);
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 12),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 7, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                      color: AppColor.DARK_ACCENT,
-                                      borderRadius:
-                                          BorderRadius.circular(50.0)),
-                                  child: Text(
-                                    '- Remove Service',
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.white, fontSize: 13),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              margin: EdgeInsets.only(right: 20.0),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    // sa = "aa";
-                                    if (_userProfileLogin.gender == "M" &&
-                                        services.maleRate != null &&
-                                        services.maleRate != 0) {
-                                      _selectedServiceList.add(services);
-                                      sum += _getDiscountedPrice(
-                                          services.maleRate);
-                                      print(
-                                          _selectedServiceList.first.maleRate);
-                                    } else if (_userProfileLogin.gender ==
-                                            "F" &&
-                                        services.femaleRate != null &&
-                                        services.femaleRate != 0) {
-                                      _selectedServiceList.add(services);
-                                      sum += _getDiscountedPrice(
-                                          services.femaleRate);
-                                      print(_selectedServiceList
-                                          .first.femaleRate);
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            "Service not available for ${_userProfileLogin.gender == "M" ? "Males" : "Females"}",
-                                        toastLength: Toast.LENGTH_LONG,
-                                        timeInSecForIosWeb: 2,
-                                      );
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 12),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 7, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                      color: AppColor.DARK_ACCENT,
-                                      borderRadius:
-                                          BorderRadius.circular(50.0)),
-                                  child: Text(
-                                    '+ Add Service',
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.white, fontSize: 13),
-                                  ),
-                                ),
-                              ),
-                            ),
+                      Text(
+                          "Male Rate: ₹${_getDiscountedPrice(services.maleRate)}",
+                          style: GoogleFonts.poppins(
+                              color: AppColor.PRIMARY_DARK,
+                              fontWeight: FontWeight.w600,
+                              fontSize: defaultOverride * 1.55)),
+                      SizedBox(width: defaultOverride * 0.9),
+                      if (_getDiscountedPrice(services.maleRate) !=
+                          services.maleRate)
+                        Text("₹${services.maleRate}",
+                            style: GoogleFonts.poppins(
+                                decoration: TextDecoration.lineThrough,
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultOverride * 1.55)),
+                      SizedBox(width: defaultOverride * 2.4),
+                      if (_getDiscountedPrice(services.maleRate) !=
+                          services.maleRate)
+                        Text("${_getDiscountPercentage()}% Off",
+                            style: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultOverride * 1.5)),
                     ],
                   ),
-                  SizedBox(height: 20),
+                ),
+              if (services.femaleRate != null && services.femaleRate > 0)
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: defaultOverride * 1.25,
+                      top: defaultOverride * 0.25,
+                      right: defaultOverride * 1.25,
+                      bottom: defaultOverride * 0.85),
+                  child: Row(
+                    children: [
+                      Text(
+                          "Female Rate: ₹${_getDiscountedPrice(services.femaleRate)}",
+                          style: GoogleFonts.poppins(
+                              color: AppColor.PRIMARY_DARK,
+                              fontWeight: FontWeight.w600,
+                              fontSize: defaultOverride * 1.5)),
+                      SizedBox(width: defaultOverride * 0.85),
+                      if (_getDiscountedPrice(services.femaleRate) !=
+                          services.femaleRate)
+                        Text("₹${services.femaleRate}",
+                            style: GoogleFonts.poppins(
+                                decoration: TextDecoration.lineThrough,
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultOverride * 1.5)),
+                      SizedBox(width: 24),
+                      if (_getDiscountedPrice(services.femaleRate) !=
+                          services.femaleRate)
+                        Text("${_getDiscountPercentage()}% Off",
+                            style: GoogleFonts.poppins(
+                                color: AppColor.PRIMARY_DARK,
+                                fontSize: defaultOverride * 1.5)),
+                    ],
+                  ),
+                ),
+              (services.description == null || services.description == "") ? Text(" ") :
+              Padding(
+                padding: EdgeInsets.only(
+                    left: defaultOverride * 1.25,
+                    top: defaultOverride * 0.25,
+                    right: defaultOverride * 1.25,
+                    bottom: defaultOverride * 0.85),
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: 'Description : ',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.PRIMARY_MEDIUM,
+                              fontSize: defaultOverride * 1.5)),
+                      TextSpan(
+                          text: services.description,
+                          style: GoogleFonts.poppins(
+                              color: AppColor.PRIMARY_MEDIUM,
+                              fontSize: defaultOverride * 1.35,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5)),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: defaultOverride * 0.85),
+              Row(
+                children: [
+                  Container(),
+                  Spacer(),
+                  _selectedServiceList.contains(services)
+                      ? Container(
+                    margin: EdgeInsets.only(right: 20.0),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          // sa = "BB";
+
+                          _selectedServiceList.remove(services);
+                          sum -= _userProfileLogin.gender == "M"
+                              ? _getDiscountedPrice(services.maleRate)
+                              : _getDiscountedPrice(_services
+                              .services[index].femaleRate);
+
+                          print(_selectedServiceList.length);
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: defaultOverride * 1.25),
+                        padding: EdgeInsets.symmetric(
+                            vertical: defaultOverride * 0.75,
+                            horizontal: defaultOverride * 1.5),
+                        decoration: BoxDecoration(
+                            color: AppColor.DARK_ACCENT,
+                            borderRadius:
+                            BorderRadius.circular(50.0)),
+                        child: Text(
+                          '- Remove Service',
+                          style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: defaultOverride * 1.35),
+                        ),
+                      ),
+                    ),
+                  )
+                      : Container(
+                    margin:
+                    EdgeInsets.only(right: defaultOverride * 2.0),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          // sa = "aa";
+                          if (_userProfileLogin.gender == "M" &&
+                              services.maleRate != null &&
+                              services.maleRate != 0) {
+                            _selectedServiceList.add(services);
+                            sum += _getDiscountedPrice(
+                                services.maleRate);
+                            print(
+                                _selectedServiceList.first.maleRate);
+                          } else if (_userProfileLogin.gender ==
+                              "F" &&
+                              services.femaleRate != null &&
+                              services.femaleRate != 0) {
+                            _selectedServiceList.add(services);
+                            sum += _getDiscountedPrice(
+                                services.femaleRate);
+                            print(_selectedServiceList
+                                .first.femaleRate);
+                          } else {
+                            Fluttertoast.showToast(
+                              msg:
+                              "Service not available for ${_userProfileLogin.gender == "M" ? "Males" : "Females"}",
+                              toastLength: Toast.LENGTH_LONG,
+                              timeInSecForIosWeb: 2,
+                            );
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: defaultOverride * 1.25),
+                        padding: EdgeInsets.symmetric(
+                            vertical: defaultOverride * 0.75,
+                            horizontal: defaultOverride * 1.5),
+                        decoration: BoxDecoration(
+                            color: AppColor.DARK_ACCENT,
+                            borderRadius:
+                            BorderRadius.circular(50.0)),
+                        child: Text(
+                          '+ Add Service',
+                          style: GoogleFonts.poppins(
+                              color: Colors.white, fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            );
-          },
-        ),
-      );
+              SizedBox(height: defaultOverride * 2.25),
+            ],
+          ),
+        );
+      },
+    ),
+  );
 }
