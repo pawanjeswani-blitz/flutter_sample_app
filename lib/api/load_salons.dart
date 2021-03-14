@@ -62,11 +62,11 @@ class LoadSalons {
     final loginAuthToken = await AppSessionManager.getLoginAuthToken();
     final body = {"authToken": loginAuthToken, "salonId": salonId};
     debugPrint(
-        "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services");
+        "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services");
     debugPrint(jsonEncode(body));
     return http
         .post(
-            "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services",
+            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -116,12 +116,12 @@ class LoadSalons {
     final body = {"authToken": loginAuthToken, "salonId": 1};
 
     print(
-        "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services");
+        "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services");
     print(body);
 
     return http
         .post(
-            "http://staging.saloonwala.in/consumercloudspa/api/rs/v1/service/get/consumer/services",
+            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services",
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
