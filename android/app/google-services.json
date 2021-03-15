@@ -1,0 +1,135 @@
+{
+  "project_info": {
+    "project_number": "37368827486",
+    "firebase_url": "https://saloonwala-partner.firebaseio.com",
+    "project_id": "saloonwala-partner",
+    "storage_bucket": "saloonwala-partner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37368827486:android:1ba113f8be5fbfde652ecf",
+        "android_client_info": {
+          "package_name": "in.saloonwala.SwConsumer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9dl_nuyhDj9kxhcgDZ1xn3qtBYfZHrsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37368827486-6shi1mc3m02um4mf9ipk6lkh28eqn45n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.saloonwala.Saloonwala-Partner"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37368827486:android:368fc2dea7854f13652ecf",
+        "android_client_info": {
+          "package_name": "in.saloonwala.saloonwala_partner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37368827486-arjtu9hcto4orora8dh8rlbpeghjm4o6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.saloonwala.saloonwala_partner",
+            "certificate_hash": "1ea86302af8887a9189c91f8475e5904cddb3be5"
+          }
+        },
+        {
+          "client_id": "37368827486-rp9kcedjmna9ak6shtdvqjev7fg53do8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.saloonwala.saloonwala_partner",
+            "certificate_hash": "eaedc1925ca13857074475c92a1833b68f54e1ac"
+          }
+        },
+        {
+          "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9dl_nuyhDj9kxhcgDZ1xn3qtBYfZHrsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37368827486-6shi1mc3m02um4mf9ipk6lkh28eqn45n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.saloonwala.Saloonwala-Partner"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37368827486:android:20255e4bb5ae1bfe652ecf",
+        "android_client_info": {
+          "package_name": "in.saloonwala.sw_appointment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9dl_nuyhDj9kxhcgDZ1xn3qtBYfZHrsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37368827486-h6mhuf0t6smmmcnk6gll9ivfe58lai3n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37368827486-6shi1mc3m02um4mf9ipk6lkh28eqn45n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.saloonwala.Saloonwala-Partner"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
