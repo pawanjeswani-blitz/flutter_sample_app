@@ -20,7 +20,7 @@ class AppointmentResponse {
   EmpInfo empInfo;
   List<ServiceInfo> serviceInfo;
   SalonDetails salonDetails;
-  int totalRate;
+  String totalRate;
 
   AppointmentResponse({
     this.id,
