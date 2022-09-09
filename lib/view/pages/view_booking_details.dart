@@ -94,7 +94,7 @@ class _ViewBookingDetailsState extends State<ViewBookingDetails> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   int getSaved() {

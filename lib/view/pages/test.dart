@@ -97,10 +97,8 @@ class _TestPageState extends State<TestPage> {
                                 ],
                               ),
                               Spacer(),
-                              FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                // color: Colors.transparent,
+                              TextButton(
+                              style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                                 onPressed: () async {
                                   final userProfile =
                                       await AppSessionManager.getUserProfile();

@@ -48,7 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ? Container()
                         : Container(
                             alignment: Alignment.centerRight,
-                            child: FlatButton(
+                            child: TextButton(
                               onPressed: () {
                                 _pageController.animateToPage(
                                   3,
@@ -220,7 +220,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             //Creates a widget that expands a child of a [Row], [Column], or [Flex] so that the child fills the available space along the flex widget's main axis.
                             child: Align(
                               alignment: FractionalOffset.bottomRight,
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () {
                                   _pageController.nextPage(
                                     duration: Duration(milliseconds: 500),

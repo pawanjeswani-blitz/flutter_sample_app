@@ -258,7 +258,7 @@ class _SalonRatingScreenState extends State<SalonRatingScreen> {
       content: Text(errorText),
       duration: Duration(milliseconds: 1000),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   var _getTextFormFieldInputDecoration = InputDecoration(

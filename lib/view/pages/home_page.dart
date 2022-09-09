@@ -341,7 +341,7 @@ class _HomePageState extends State<HomePage> {
       content: Text(errorText),
       duration: Duration(milliseconds: 500),
     );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget _title() => Container(

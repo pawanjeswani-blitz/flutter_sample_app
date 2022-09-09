@@ -70,7 +70,7 @@ class _SalonServicesTabViewState extends State<SalonServicesTabView>
     double defaultSize = SizeConfig.defaultSize;
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light
             .copyWith(statusBarColor: Theme.of(context).primaryColor),

@@ -264,7 +264,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
   }
 
   Widget _showLogout(int id) {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text(
         "No",
         style: GoogleFonts.poppins(
@@ -275,7 +275,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text(
         "Yes",
         style: GoogleFonts.poppins(
@@ -344,7 +344,7 @@ class _UpcomingAppointmentScreenState extends State<UpcomingAppointmentScreen> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget _getLoaderView() {

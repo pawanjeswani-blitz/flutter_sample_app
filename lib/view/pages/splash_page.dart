@@ -17,9 +17,9 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     //take the permission
-    firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, alert: true));
-    firebaseMessaging.configure();
+    // firebaseMessaging.requestNotificationPermissions(
+    //     IosNotificationSettings(sound: true, alert: true));
+    // firebaseMessaging.configure();
     _refreshToken();
     _startTime();
   }

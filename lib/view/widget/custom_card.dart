@@ -577,9 +577,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
             ),
             Row(
               children: [
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                   onPressed: () async {
                     widget.viewDetails();
                   },
@@ -593,9 +592,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                 ),
                 Spacer(),
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                   onPressed: () async {
                     widget.cancel();
                   },
@@ -704,9 +702,8 @@ class _PastAppointmentCardState extends State<PastAppointmentCard> {
             ),
             Row(
               children: [
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                   onPressed: () async {
                     widget.review();
                   },
@@ -720,9 +717,8 @@ class _PastAppointmentCardState extends State<PastAppointmentCard> {
                   ),
                 ),
                 Spacer(),
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                   onPressed: () async {
                     widget.viewDetails();
                   },
@@ -831,9 +827,8 @@ class _CancelledAppointmentCardState extends State<CancelledAppointmentCard> {
             ),
             Row(
               children: [
-                FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                   onPressed: () async {
                     widget.viewDetails();
                   },

@@ -175,9 +175,8 @@ class _SalonServicesUIState extends State<SalonServicesUI> {
                         ],
                       ),
                       Spacer(),
-                      FlatButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
+                      TextButton(
+                        style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                         // color: Colors.transparent,
                         onPressed: () async {
                           final userProfile =

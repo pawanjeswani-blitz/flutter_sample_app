@@ -222,6 +222,6 @@ class _FavoriteSalonsScreenState extends State<FavoriteSalonsScreen> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

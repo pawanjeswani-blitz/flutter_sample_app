@@ -297,7 +297,7 @@ class _RandomTestSearchBARState extends State<RandomTestSearchBAR> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget _title() => Container(

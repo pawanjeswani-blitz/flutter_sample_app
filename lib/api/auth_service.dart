@@ -21,7 +21,7 @@ class AuthService {
   static Future<SuperResponse<NonLoginResponse>> getNonAuthToken() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    final fcmToken = await firebaseMessaging.getToken();
+    // final fcmToken = await firebaseMessaging.getToken();
     final uuid = Uuid();
     final body = {};
 
@@ -35,7 +35,7 @@ class AuthService {
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
           deviceModel: androidInfo.model,
-          fcmId: fcmToken,
+          // fcmId: fcmToken,
           manufacturer: androidInfo.manufacturer,
           userAgent: 'Android',
           platform: 'APP');
@@ -51,7 +51,7 @@ class AuthService {
           appSignature: "-1475535803",
           appVersion: packageInfo.version,
           deviceModel: iosInfo.utsname.machine,
-          fcmId: fcmToken,
+          // fcmId: fcmToken,
           manufacturer: 'Apple',
           userAgent: 'iOS',
           platform: 'APP');
@@ -63,7 +63,7 @@ class AuthService {
     debugPrint("${Constants.BaseUrl}${Constants.NonLoginAuth}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.NonLoginAuth}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.NonLoginAuth}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -100,7 +100,7 @@ class AuthService {
     debugPrint("${Constants.BaseUrl}${Constants.LoginUsingOTP}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.LoginUsingOTP}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.LoginUsingOTP}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -133,7 +133,7 @@ class AuthService {
     debugPrint(jsonEncode(body));
 
     return http
-        .post("${Constants.BaseUrl}${Constants.LoginPhoneVerfication}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.LoginPhoneVerfication}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -167,7 +167,7 @@ class AuthService {
     debugPrint("${Constants.BaseUrl}${Constants.RefreshSession}");
     debugPrint(json.encode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.RefreshSession}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.RefreshSession}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -196,7 +196,7 @@ class AuthService {
     debugPrint("${Constants.BaseUrl}${Constants.LogoutUser}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.LogoutUser}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.LogoutUser}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

@@ -50,7 +50,7 @@ class UserProfileService {
     debugPrint("${Constants.BaseUrl}${Constants.UpdateUserProfile}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.UpdateUserProfile}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.UpdateUserProfile}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -78,7 +78,7 @@ class UserProfileService {
     debugPrint("${Constants.BaseUrl}${Constants.GetUserProfilePath}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.GetUserProfilePath}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.GetUserProfilePath}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -126,7 +126,7 @@ class UserProfileService {
     debugPrint("${Constants.BaseUrl}${Constants.UpdateUserProfile}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.UpdateUserProfile}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.UpdateUserProfile}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -161,8 +161,7 @@ class UserProfileService {
 
     print('--------------------');
     try {
-      final response = await Dio().post(
-        "${Constants.BaseUrl}${Constants.UploadProfilePic}",
+      final response = await Dio().post("${Constants.BaseUrl}${Constants.UploadProfilePic}",
         data: formData,
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );

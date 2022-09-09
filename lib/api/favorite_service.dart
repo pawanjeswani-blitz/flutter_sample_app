@@ -21,7 +21,7 @@ class FavoriteService {
     debugPrint("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -44,7 +44,7 @@ class FavoriteService {
     debugPrint("${Constants.BaseUrl}${Constants.GetLikedSalon}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.GetLikedSalon}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.GetLikedSalon}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -74,7 +74,7 @@ class FavoriteService {
     debugPrint("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.FavoriteUpdateHeart}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

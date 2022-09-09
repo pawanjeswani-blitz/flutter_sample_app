@@ -226,9 +226,8 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  suffixIcon: FlatButton(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
+                  suffixIcon: TextButton(
+                      style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                       onPressed: () async {
                         if (_loginFormKey1.currentState.validate()) {
                           _requestOTP();
@@ -399,6 +398,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

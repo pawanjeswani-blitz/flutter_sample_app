@@ -22,7 +22,7 @@ class FetchSlots {
     debugPrint("${Constants.BaseUrl}${Constants.GetSalonSlots}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.GetSalonSlots}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.GetSalonSlots}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -60,7 +60,7 @@ class FetchSlots {
     debugPrint("${Constants.BaseUrl}${Constants.SlotsBooking}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.SlotsBooking}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.SlotsBooking}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

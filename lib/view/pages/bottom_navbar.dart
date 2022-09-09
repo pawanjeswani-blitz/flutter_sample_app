@@ -10,7 +10,7 @@ import 'package:saloonwala_consumer/view/pages/home_page.dart';
 import 'package:saloonwala_consumer/view/pages/user_profile_ui.dart';
 import 'package:saloonwala_consumer/view/pages/view_booking_details.dart';
 
-final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+// final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -29,21 +29,21 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   void initState() {
     super.initState();
-    firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        //when app is on and receive the message ignore it
-      },
-      // onLaunch: (Map<String, dynamic> message) async {
-      //   //handle the redirect when user click on notification
-      //   print("onLaunch: $message");
-      //   // _handleNotificationRedirect(message);
-      // },
-      onResume: (Map<String, dynamic> message) async {
-        //handle the redirect when user click on notification
-        print("onResume: $message");
-        _handleNotificationRedirect(message);
-      },
-    );
+    // firebaseMessaging.configure(
+    //   onMessage: (Map<String, dynamic> message) async {
+    //     //when app is on and receive the message ignore it
+    //   },
+    //   // onLaunch: (Map<String, dynamic> message) async {
+    //   //   //handle the redirect when user click on notification
+    //   //   print("onLaunch: $message");
+    //   //   // _handleNotificationRedirect(message);
+    //   // },
+    //   onResume: (Map<String, dynamic> message) async {
+    //     //handle the redirect when user click on notification
+    //     print("onResume: $message");
+    //     _handleNotificationRedirect(message);
+    //   },
+    // );
   }
 
   void _handleNotificationRedirect(Map<String, dynamic> message) {

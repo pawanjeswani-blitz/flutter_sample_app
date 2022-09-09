@@ -269,7 +269,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
   }
 
   Widget _showLogout() {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text(
         "Cancel",
         style: GoogleFonts.poppins(
@@ -280,7 +280,7 @@ class _UserProfileUIState extends State<UserProfileUI> {
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text(
         "Logout",
         style: GoogleFonts.poppins(
@@ -403,6 +403,6 @@ class _UserProfileUIState extends State<UserProfileUI> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

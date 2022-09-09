@@ -16,7 +16,7 @@ class FeedBackService {
     debugPrint("${Constants.BaseUrl}${Constants.FeedBack}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.FeedBack}${pageNo.toString()}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.FeedBack}${pageNo.toString()}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -47,7 +47,7 @@ class FeedBackService {
     debugPrint("${Constants.BaseUrl}${Constants.PostStoreRating}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.PostStoreRating}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.PostStoreRating}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -77,7 +77,7 @@ class FeedBackService {
     debugPrint("${Constants.BaseUrl}${Constants.PostStoreComment}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.PostStoreComment}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.PostStoreComment}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

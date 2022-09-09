@@ -18,8 +18,8 @@ class GetAppointmentService {
         "${Constants.BaseUrl}${Constants.GetAppointmentData}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
-        .post(
-            "${Constants.BaseUrl}${Constants.GetAppointmentData}${pageNo.toString()}",
+        .post(Uri.parse(
+            "${Constants.BaseUrl}${Constants.GetAppointmentData}${pageNo.toString()}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -48,7 +48,7 @@ class GetAppointmentService {
     debugPrint("${Constants.BaseUrl}${Constants.EditAppointMent}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.EditAppointMent}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.EditAppointMent}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -71,7 +71,7 @@ class GetAppointmentService {
     debugPrint("${Constants.BaseUrl}${Constants.GetSingleAppointment}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.GetSingleAppointment}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.GetSingleAppointment}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

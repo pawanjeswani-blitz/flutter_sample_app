@@ -39,8 +39,8 @@ class LoadSalons {
         "${Constants.BaseUrl}${Constants.GetSalonFeedList}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
-        .post(
-            "${Constants.BaseUrl}${Constants.GetSalonFeedList}${pageNo.toString()}",
+        .post(Uri.parse(
+            "${Constants.BaseUrl}${Constants.GetSalonFeedList}${pageNo.toString()}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -65,8 +65,8 @@ class LoadSalons {
         "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services");
     debugPrint(jsonEncode(body));
     return http
-        .post(
-            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services",
+        .post(Uri.parse(
+            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -89,8 +89,8 @@ class LoadSalons {
         "${Constants.BaseUrl}${Constants.GetSearchList}${pageNo.toString()}");
     debugPrint(jsonEncode(body));
     return http
-        .post(
-            "${Constants.BaseUrl}${Constants.GetSearchList}${pageNo.toString()}",
+        .post(Uri.parse(
+            "${Constants.BaseUrl}${Constants.GetSearchList}${pageNo.toString()}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -120,8 +120,8 @@ class LoadSalons {
     print(body);
 
     return http
-        .post(
-            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services",
+        .post(Uri.parse(
+            "${Constants.BaseUrl}consumercloudspa/api/rs/v1/service/get/consumer/services"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {
@@ -146,7 +146,7 @@ class LoadSalons {
     debugPrint("${Constants.BaseUrl}${Constants.GetSingleStore}");
     debugPrint(jsonEncode(body));
     return http
-        .post("${Constants.BaseUrl}${Constants.GetSingleStore}",
+        .post(Uri.parse("${Constants.BaseUrl}${Constants.GetSingleStore}"),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
             body: json.encode(body))
         .then((http.Response response) {

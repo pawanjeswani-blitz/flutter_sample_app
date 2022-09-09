@@ -33,6 +33,7 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   bool readOnly = true;
   bool _inProcess = false;
+  final ImagePicker _picker = ImagePicker();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _fullNameFormKey = GlobalKey<FormState>();
   // final GlobalKey<FormState> _phoneNumberFormKey = GlobalKey<FormState>();
@@ -48,13 +49,12 @@ class _EditProfileState extends State<EditProfile> {
       address;
   String fsname = "aa";
   double defaultOverride;
-  File selectedImage;
+  CroppedFile selectedImage;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double defaultSize = SizeConfig.defaultSize;
     defaultOverride = defaultSize;
-
     return WillPopScope(
       onWillPop: () => _onwillPop(),
       child: Scaffold(
@@ -207,9 +207,8 @@ class _EditProfileState extends State<EditProfile> {
                                 widget.userProfile.lastName,
                             hintStyle: GoogleFonts.poppins(
                                 color: AppColor.PRIMARY_DARK),
-                            suffixIcon: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
+                            suffixIcon: TextButton(
+                                style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                                 onPressed: () async {
                                   setState(() {
                                     readOnly = false;
@@ -247,9 +246,8 @@ class _EditProfileState extends State<EditProfile> {
                             hintText: widget.userProfile.email,
                             hintStyle: GoogleFonts.poppins(
                                 color: AppColor.PRIMARY_DARK),
-                            suffixIcon: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
+                            suffixIcon: TextButton(
+                                style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                                 onPressed: () async {
                                   setState(() {
                                     readOnly = false;
@@ -288,9 +286,8 @@ class _EditProfileState extends State<EditProfile> {
                             hintText: widget.userProfile.gender == "M"
                                 ? 'Male'
                                 : 'Female',
-                            suffixIcon: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
+                            suffixIcon: TextButton(
+                                style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                                 onPressed: () async {
                                   // _requestOTP();
                                   // setState(() {
@@ -330,9 +327,8 @@ class _EditProfileState extends State<EditProfile> {
                             hintText: widget.userProfile.address,
                             hintStyle: GoogleFonts.poppins(
                                 color: AppColor.PRIMARY_DARK),
-                            suffixIcon: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
+                            suffixIcon: TextButton(
+                                style: TextButton.styleFrom(foregroundColor: Colors.transparent),
                                 onPressed: () async {
                                   setState(() {
                                     readOnly = false;
@@ -412,7 +408,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _showCancel() {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text(
         "No",
         style: GoogleFonts.poppins(
@@ -423,7 +419,7 @@ class _EditProfileState extends State<EditProfile> {
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text(
         "Yes",
         style: GoogleFonts.poppins(
@@ -510,7 +506,7 @@ class _EditProfileState extends State<EditProfile> {
 
   void showSnackBar(String errorText) {
     final snackBar = SnackBar(content: Text(errorText));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   String _validatePhoneNumber(String value) {
@@ -549,21 +545,14 @@ class _EditProfileState extends State<EditProfile> {
     // hintText: hint,
   );
   Widget _bottomSheet() {
-    _cropImage(File picked) async {
-      File cropped = await ImageCropper.cropImage(
+    _cropImage(XFile picked) async {
+      CroppedFile cropped = await ImageCropper().cropImage(
         sourcePath: picked.path,
         compressFormat: ImageCompressFormat.jpg,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 70,
         maxWidth: 700,
         maxHeight: 700,
-        androidUiSettings: AndroidUiSettings(
-          toolbarColor: AppColor.PRIMARY_MEDIUM,
-          toolbarTitle: "Crop Profile Picture",
-          statusBarColor: AppColor.PRIMARY_MEDIUM,
-          toolbarWidgetColor: Colors.white,
-          backgroundColor: Colors.white,
-        ),
       );
       if (cropped != null) {
         setState(() {
@@ -576,7 +565,7 @@ class _EditProfileState extends State<EditProfile> {
       this.setState(() {
         _inProcess = true;
       });
-      File image = await ImagePicker.pickImage(source: ImageSource.camera);
+      XFile image = await _picker.pickImage(source: ImageSource.camera);
 
       if (image != null) {
         _cropImage(image);
@@ -595,7 +584,7 @@ class _EditProfileState extends State<EditProfile> {
       this.setState(() {
         _inProcess = true;
       });
-      File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      XFile image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         _cropImage(image);
         this.setState(() {
@@ -627,7 +616,7 @@ class _EditProfileState extends State<EditProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton.icon(
+              TextButton.icon(
                 icon: Icon(
                   Icons.camera,
                   color: AppColor.PRIMARY_MEDIUM,
@@ -644,7 +633,7 @@ class _EditProfileState extends State<EditProfile> {
               Container(
                 margin: EdgeInsets.only(right: defaultOverride * 2.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                 icon: Icon(
                   Icons.image,
                   color: AppColor.PRIMARY_MEDIUM,
